@@ -23,23 +23,22 @@ function App() {
   const [user, setUser] = useState(false);
 
   return (
-    // <BrowserRouter>
-    //   <Routes>
-    //     {user ? (          
-    //       <Route path="/" element={<Feeds />} /> 
-                    
-    //     ) : (
-    //       <Route path="/" element={<Login />} />
-    //     )}       
-    //     <Route path='/Userprofile' element={<Selfprofile />}></Route>        
-    //   </Routes>
-    // </BrowserRouter>
     <BrowserRouter>
-    <Navbar />
-    <Routes>
-      <Route path='/' element={<Feeds />} />      
-      <Route path='/selfProfile' element={<Selfprofile />} /> 
-    </Routes>
+      {user ? (
+        <>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Feeds />} />
+            <Route path="/profile" element={<Selfprofile />} />
+          </Routes>
+        </>
+      ) : (
+        <>
+          <Routes>
+            <Route path="/" element={<Login />} />
+          </Routes>
+        </>
+      )}
     </BrowserRouter>
   );
 }

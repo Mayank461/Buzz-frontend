@@ -1,87 +1,49 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-.font-family{
+.font-family {
   font-family: 'Poppins', sans-serif;
-  
 }
-.font-size{
+.font-size {
   font-size: 15px;
 }
 
-.round-img{
+.round-img {
   clip-path: circle();
 }
-.icon-bg{
-  background-color:  #E4E5EB;
+.icon-bg {
+  background-color: #e4e5eb;
 }
-.incoming{
+.incoming {
   font-size: 12px;
 }
-.profile-pic{
-  height:100px;
+.profile-pic {
+  height: 100px;
   width: 100px;
 }
-.small-round-pic{
-  height:50px;
+.small-round-pic {
+  height: 50px;
   width: 50px;
 }
-.scroll{
+.scroll {
   height: 50%;
   overflow-y: auto;
 }
-.scroll-mid{
+.scroll-mid {
   height: 885px;
   overflow-y: auto;
 }
-.side-height{
+.side-height {
   height: 850px;
 }
-.coverpic{
+.coverpic {
   height: 200px;
   width: 100%;
 }
-.profilepic{
+.profilepic {
   width: 150px;
   height: 150px;
   position: absolute;
   top: 50%;
-  left: 5%;  
+  left: 5%;
 }
-.profile-sidebar{
+.profile-sidebar {
   height: 900px;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }

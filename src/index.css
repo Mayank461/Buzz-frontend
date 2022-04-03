@@ -5,26 +5,28 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
 }
-.vertically-center{
+.vertically-center {
   display: flex;
   align-items: center;
 }
-.logo{
-  width: 70px;
+.logo {
   height: 70px;
 }
-.google-button-clr{
-  color: #F4008C;
-  border-color: #F4008C;;
+.google-button-clr {
+  color: #f4008c;
+  border-color: #f4008c;
 }
-.signup-btn-clr{
-   color: white;
-   background-color: #B300F8;
+.signup-btn-clr {
+  color: white;
+  background-color: #b300f8;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.pointer {
+  cursor: pointer;
 }

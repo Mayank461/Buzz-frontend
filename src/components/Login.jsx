@@ -1,11 +1,12 @@
 import React from 'react';
 import axios from 'axios';
+import { API_URL } from '../config';
 
 export default function Login() {
   async function handleGAuth(e) {
     e.preventDefault();
 
-    window.open('http://localhost:5000/api/auth/google', '_self');
+    window.open(`${API_URL}/auth/google`, '_self');
 
     // axios
     //   .get('http://localhost:5000/api/auth/google', { withCredentials: true })
