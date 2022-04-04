@@ -8,6 +8,7 @@ import { API_URL } from './config';
 import Navbar from './components/Navbar';
 import Userprofile from './components/Userprofile';
 import Selfprofile from './components/Selfprofile';
+import Friends from './components/Friends';
 
 function App() {
   useEffect(() => {
@@ -21,6 +22,7 @@ function App() {
   }, []);
 
   const [user, setUser] = useState(false);
+  user && console.log(user);
 
   return (
     <BrowserRouter>
@@ -30,6 +32,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Feeds />} />
             <Route path="/profile" element={<Selfprofile />} />
+            <Route path="/friends" element={<Friends user={user} />} />
           </Routes>
         </>
       ) : (
