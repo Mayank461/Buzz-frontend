@@ -31,6 +31,8 @@ export default function Navbar() {
             </Link>
           </div>
           <div className="d-flex position-relative">
+            <Link to='/profile' className='nav-link text-dark'>
+            <div className='d-flex'>
             <div className="">
               <img
                 src={user.picture_url}
@@ -41,14 +43,17 @@ export default function Navbar() {
             <div className="d-flex align-items-center ms-2">
               {user.firstname + ' ' + user.lastname}
             </div>
+            </div>
+            </Link>
+          
             <div className="d-flex align-items-center ms-2 round-img border rounded-circle icon-bg text-dark p-2">
               <i className="fa-brands fa-facebook-messenger "></i>
             </div>
             <div className="position-relative d-flex">
               <div className="d-flex align-items-center ms-2 round-img border rounded-circle icon-bg text-dark p-2 ">
-                <Link to="/profile">
+             
                   <i className="fa-solid fa-user"></i>
-                </Link>
+             
               </div>
               <div className="round-img bg-danger p-1 text-white incoming position-absolute bottom-50 end-0">
                 1

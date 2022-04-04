@@ -21,10 +21,10 @@ export default function Feeds() {
   return (
     <>
       <div style={{ backgroundColor: '#F0F2F5' }}>
-        <div className="container mt-2">
+        <div className="container">
           <div className="row">
             {/* column 1st  */}
-            <div className="col-md-3 ">
+            <div className="col-md-3 mt-3">
               <div className="card p-5 shadow-lg p-3 mb-5 bg-body rounded border-0">
                 <div className="d-flex justify-content-center">
                   <img
@@ -51,7 +51,7 @@ export default function Feeds() {
               </div>
             </div>
             {/* column 2nd  */}
-            <div className="col-md-6  scroll-mid ">
+            <div className="col-md-6  scroll-mid mt-3 ">
               <div className="card p-3 mb-3 shadow p-3 mb-5 bg-body rounded border-0">
                 <div className="d-flex justify-content-between align-items-center mb-2">
                   <div className="">
@@ -177,7 +177,7 @@ export default function Feeds() {
               </div>
             </div>
             {/* column 3rd  */}
-            <div className="col-md-3 side-height">
+            <div className="col-md-3 side-height mt-3">
               <div className=" border p-2 scroll bg-white shadow-lg p-3 bg-body rounded border-0">
                 <div className="d-flex justify-content-between">
                   <div>Contacts</div>
