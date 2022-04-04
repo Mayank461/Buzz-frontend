@@ -18,10 +18,44 @@ export default function Feeds() {
       .then((res) => console.log(res.data))
       .catch((err) => console.log(err.message));
   }
+  const [title, setTitle] = useState("")
+  // const [body, setBody] = useState("")
+  const [image, setImage] = useState("")
+  const [url,setUrl] = useState("")
+
+  const postDetails = () =>{
+      const data = new FormData()
+      data.append('file',image)
+      data.append('upload_preset','buzz-app')
+      data.append('cloud_name','buzz-social-app')
+      fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload',{
+      method:"post",
+      body:data    
+    })
+    .then(res => res.json())
+    .then(data => {
+        setUrl(data.url)
+        console.log(data.url);
+        fetch(`${API_URL}/user/userPost`, {
+          method:"post",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            pic_url: data.url,
+            caption: title,
+            user_id: user._id
+          })
+        })        
+    })
+    .catch(err => {
+        console.log(err)
+    })
+  }
   return (
     <>
       <div style={{ backgroundColor: '#F0F2F5' }}>
-        <div className="container">
+        <div className="container">          
           <div className="row">
             {/* column 1st  */}
             <div className="col-md-3 mt-3">
@@ -52,6 +86,35 @@ export default function Feeds() {
             </div>
             {/* column 2nd  */}
             <div className="col-md-6  scroll-mid mt-3 ">
+            <div className='d-flex'>
+            <div className=''> 
+            <img
+                src={user.picture_url}
+                className="card-img-top small-round-pic  round-img"
+                alt="..."
+              />
+            </div>
+            <div className=''>
+            <input
+          type="text"
+          placeholder="title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+            </div>
+            <div className=''>
+           
+            <input
+              type="file" onChange={(e) => setImage(e.target.files[0])} />              
+            </div>        
+            
+          </div>
+          <div>
+            <button className="btn"
+        onClick={() => postDetails()}
+        >Sumbit Post
+        </button>
+            </div>
               <div className="card p-3 mb-3 shadow p-3 mb-5 bg-body rounded border-0">
                 <div className="d-flex justify-content-between align-items-center mb-2">
                   <div className="">
