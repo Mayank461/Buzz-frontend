@@ -16,7 +16,13 @@ export default function Navbar() {
   }, []);
 
   function handleLogout() {
+    
     window.open(`${API_URL}/auth/logout`, '_self');
+    // axios
+    // .get(`${API_URL}/auth/loginUser`)
+    // .then((res) => console.log(res.data))
+    // .then((user) =>  setEmailLogin(user))
+    // .catch((err) => console.log(err.message));
   }
   return (
     <>

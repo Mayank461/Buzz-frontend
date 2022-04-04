@@ -10,6 +10,7 @@ import Userprofile from './components/Userprofile';
 import Selfprofile from './components/Selfprofile';
 
 function App() {
+  const [user, setUser] = useState(false);
   useEffect(() => {
     axios
       .get(`${API_URL}/auth/login/success`, {
@@ -20,7 +21,17 @@ function App() {
       .catch((err) => console.log(err.message));
   }, []);
 
-  const [user, setUser] = useState(false);
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/auth/loginUser`)
+      .then((res) => res.data)
+      .then((user) =>  setUser(user))
+      .catch((err) => console.log(err.message));
+  }, []);
+
+  // const [user, setUser] = useState(false);
+  const [emailLogin, setEmailLogin] = useState(false);
+
 
   return (
     <BrowserRouter>
