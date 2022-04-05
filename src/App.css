@@ -47,3 +47,11 @@
 .profile-sidebar {
   height: 900px;
 }
+.post {
+  display: none;
+  visibility: none;
+
+}
+/* .caption{
+  width: 100%;
+} */
