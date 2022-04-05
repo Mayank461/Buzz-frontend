@@ -13,6 +13,10 @@ import Friends from './components/Friends';
 function App() {
   const [user, setUser] = useState(false);
   useEffect(() => {
+    fetchUser();
+  }, []);
+
+  function fetchUser() {
     axios
       .get(`${API_URL}/auth/login/success`, {
         withCredentials: true,
@@ -20,34 +24,23 @@ function App() {
       .then((res) => res.data)
       .then(({ user, success }) => success && setUser(user))
       .catch((err) => console.log(err.message));
-  }, []);
-
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/auth/loginUser`)
-      .then((res) => res.data)
-      .then((user) => setUser(user))
-      .catch((err) => console.log(err.message));
-  }, []);
-
-  // const [user, setUser] = useState(false);
-  const [emailLogin, setEmailLogin] = useState(false);
+  }
 
   return (
     <BrowserRouter>
       {user ? (
         <>
-          <Navbar />
+          <Navbar user={user} />
           <Routes>
-            <Route path="/" element={<Feeds />} />
-            <Route path="/profile" element={<Selfprofile />} />
+            <Route path="/" element={<Feeds user={user} />} />
+            <Route path="/profile" element={<Selfprofile user={user} />} />
             <Route path="/friends" element={<Friends user={user} />} />
           </Routes>
         </>
       ) : (
         <>
           <Routes>
-            <Route path="/" element={<Login />} />
+            <Route path="*" element={<Login fetchUser={fetchUser} />} />
           </Routes>
         </>
       )}

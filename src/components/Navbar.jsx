@@ -3,26 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { API_URL } from '../config';
 
-export default function Navbar() {
-  const [user, setUser] = useState({});
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/user/getUser`, { withCredentials: true })
-      .then((res) => {
-        setUser(res.data[0]);
-        console.log(user);
-      })
-      .catch((err) => console.log(err.message));
-  }, []);
-
+export default function Navbar({ user }) {
   function handleLogout() {
-    
     window.open(`${API_URL}/auth/logout`, '_self');
-    // axios
-    // .get(`${API_URL}/auth/loginUser`)
-    // .then((res) => console.log(res.data))
-    // .then((user) =>  setEmailLogin(user))
-    // .catch((err) => console.log(err.message));
   }
   return (
     <>

@@ -2,52 +2,44 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { API_URL } from '../config';
 
-export default function Login() {
+export default function Login({ fetchUser }) {
   async function handleGAuth(e) {
     e.preventDefault();
-
     window.open(`${API_URL}/auth/google`, '_self');
-
-    // axios
-    //   .get('http://localhost:5000/api/auth/google', { withCredentials: true })
-    //   .then((d) => console.log(d.data))
-    //   .catch((e) => console.log(e.message));
   }
   const [inputs, setInputs] = useState({
-     userEmail:"",
-     userPassword:""
-});
-  const OnInputChange = e => {
+    userEmail: '',
+    userPassword: '',
+  });
+  const OnInputChange = (e) => {
+    setInputs({ ...inputs, [e.target.name]: e.target.value });
+  };
 
-    setInputs({ ...inputs, [e.target.name]: e.target.value })
-    // console.log(e.target.value)
-   
-
-};
   const postLoginData = async (e) => {
     e.preventDefault();
-    // window.open(`${API_URL}/user/loginUser`, '_self');
-    
-    const { userEmail, userPassword} = inputs;
-    console.log(inputs);
-    const res = await fetch(`${API_URL}/user/loginUser`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
+    const { userEmail, userPassword } = inputs;
+
+    if (userEmail == '' || userPassword == '')
+      return alert('Please fill the login details');
+
+    if (userEmail.split('@')[1] !== 'tothenew.com')
+      return alert('Only ToTheNew email can be used');
+
+    axios
+      .post(
+        `${API_URL}/auth/login`,
+        {
+          username: userEmail,
+          password: userPassword,
         },
-        body: JSON.stringify({
-            userEmail, userPassword
-        })
-    });
-    // window.open(`${API_URL}/user/loginUser`, '_self');
-    const result = await res.json();
-    if (result.status === 422 || !result) {
-        console.log("success")
-    }
-    else {
-        console.log("failed");
-    }
-}
+        { withCredentials: true }
+      )
+      .then(() => {
+        fetchUser();
+      })
+      .catch((err) => console.log(err.message));
+  };
+
   return (
     <>
       <div className="container ">
@@ -82,40 +74,46 @@ export default function Login() {
               </div>
             </div>
             <div className="col-md-6">
-              <form method='POST'>
-              <div className="p-3">
-                <h3 className=" text-center font-family fw-bolder">
-                  Login To Your Account
-                </h3>
-                <input
-                  type="email"
-                  name='userEmail'
-                  className="form-control border-0 border-bottom  mt-5"
-                  onChange={(e) => OnInputChange(e)}
-                  id="exampleFormControlInput1"
-                  placeholder="TTN Email"
-                />
-                <input
-                  type="password"
-                  className="form-control border-0 border-bottom   mt-5"
-                  name='userPassword'
-                  onChange={(e) => OnInputChange(e)}
-                  id="exampleFormControlInput1"
-                  placeholder="Password"
-                />
-                <div className="d-flex justify-content-between mt-4">
-                  <div className="ms-1 font-family font-size">Remember me</div>
-                  <div className="font-family fw-bolder font-size">
-                    Forgot Password?
+              <form method="POST">
+                <div className="p-3">
+                  <h3 className=" text-center font-family fw-bolder">
+                    Login To Your Account
+                  </h3>
+                  <input
+                    type="email"
+                    name="userEmail"
+                    className="form-control border-0 border-bottom  mt-5"
+                    onChange={(e) => OnInputChange(e)}
+                    id="exampleFormControlInput1"
+                    placeholder="TTN Email"
+                  />
+                  <input
+                    type="password"
+                    className="form-control border-0 border-bottom   mt-5"
+                    name="userPassword"
+                    onChange={(e) => OnInputChange(e)}
+                    id="exampleFormControlInput1"
+                    placeholder="Password"
+                  />
+                  <div className="d-flex justify-content-between mt-4">
+                    <div className="ms-1 font-family font-size">
+                      Remember me
+                    </div>
+                    <div className="font-family fw-bolder font-size">
+                      Forgot Password?
+                    </div>
+                  </div>
+
+                  <div className="text-center d-grid gap-1 mt-3">
+                    <button
+                      type="submit"
+                      onClick={postLoginData}
+                      className="btn btn-lg px-5  mt-3 rounded-pill signup-btn-clr font-family fw-bolder font-size"
+                    >
+                      Sign In
+                    </button>
                   </div>
                 </div>
-
-                <div className="text-center d-grid gap-1 mt-3">
-                  <button type='submit' onClick={postLoginData} className="btn btn-lg px-5  mt-3 rounded-pill signup-btn-clr font-family fw-bolder font-size">
-                    Sign In
-                  </button>
-                </div>
-              </div>
               </form>
             </div>
           </div>
