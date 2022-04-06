@@ -49,7 +49,12 @@ function App() {
               path="/profile"
               element={<Selfprofile user={user} suggestFriend={SFriend} />}
             />
-            <Route path="/friends" element={<Friends user={user} />} />
+            <Route exact path="/friends" element={<Friends user={user} />} />
+            <Route
+              exact
+              path="/profile/:id/"
+              element={<Userprofile suggestFriend={SFriend} />}
+            />
           </Routes>
         </>
       ) : (
