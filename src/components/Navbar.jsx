@@ -44,6 +44,11 @@ export default function Navbar({ user }) {
             </div>
 
             <div className="d-flex align-items-center ms-2 round-img border rounded-circle icon-bg text-dark p-2">
+              <Link to={'/'} className="text-dark">
+            <i class="fa-solid fa-house"></i></Link>
+            </div>
+           
+            <div className="d-flex align-items-center ms-2 round-img border rounded-circle icon-bg text-dark p-2">
               <i className="fa-brands fa-facebook-messenger "></i>
             </div>
             <div className="position-relative d-flex ">
