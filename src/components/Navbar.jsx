@@ -13,6 +13,8 @@ export default function Navbar({ user }) {
     // .then((user) =>  setEmailLogin(user))
     // .catch((err) => console.log(err.message));
   }
+
+
   return (
     <>
       <nav className="navbar navbar-light bg-light p-0">
