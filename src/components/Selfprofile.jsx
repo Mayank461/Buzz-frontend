@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { API_URL } from '../config';
 
-export default function Selfprofile() {
+export default function Selfprofile(user) {
     const [inputs, setInputs] = useState({
         firstname: "",
         lastname: "",
@@ -17,21 +17,23 @@ export default function Selfprofile() {
     const OnInputChange = e => {
 
         setInputs({ ...inputs, [e.target.name]: e.target.value })
-        console.log(e.target.value)
+        // console.log(e.target.value)
        
 
     };
 
-    const [user, setUser] = useState({});
-    //data fatch
+    // const [user, setUser] = useState({});
+   
     useEffect(() => {
-        axios
-            .get(`${API_URL}/user/getUser`, { withCredentials: true })
-            .then((res) => {
-                setUser(res.data[0]);
-                console.log(user)
-            })
-            .catch((err) => console.log(err.message));
+        // axios
+        //     .get(`${API_URL}/user/getUser`, { withCredentials: true })
+        //     .then((res) => {
+        //         setUser(res.data[0]);
+        //         console.log(user)
+        //     })
+        //     .catch((err) => console.log(err.message));
+
+        console.log(user.user)
     }, []);
 
 
@@ -40,7 +42,7 @@ export default function Selfprofile() {
         e.preventDefault();
         const { firstname, lastname, designation, website, gender, birthday, city, state, zip } = inputs
         console.log(inputs);
-        const res = await fetch(`${API_URL}/user/updateUser/${user._id}`, {
+        const res = await fetch(`${API_URL}/user/updateUser/${user.user._id}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -88,10 +90,11 @@ export default function Selfprofile() {
                     <div className="col-md-9 bg-white mt-3 p-2">
                         <div className="position-relative">
                             <img src="https://images.unsplash.com/photo-1495277493816-4c359911b7f1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1165&q=80" className="coverpic" />
-                            <img src={user.picture_url} className="profilepic" />
+                            
+                         {('picture_url' in user.user)?<img src={user.user.picture_url} className="profilepic" />:<i className="fa-solid fa-user fa-5x profilepic  d-flex justify-content-center align-items-center bg-warning"></i>}
 
                         </div>
-                        <h1 className="mt-5">{user.firstname + " " + user.lastname}</h1>
+                        <h1 className="mt-5">{user.user.firstname + " " + user.user.lastname}</h1>
                         <div>
                             <form method='POST'>
 

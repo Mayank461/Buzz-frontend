@@ -21,7 +21,7 @@ function App() {
       .get(`${API_URL}/auth/login/success`, {
         withCredentials: true,
       })
-      .then((res) => res.data)
+      .then((res) =>res.data)
       .then(({ user, success }) => success && setUser(user))
       .catch((err) => console.log(err.message));
   }
