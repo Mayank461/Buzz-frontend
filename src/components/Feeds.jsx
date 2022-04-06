@@ -3,21 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { API_URL } from '../config';
 import Navbar from './Navbar';
 
-export default function Feeds() {
-  const [user,setUser] = useState({});
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/user/getUser`, { withCredentials: true })
-      .then((res) => {setUser(res.data[0]);
-        console.log(user)})
-      .catch((err) => console.log(err.message));
-  },[]);
-  function logout() {
-    axios
-      .get(`${API_URL}/auth/logout`, { withCredentials: true })
-      .then((res) => console.log(res.data))
-      .catch((err) => console.log(err.message));
-  }
+export default function Feeds({ user }) {
   return (
     <>
       <div style={{ backgroundColor: '#F0F2F5' }}>
@@ -34,7 +20,9 @@ export default function Feeds() {
                   />
                 </div>
                 <div className="card-body">
-                  <h5 className="card-title text-center">{user.firstname+ " " +user.lastname}</h5>
+                  <h5 className="card-title text-center">
+                    {user.firstname + ' ' + user.lastname}
+                  </h5>
                   <p className="card-text text-center">Newly Recruit at TTN</p>
                   <div className="d-flex justify-content-between mt-4">
                     <div>

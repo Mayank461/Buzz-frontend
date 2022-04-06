@@ -22,32 +22,35 @@ export default function Login() {
     setInputs({ ...inputs, [e.target.name]: e.target.value })
     // console.log(e.target.value)
    
-
 };
-  const postLoginData = async (e) => {
-    e.preventDefault();
-    // window.open(`${API_URL}/user/loginUser`, '_self');
+//   const postLoginData = async (e) => {
+//     e.preventDefault();
+//     // window.open(`${API_URL}/auth/local`, '_self');
+//    await  axios.post(`${API_URL}/auth/localLogin`,{withCredentials: true,})
+//    .then((res) => res.data)
+//    .then(({ user, success }) => success && console.log(user))
+//    .catch((err) => console.log(err.message));
     
-    const { userEmail, userPassword} = inputs;
-    console.log(inputs);
-    const res = await fetch(`${API_URL}/user/loginUser`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            userEmail, userPassword
-        })
-    });
-    // window.open(`${API_URL}/user/loginUser`, '_self');
-    const result = await res.json();
-    if (result.status === 422 || !result) {
-        console.log("success")
-    }
-    else {
-        console.log("failed");
-    }
-}
+//     // const { userEmail, userPassword} = inputs;
+//     // console.log(inputs);
+//     // const res = await fetch(`${API_URL}/user/loginUser`, {
+//     //     method: "POST",
+//     //     headers: {
+//     //         "Content-Type": "application/json"
+//     //     },
+//     //     body: JSON.stringify({
+//     //         userEmail, userPassword
+//     //     })
+//     // });
+//     // // window.open(`${API_URL}/user/loginUser`, '_self');
+//     // const result = await res.json();
+//     // if (result.status === 422 || !result) {
+//     //     console.log("success")
+//     // }
+//     // else {
+//     //     console.log("failed");
+//     // }
+// }
   return (
     <>
       <div className="container ">
@@ -111,7 +114,7 @@ export default function Login() {
                 </div>
 
                 <div className="text-center d-grid gap-1 mt-3">
-                  <button type='submit' onClick={postLoginData} className="btn btn-lg px-5  mt-3 rounded-pill signup-btn-clr font-family fw-bolder font-size">
+                  <button type='submit'  className="btn btn-lg px-5  mt-3 rounded-pill signup-btn-clr font-family fw-bolder font-size">
                     Sign In
                   </button>
                 </div>
