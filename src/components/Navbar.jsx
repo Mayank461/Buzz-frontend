@@ -16,7 +16,13 @@ export default function Navbar() {
   }, []);
 
   function handleLogout() {
+    
     window.open(`${API_URL}/auth/logout`, '_self');
+    // axios
+    // .get(`${API_URL}/auth/loginUser`)
+    // .then((res) => console.log(res.data))
+    // .then((user) =>  setEmailLogin(user))
+    // .catch((err) => console.log(err.message));
   }
   return (
     <>
@@ -46,6 +52,11 @@ export default function Navbar() {
             </div>
             </Link>
           
+            <div className="d-flex align-items-center ms-2 round-img border rounded-circle icon-bg text-dark p-2">
+              <Link to={'/'} className="text-dark">
+            <i class="fa-solid fa-house"></i></Link>
+            </div>
+           
             <div className="d-flex align-items-center ms-2 round-img border rounded-circle icon-bg text-dark p-2">
               <i className="fa-brands fa-facebook-messenger "></i>
             </div>
