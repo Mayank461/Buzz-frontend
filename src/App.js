@@ -35,6 +35,7 @@ function App() {
             <Route path="/" element={<Feeds user={user} />} />
             <Route path="/profile" element={<Selfprofile user={user} />} />
             <Route path="/friends" element={<Friends user={user} />} />
+            <Route path='/userProfile' element={<Userprofile />} />
           </Routes>
         </>
       ) : (
