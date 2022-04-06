@@ -5,13 +5,7 @@ import { API_URL } from '../config';
 
 export default function Navbar({ user }) {
   function handleLogout() {
-    
     window.open(`${API_URL}/auth/logout`, '_self');
-    // axios
-    // .get(`${API_URL}/auth/loginUser`)
-    // .then((res) => console.log(res.data))
-    // .then((user) =>  setEmailLogin(user))
-    // .catch((err) => console.log(err.message));
   }
   return (
     <>
@@ -30,7 +24,9 @@ export default function Navbar({ user }) {
               <div className="d-flex">
                 <div className="">
                   <img
-                    src={user.picture_url}
+                    src={
+                      user.picture_url || require('../images/blank-profile.png')
+                    }
                     className="card-img-top small-round-pic  round-img"
                     alt="..."
                   />
@@ -43,9 +39,10 @@ export default function Navbar({ user }) {
 
             <div className="d-flex align-items-center ms-2 round-img border rounded-circle icon-bg text-dark p-2">
               <Link to={'/'} className="text-dark">
-            <i class="fa-solid fa-house"></i></Link>
+                <i class="fa-solid fa-house"></i>
+              </Link>
             </div>
-           
+
             <div className="d-flex align-items-center ms-2 round-img border rounded-circle icon-bg text-dark p-2">
               <i className="fa-brands fa-facebook-messenger "></i>
             </div>

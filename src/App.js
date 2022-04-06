@@ -12,6 +12,7 @@ import Friends from './components/Friends';
 
 function App() {
   const [user, setUser] = useState(false);
+  const [SFriend, setSFriend] = useState([]);
   useEffect(() => {
     fetchUser();
   }, []);
@@ -22,7 +23,15 @@ function App() {
         withCredentials: true,
       })
       .then((res) => res.data)
-      .then(({ user, success }) => success && setUser(user))
+      .then(({ user, success }) => {
+        success && setUser(user);
+        axios
+          .get(`${API_URL}/users/suggestions/${user._id}`, {
+            withCredentials: true,
+          })
+          .then((res) => setSFriend([...res.data]))
+          .catch((err) => console.log(err.message));
+      })
       .catch((err) => console.log(err.message));
   }
 
@@ -32,8 +41,14 @@ function App() {
         <>
           <Navbar user={user} />
           <Routes>
-            <Route path="/" element={<Feeds user={user} />} />
-            <Route path="/profile" element={<Selfprofile user={user} />} />
+            <Route
+              path="/"
+              element={<Feeds user={user} suggestFriend={SFriend} />}
+            />
+            <Route
+              path="/profile"
+              element={<Selfprofile user={user} suggestFriend={SFriend} />}
+            />
             <Route path="/friends" element={<Friends user={user} />} />
           </Routes>
         </>

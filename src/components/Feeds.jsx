@@ -1,9 +1,10 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { API_URL } from '../config';
-import Navbar from './Navbar';
+import { Link } from 'react-router-dom';
+import UserlistWidget from './UserlistWidget';
 
-export default function Feeds({ user }) {
+export default function Feeds({ user, suggestFriend }) {
   return (
     <>
       <div style={{ backgroundColor: '#F0F2F5' }}>
@@ -14,7 +15,9 @@ export default function Feeds({ user }) {
               <div className="card p-5 shadow-lg p-3 mb-5 bg-body rounded border-0">
                 <div className="d-flex justify-content-center">
                   <img
-                    src={user.picture_url}
+                    src={
+                      user.picture_url || require('../images/blank-profile.png')
+                    }
                     className="card-img-top profile-pic  round-img"
                     alt="..."
                   />
@@ -39,7 +42,7 @@ export default function Feeds({ user }) {
               </div>
             </div>
             {/* column 2nd  */}
-            <div className="col-md-6  scroll-mid mt-3 ">
+            <div className="col-md-6   mt-3 ">
               <div className="card p-3 mb-3 shadow p-3 mb-5 bg-body rounded border-0">
                 <div className="d-flex justify-content-between align-items-center mb-2">
                   <div className="">
@@ -166,325 +169,18 @@ export default function Feeds({ user }) {
             </div>
             {/* column 3rd  */}
             <div className="col-md-3 side-height mt-3">
-              <div className=" border p-2 scroll bg-white shadow-lg p-3 bg-body rounded border-0">
-                <div className="d-flex justify-content-between">
-                  <div>Contacts</div>
-                  <div>
-                    <div className="d-flex align-items-center ms-2 round-img border rounded-circle icon-bg  p-2">
-                      <i className="fa-solid fa-magnifying-glass-plus"></i>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="d-flex">
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                      className="card-img-top small-round-pic me-2  round-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="d-flex align-items-center">
-                    Prashant Mishra
-                  </div>
-                </div>
-
-                <div className="d-flex mt-2">
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                      className="card-img-top small-round-pic me-2  round-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="d-flex align-items-center">
-                    Prashant Mishra
-                  </div>
-                </div>
-                <div className="d-flex mt-2">
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                      className="card-img-top small-round-pic me-2  round-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="d-flex align-items-center">
-                    Prashant Mishra
-                  </div>
-                </div>
-                <div className="d-flex mt-2">
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                      className="card-img-top small-round-pic me-2  round-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="d-flex align-items-center">
-                    Prashant Mishra
-                  </div>
-                </div>
-
-                <div className="d-flex mt-2">
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                      className="card-img-top small-round-pic me-2  round-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="d-flex align-items-center">
-                    Prashant Mishra
-                  </div>
-                </div>
-                <div className="d-flex mt-2">
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                      className="card-img-top small-round-pic me-2  round-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="d-flex align-items-center">
-                    Prashant Mishra
-                  </div>
-                </div>
-                <div className="d-flex mt-2">
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                      className="card-img-top small-round-pic me-2  round-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="d-flex align-items-center">
-                    Prashant Mishra
-                  </div>
-                </div>
-                <div className="d-flex mt-2">
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                      className="card-img-top small-round-pic me-2  round-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="d-flex align-items-center">
-                    Prashant Mishra
-                  </div>
-                </div>
-                <div className="d-flex mt-2">
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                      className="card-img-top small-round-pic me-2  round-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="d-flex align-items-center">
-                    Prashant Mishra
-                  </div>
-                </div>
-
-                <div className="d-flex mt-2">
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                      className="card-img-top small-round-pic me-2  round-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="d-flex align-items-center">
-                    Prashant Mishra
-                  </div>
-                </div>
-
-                <div className="d-flex mt-2">
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                      className="card-img-top small-round-pic me-2  round-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="d-flex align-items-center">
-                    Prashant Mishra
-                  </div>
-                </div>
-                <div className="d-flex mt-2">
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                      className="card-img-top small-round-pic me-2  round-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="d-flex align-items-center">
-                    Prashant Mishra
-                  </div>
-                </div>
-              </div>
-
-              <div className=" border p-2 scroll mt-3 bg-white shadow-lg p-3  bg-body rounded border-0">
-                <div className="d-flex justify-content-between">
-                  <div>Contacts</div>
-                  <div>
-                    <div className="d-flex align-items-center ms-2 round-img border rounded-circle icon-bg  p-2">
-                      <i className="fa-solid fa-magnifying-glass-plus"></i>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="d-flex">
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                      className="card-img-top small-round-pic me-2  round-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="d-flex align-items-center">
-                    Prashant Mishra
-                  </div>
-                </div>
-
-                <div className="d-flex mt-2">
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                      className="card-img-top small-round-pic me-2  round-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="d-flex align-items-center">
-                    Prashant Mishra
-                  </div>
-                </div>
-                <div className="d-flex mt-2">
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                      className="card-img-top small-round-pic me-2  round-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="d-flex align-items-center">
-                    Prashant Mishra
-                  </div>
-                </div>
-                <div className="d-flex mt-2">
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                      className="card-img-top small-round-pic me-2  round-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="d-flex align-items-center">
-                    Prashant Mishra
-                  </div>
-                </div>
-
-                <div className="d-flex mt-2">
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                      className="card-img-top small-round-pic me-2  round-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="d-flex align-items-center">
-                    Prashant Mishra
-                  </div>
-                </div>
-                <div className="d-flex mt-2">
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                      className="card-img-top small-round-pic me-2  round-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="d-flex align-items-center">
-                    Prashant Mishra
-                  </div>
-                </div>
-                <div className="d-flex mt-2">
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                      className="card-img-top small-round-pic me-2  round-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="d-flex align-items-center">
-                    Prashant Mishra
-                  </div>
-                </div>
-                <div className="d-flex mt-2">
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                      className="card-img-top small-round-pic me-2  round-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="d-flex align-items-center">
-                    Prashant Mishra
-                  </div>
-                </div>
-                <div className="d-flex mt-2">
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                      className="card-img-top small-round-pic me-2  round-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="d-flex align-items-center">
-                    Prashant Mishra
-                  </div>
-                </div>
-
-                <div className="d-flex mt-2">
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                      className="card-img-top small-round-pic me-2  round-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="d-flex align-items-center">
-                    Prashant Mishra
-                  </div>
-                </div>
-
-                <div className="d-flex mt-2">
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                      className="card-img-top small-round-pic me-2  round-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="d-flex align-items-center">
-                    Prashant Mishra
-                  </div>
-                </div>
-                <div className="d-flex mt-2">
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                      className="card-img-top small-round-pic me-2  round-img"
-                      alt="..."
-                    />
-                  </div>
-                  <div className="d-flex align-items-center">
-                    Prashant Mishra
-                  </div>
-                </div>
-              </div>
+              {user && (
+                <>
+                  <UserlistWidget
+                    title="Friend Suggestions"
+                    friendList={suggestFriend}
+                  />
+                  <UserlistWidget
+                    title="My Friends"
+                    friendList={user.friends.myFriends}
+                  />
+                </>
+              )}
             </div>
           </div>
         </div>
