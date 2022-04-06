@@ -80,6 +80,9 @@ export default function Feeds(user) {
             user_id: userData._id
           })
         })
+        alert("Your post uplaoded successfully")
+        setTitle('');
+        document.getElementById('file').value="";
 
       })
       .catch(err => {
@@ -136,7 +139,7 @@ export default function Feeds(user) {
                   <div className='w-100'>
                     <input
                       type="text"
-                      className='caption p-2 rounded-pill form-control'
+                      className='caption p-2 rounded-pill form-control' 
                       placeholder="Write Something in your mind"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
@@ -146,7 +149,7 @@ export default function Feeds(user) {
                 </div>
                 <div className='text-center mt-2'>
                   <input
-                    type="file" className='' onChange={(e) => setImage(e.target.files[0])} />
+                    type="file" className='' id="file" onChange={(e) => setImage(e.target.files[0])} />
                 </div>
                 <div className='text-center mt-2'>
                   <button className="btn btn-danger"

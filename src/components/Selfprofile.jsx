@@ -4,15 +4,15 @@ import { API_URL } from '../config';
 
 export default function Selfprofile(user) {
     const [inputs, setInputs] = useState({
-        firstname: "",
-        lastname: "",
-        designation: "",
-        website: "",
-        gender: "",
-        birthday: "",
-        city: "",
-        state: "",
-        zip: ""
+        firstname: user.user.firstname,
+        lastname: user.user.lastname,
+        designation: user.user.designation,
+        website: user.user.website,
+        gender: user.user.gender,
+        birthday: user.user.birthday,
+        city: user.user.city,
+        state: user.user.state,
+        zip: user.user.zip
     });
     const OnInputChange = e => {
 
@@ -38,26 +38,28 @@ export default function Selfprofile(user) {
 
 
 
-    const postData = async (e) => {
+    const postData =  (e) => {
         e.preventDefault();
         const { firstname, lastname, designation, website, gender, birthday, city, state, zip } = inputs
         console.log(inputs);
-        const res = await fetch(`${API_URL}/user/updateUser/${user.user._id}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                firstname, lastname, designation, website, gender, birthday, city, state, zip
+        try {
+             fetch(`${API_URL}/user/updateUser/${user.user._id}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    firstname, lastname, designation, website, gender, birthday, city, state, zip
+                })
+               
             })
-        });
-        const result = await res.json();
-        if (result.status === 422 || !result) {
-            console.log("success")
+            alert("Your post uplaoded successfully")
+            
+        } catch (error) {
+            console.log(error);
+            alert("Your data updated successfully")
         }
-        else {
-            console.log("failed");
-        }
+    
     }
 
    const maleToggle = ()=>
@@ -103,12 +105,12 @@ export default function Selfprofile(user) {
                                 <div className="row mt-4">
                                     <div className="col-md-4 ">
                                         <label htmlFor="floatingInput">First Name</label>
-                                        <input type="text" className="form-control mt-2" id="exampleInputEmail1" aria-describedby="emailHelp" name='firstname' placeholder="First Name" onChange={(e) => OnInputChange(e)} />
+                                        <input type="text" className="form-control mt-2" id="exampleInputEmail1" value={inputs.firstname} aria-describedby="emailHelp" name='firstname' placeholder="First Name" onChange={(e) => OnInputChange(e)} />
 
                                     </div>
                                     <div className="col-md-4">
                                         <label htmlFor="floatingInput">Last Name</label>
-                                        <input type="text" className="form-control mt-2" id="exampleInputEmail1" aria-describedby="emailHelp" name='lastname' placeholder="Last Name" onChange={(e) => OnInputChange(e)} />
+                                        <input type="text" className="form-control mt-2" id="exampleInputEmail1" value={inputs.lastname} aria-describedby="emailHelp" name='lastname' placeholder="Last Name" onChange={(e) => OnInputChange(e)} />
 
                                     </div>
 
@@ -119,8 +121,8 @@ export default function Selfprofile(user) {
                                 <div className="row mt-4">
                                     <div className="col-md-4">
                                         <label htmlFor="floatingInput">Designation</label><br />
-                                        <select name="designation" onChange={(e) => OnInputChange(e)} className="form-control mt-2">
-                                            <option value="" disabled="true" selected="true">Select Designation</option>
+                                        <select name="designation" value={inputs.designation} onChange={(e) => OnInputChange(e)} className="form-control mt-2">
+                                            <option value="" disabled={true} selected={true}>Select Designation</option>
                                             <option value="Co-Founder">Co-Founder</option>
                                             <option value="Software-Developer">Software-Developer</option>
                                             <option value="Tech Support">Tech Support</option>
@@ -129,7 +131,7 @@ export default function Selfprofile(user) {
                                     </div>
                                     <div className="col-md-4">
                                         <label htmlFor="floatingInput">My Website</label>
-                                        <input type="text" className="form-control mt-2" id="exampleInputEmail1" aria-describedby="emailHelp" name='website' placeholder="www.domain.com" onChange={(e) => OnInputChange(e)} />
+                                        <input type="text" className="form-control mt-2" value={inputs.website} id="exampleInputEmail1" aria-describedby="emailHelp" name='website' placeholder="www.domain.com" onChange={(e) => OnInputChange(e)} />
 
                                     </div>
                                 </div>
@@ -139,8 +141,8 @@ export default function Selfprofile(user) {
                                     <div className="col-md-4">
                                         <label htmlFor="floatingInput">Gender</label>
                                         <div className='border p-1 mt-2'>
-                                            <input type="radio" className="btn-check" name="gender" id="male" onChange={(e) => OnInputChange(e)} value="Male"/>
-                                            <label className="btn border-success w-50 "  id="labelMale" value="Male"  onClick={maleToggle}>Male</label>
+                                            <input type="radio" className="btn-check"  name="gender" id="male" onChange={(e) => OnInputChange(e)} value="Male"/>
+                                            <label className="btn border-success w-50 "   id="labelMale" value="Male"  onClick={maleToggle}>Male</label>
 
                                             <input type="radio" className="btn-check"  name="gender" id="female"  onChange={(e) => OnInputChange(e)} value="Female" />
                                             <label className="btn border-success w-50"  id='labelFemale' value="Female"  onClick={femaleToggle} >Female</label>
@@ -150,7 +152,7 @@ export default function Selfprofile(user) {
                                     <div className="col-md-4">
                                         <label htmlFor="floatingInput">Birthday</label>
                                        
-                                        <input type="date" className="form-control mt-2" id="exampleInputEmail1" aria-describedby="emailHelp" name='birthday' placeholder="website" onChange={(e) => OnInputChange(e)} />
+                                        <input type="date" className="form-control mt-2" value={inputs.birthday} id="exampleInputEmail1" aria-describedby="emailHelp" name='birthday' placeholder="website" onChange={(e) => OnInputChange(e)} />
 
                                     </div>
 
@@ -160,15 +162,15 @@ export default function Selfprofile(user) {
                                 <div className="row mt-4">
                                     <div className="col-md-4">
                                         <label htmlFor="floatingInput">City</label>
-                                        <input type="text" className="form-control mt-2" id="exampleInputEmail1" name='city' aria-describedby="emailHelp" placeholder="City" onChange={(e) => OnInputChange(e)} />
+                                        <input type="text" className="form-control mt-2" value={inputs.city} id="exampleInputEmail1" name='city' aria-describedby="emailHelp" placeholder="City" onChange={(e) => OnInputChange(e)} />
 
                                     </div>
                                     <div className=" d-flex col-md-4">
 
                                         <div className='col'>
                                             <label htmlFor="floatingInput">state</label>
-                                            <select name="state" id="state" onChange={(e) => OnInputChange(e)} className="form-control mt-2">
-                                                <option value="" disabled="true" selected="true">Select State</option>
+                                            <select name="state" id="state" value={inputs.state} onChange={(e) => OnInputChange(e)} className="form-control mt-2">
+                                                <option value="" disabled={true} selected={true}>Select State</option>
                                                 <option value="New Delhi">New Delhi</option>
                                                 <option value="Uttar Pradesh">Utter Pradesh</option>
                                                 <option value="Bihar">Bihar</option>
@@ -176,7 +178,7 @@ export default function Selfprofile(user) {
                                         </div>
                                         <div className='col'>
                                             <label htmlFor="floatingInput">Zip</label>
-                                            <input type="text" className="form-control mt-2" id="exampleInputEmail1" name='zip' aria-describedby="emailHelp" placeholder="Zip" onChange={(e) => OnInputChange(e)} />
+                                            <input type="text" className="form-control mt-2" value={inputs.zip} id="exampleInputEmail1" name='zip' aria-describedby="emailHelp" placeholder="Zip" onChange={(e) => OnInputChange(e)} />
 
                                         </div>
                                     </div>
