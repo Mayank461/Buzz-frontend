@@ -16,7 +16,7 @@ export default function Feeds(user) {
 
   useEffect(() => {
     console.log("render")
-    loaduser(); 
+    loaduser();
     console.log(posts)
     axios
       .get(`${API_URL}/user/getUser`, { withCredentials: true })
@@ -37,21 +37,21 @@ export default function Feeds(user) {
   }
 
 
-  const postDetails =  () => {
+  const postDetails = () => {
 
     const data = new FormData()
     data.append('file', image)
     data.append('upload_preset', 'buzz-app')
     data.append('cloud_name', 'buzz-social-app')
-     fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
+    fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
       method: "post",
       body: data
     })
       .then(res => res.json())
       .then(data => {
-        setPosts([...posts,{post_url:data.url,post_caption:title}]);
+        setPosts([...posts, { post_url: data.url, post_caption: title }]);
 
-        fetch(`${API_URL}/user/userPost`, {
+        fetch(`${API_URL}/posts/userPost`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -63,28 +63,28 @@ export default function Feeds(user) {
           })
         })
         alert("Your post uplaoded successfully")
-        setCheck([...check,{post_url:url,post_caption:title}]);
+        setCheck([...check, { post_url: url, post_caption: title }]);
         setTitle('');
-        document.getElementById('file').value="";
-     
+        document.getElementById('file').value = "";
+
       })
       .catch(err => {
         console.log(err)
       })
-  
+
   }
   return (
     <>
-      <div style={{ backgroundColor: '#F0F2F5' }}>        
+      <div style={{ backgroundColor: '#F0F2F5' }}>
         <div className="container">
           <div className="row">
             {/* ================================================================== column 1st  ====================================================================*/}
             <div className="col-md-3 mt-3">
               <div className="card p-5 shadow-lg p-3 mb-5 bg-body rounded border-0">
                 <div className="d-flex justify-content-center">
-                {('picture_url' in userData)?<img src={userData.picture_url} className="card-img-top small-round-pic  round-img" alt="..." />:<i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>}
+                  {('picture_url' in userData) ? <img src={userData.picture_url} className="card-img-top small-round-pic  round-img" alt="..." /> : <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>}
 
-                  
+
                 </div>
                 <div className="card-body">
                   <h5 className="card-title text-center">{userData.firstname + " " + userData.lastname}</h5>
@@ -109,13 +109,13 @@ export default function Feeds(user) {
 
                 <div className='d-flex align-items-center'>
                   <div className=''>
-                {('picture_url' in userData)?<img src={userData.picture_url} className="card-img-top small-round-pic  round-img" alt="..." />:<i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>}
-              
+                    {('picture_url' in userData) ? <img src={userData.picture_url} className="card-img-top small-round-pic  round-img" alt="..." /> : <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>}
+
                   </div>
                   <div className='w-100'>
                     <input
                       type="text"
-                      className='caption p-2 rounded-pill form-control' 
+                      className='caption p-2 rounded-pill form-control'
                       placeholder="Write Something in your mind"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
@@ -136,14 +136,14 @@ export default function Feeds(user) {
 
                 </div>
               </div>
-  
-              { (posts.length === 0) ? "" : posts.map((element, index) => {
+
+              {(posts.length === 0) ? "" : posts.map((element, index) => {
                 return (
 
                   <div key={index} className="card p-3 mb-3 shadow p-3 mb-5 bg-body rounded border-0">
                     <div className="d-flex justify-content-between align-items-center mb-2">
                       <div className="d-flex align-items-center">
-                {('picture_url' in userData)?<img src={userData.picture_url} className="card-img-top small-round-pic  round-img" alt="..." />:<i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>}
+                        {('picture_url' in userData) ? <img src={userData.picture_url} className="card-img-top small-round-pic  round-img" alt="..." /> : <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>}
 
                         {/* <img
                           src={userData.picture_url}
@@ -294,7 +294,7 @@ export default function Feeds(user) {
                   </div>
                 </div>
 
-                {(friendList.length === 0) ? <div className='text-center'>You have no friends</div>:
+                {(friendList.length === 0) ? <div className='text-center'>You have no friends</div> :
                   <div className="d-flex">
                     <div>
                       <img
@@ -324,7 +324,7 @@ export default function Feeds(user) {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="d-flex">
                   <div>
                     <img

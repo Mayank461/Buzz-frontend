@@ -43,7 +43,7 @@ export default function Selfprofile(user) {
         const { firstname, lastname, designation, website, gender, birthday, city, state, zip } = inputs
         console.log(inputs);
         try {
-             fetch(`${API_URL}/user/updateUser/${user.user._id}`, {
+             fetch(`${API_URL}/users/updateUser/${user.user._id}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
