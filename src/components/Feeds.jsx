@@ -69,7 +69,7 @@ export default function Feeds(user) {
         setUrl(data.url)
         console.log(data);
 
-        fetch(`${API_URL}/user/userPost`, {
+        fetch(`${API_URL}/posts/userPost`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
