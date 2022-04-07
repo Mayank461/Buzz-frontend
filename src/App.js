@@ -54,7 +54,7 @@ function App() {
             <Route
               exact
               path="/profile/:id/"
-              element={<Userprofile suggestFriend={SFriend} />}
+              element={<Userprofile myData={user} suggestFriend={SFriend} />}
             />
           </Routes>
         </>

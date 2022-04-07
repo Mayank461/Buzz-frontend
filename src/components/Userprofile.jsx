@@ -4,9 +4,13 @@ import { useParams } from 'react-router-dom';
 import { API_URL } from '../config';
 import UserlistWidget from './UserlistWidget';
 
-export default function Userprofile({ suggestFriend }) {
+export default function Userprofile({ suggestFriend, myData }) {
   const [user, setUser] = useState({});
   const { id } = useParams();
+
+  let isFriend = myData.friends.myFriends
+    .map(({ _id }) => _id === id)
+    .includes(true);
 
   useEffect(() => {
     axios
@@ -20,6 +24,17 @@ export default function Userprofile({ suggestFriend }) {
   function SendReq() {
     axios
       .get(`${API_URL}/users/sendRequest/` + id, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        alert(res.data.message);
+      })
+      .catch((err) => console.log(err.message));
+  }
+
+  function DeleteFriend() {
+    axios
+      .get(`${API_URL}/users/deleteRequest/` + id, {
         withCredentials: true,
       })
       .then((res) => {
@@ -49,9 +64,18 @@ export default function Userprofile({ suggestFriend }) {
               {`${user?.city} , ${user?.state} , India | ${user?.friends?.myFriends?.length}  Friend`}
             </p>
             <div className="d-flex">
-              <div onClick={SendReq} className="btn btn-primary me-3">
-                ADD FRIEND
-              </div>
+              {/* {console.log(myData?.friends?.myFriends[0], id)} */}
+              {/* {console.log(myData.friends.myFriends[0])} */}
+
+              {isFriend ? (
+                <div onClick={DeleteFriend} className="btn btn-danger me-3">
+                  REMOVE FRIEND
+                </div>
+              ) : (
+                <div onClick={SendReq} className="btn btn-primary me-3">
+                  ADD FRIEND
+                </div>
+              )}
               <button className="border boder-white">Visit Website</button>
             </div>
           </div>

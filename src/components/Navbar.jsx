@@ -25,13 +25,15 @@ export default function Navbar({ user }) {
             <Link to="/profile" className="nav-link text-dark">
               <div className="d-flex">
                 <div className="">
-                  <img
-                    src={
-                      user.picture_url || require('../images/blank-profile.png')
-                    }
-                    className="card-img-top small-round-pic  round-img"
-                    alt="..."
-                  />
+                  {'picture_url' in user ? (
+                    <img
+                      src={user.picture_url}
+                      className="card-img-top small-round-pic  round-img"
+                      alt="..."
+                    />
+                  ) : (
+                    <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
+                  )}
                 </div>
                 <div className="d-flex align-items-center ms-2">
                   {user.firstname + ' ' + user.lastname}
@@ -41,13 +43,7 @@ export default function Navbar({ user }) {
 
             <div className="d-flex align-items-center ms-2 round-img border rounded-circle icon-bg text-dark p-2">
               <Link to={'/'} className="text-dark">
-                <i class="fa-solid fa-house"></i>
-              </Link>
-            </div>
-
-            <div className="d-flex align-items-center ms-2 round-img border rounded-circle icon-bg text-dark p-2">
-              <Link to={'/'} className="text-dark">
-                <i class="fa-solid fa-house"></i>
+                <i className="fa-solid fa-house"></i>
               </Link>
             </div>
 

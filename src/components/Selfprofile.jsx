@@ -15,9 +15,9 @@ export default function Selfprofile({ user, suggestFriend }) {
     state: '',
     zip: '',
   });
+
   const OnInputChange = (e) => {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
-    console.log(e.target.value);
   };
 
   const postData = async (e) => {
@@ -34,7 +34,7 @@ export default function Selfprofile({ user, suggestFriend }) {
       zip,
     } = inputs;
     console.log(inputs);
-    const res = await fetch(`${API_URL}/user/updateUser/${user._id}`, {
+    const res = await fetch(`${API_URL}/users/updateUser/${user._id}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -85,7 +85,12 @@ export default function Selfprofile({ user, suggestFriend }) {
                 src="https://images.unsplash.com/photo-1495277493816-4c359911b7f1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1165&q=80"
                 className="coverpic"
               />
-              <img src={user.picture_url} className="profilepic" />
+
+              {'picture_url' in user ? (
+                <img src={user.picture_url} className="profilepic" />
+              ) : (
+                <i className="fa-solid fa-user fa-5x profilepic  d-flex justify-content-center align-items-center bg-warning"></i>
+              )}
             </div>
             <h1 className="mt-5">{user.firstname + ' ' + user.lastname}</h1>
             <div>
@@ -273,7 +278,7 @@ export default function Selfprofile({ user, suggestFriend }) {
           {/**part for suggestion */}
           <div className="col-md-3 profile-sidebar mt-3">
             <UserlistWidget
-              title="Friend Suggestions"
+              title="Friends Sugesstion"
               friendList={suggestFriend}
             />
           </div>
