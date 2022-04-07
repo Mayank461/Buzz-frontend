@@ -25,12 +25,13 @@ function App() {
       .then((res) => res.data)
       .then(({ user, success }) => {
         success && setUser(user);
-        axios
-          .get(`${API_URL}/users/suggestions/${user._id}`, {
-            withCredentials: true,
-          })
-          .then((res) => setSFriend([...res.data]))
-          .catch((err) => console.log(err.message));
+        user &&
+          axios
+            .get(`${API_URL}/users/friends/suggestions`, {
+              withCredentials: true,
+            })
+            .then((res) => setSFriend([...res.data]))
+            .catch((err) => console.log(err.message));
       })
       .catch((err) => console.log(err.message));
   }

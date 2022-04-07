@@ -7,6 +7,7 @@ export default function Navbar({ user }) {
   function handleLogout() {
     window.open(`${API_URL}/auth/logout`, '_self');
   }
+
   return (
     <>
       <nav className="navbar navbar-light bg-light p-0">
@@ -19,6 +20,7 @@ export default function Navbar({ user }) {
               />
             </Link>
           </div>
+
           <div className="d-flex position-relative">
             <Link to="/profile" className="nav-link text-dark">
               <div className="d-flex">
@@ -45,9 +47,10 @@ export default function Navbar({ user }) {
 
             <div className="d-flex align-items-center ms-2 round-img border rounded-circle icon-bg text-dark p-2">
               <Link to={'/'} className="text-dark">
-            <i class="fa-solid fa-house"></i></Link>
+                <i class="fa-solid fa-house"></i>
+              </Link>
             </div>
-           
+
             <div className="d-flex align-items-center ms-2 round-img border rounded-circle icon-bg text-dark p-2">
               <i className="fa-brands fa-facebook-messenger "></i>
             </div>
