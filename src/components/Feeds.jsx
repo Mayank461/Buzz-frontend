@@ -2,14 +2,6 @@ import axios from 'axios';
 import React, { useEffect, useReducer, useState } from 'react';
 import { API_URL } from '../config';
 
-const reducer = (state, action) => {
-  switch (action.type) {
-    case "increment": return state + 1;
-
-    default:
-      return state;
-  }
-};
 export default function Feeds(user) {
   const [title, setTitle] = useState("")
   const [image, setImage] = useState("")
@@ -17,57 +9,47 @@ export default function Feeds(user) {
   const [userData, setUserData] = useState({});
   const [allUsers, setAllUsers] = useState([]);
   const [friendList, setFriendList] = useState([]);
-  const [posts, setPosts] = useState([]);
+  const reverseArray = (user.user.posts).concat().reverse();
+  const [posts, setPosts] = useState(user.user.posts);
+  const [check, setCheck] = useState(reverseArray)
 
-
-  const [todos, dispatch] = useReducer(reducer, 0);
 
   useEffect(() => {
     console.log("render")
-
-    loaduser();
-
-    // console.log(user.user.posts)
+    loaduser(); 
+    console.log(posts)
     axios
       .get(`${API_URL}/user/getUser`, { withCredentials: true })
-      .then((res) => { setAllUsers(res.data); })
+      .then((res) => { console.log(res.data); })
       .catch((err) => console.log(err.message));
-  }, [todos]);
+  }, []);
 
   const loaduser = () => {
     setUserData(user.user);
-    // const reverseArray = (user.user.posts).concat().reverse();
-    setPosts((user.user.posts).concat().reverse());
 
     setFriendList(user.user.friends.myFriends);
   }
   function logout() {
     axios
       .get(`${API_URL}/auth/logout`, { withCredentials: true })
-      .then((res) => console.log(res.data))
+      .then((res) => console.log(res.data[1]))
       .catch((err) => console.log(err.message));
   }
 
 
-  const postDetails = async () => {
-    // console.log(title)
-    // if(url === "" && title === "")
-    // {
-    //       alert("Sorry shaktimaan");
-    // }
-    console.log(posts)
+  const postDetails =  () => {
+
     const data = new FormData()
     data.append('file', image)
     data.append('upload_preset', 'buzz-app')
     data.append('cloud_name', 'buzz-social-app')
-    await fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
+     fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
       method: "post",
       body: data
     })
       .then(res => res.json())
       .then(data => {
-        setUrl(data.url)
-        console.log(data);
+        setPosts([...posts,{post_url:data.url,post_caption:title}]);
 
         fetch(`${API_URL}/user/userPost`, {
           method: "POST",
@@ -81,20 +63,19 @@ export default function Feeds(user) {
           })
         })
         alert("Your post uplaoded successfully")
+        setCheck([...check,{post_url:url,post_caption:title}]);
         setTitle('');
         document.getElementById('file').value="";
-
+     
       })
       .catch(err => {
         console.log(err)
       })
-
-    dispatch({ type: "increment" })
-
+  
   }
   return (
     <>
-      <div style={{ backgroundColor: '#F0F2F5' }}>
+      <div style={{ backgroundColor: '#F0F2F5' }}>        
         <div className="container">
           <div className="row">
             {/* ================================================================== column 1st  ====================================================================*/}
@@ -107,7 +88,7 @@ export default function Feeds(user) {
                 </div>
                 <div className="card-body">
                   <h5 className="card-title text-center">{userData.firstname + " " + userData.lastname}</h5>
-                  <p className="card-text text-center">Newly Recruit at TTN {todos} </p>
+                  <p className="card-text text-center">Newly Recruit at TTN </p>
                   <div className="d-flex justify-content-between mt-4">
                     <div>
                       <div className="text-center">234</div>
@@ -129,12 +110,7 @@ export default function Feeds(user) {
                 <div className='d-flex align-items-center'>
                   <div className=''>
                 {('picture_url' in userData)?<img src={userData.picture_url} className="card-img-top small-round-pic  round-img" alt="..." />:<i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>}
-                    
-                    {/* <img
-                      src={userData.picture_url}
-                      className="card-img-top small-round-pic me-2  round-img"
-                      alt="..."
-                    /> */}
+              
                   </div>
                   <div className='w-100'>
                     <input
@@ -160,11 +136,11 @@ export default function Feeds(user) {
 
                 </div>
               </div>
-
-              {(posts.length === 0) ? "" : posts.map((element, index) => {
+  
+              { (posts.length === 0) ? "" : posts.map((element, index) => {
                 return (
 
-                  <div key={element._id} className="card p-3 mb-3 shadow p-3 mb-5 bg-body rounded border-0">
+                  <div key={index} className="card p-3 mb-3 shadow p-3 mb-5 bg-body rounded border-0">
                     <div className="d-flex justify-content-between align-items-center mb-2">
                       <div className="d-flex align-items-center">
                 {('picture_url' in userData)?<img src={userData.picture_url} className="card-img-top small-round-pic  round-img" alt="..." />:<i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>}
@@ -236,7 +212,7 @@ export default function Feeds(user) {
                   </div>
 
                 )
-              })}
+              }).reverse()}
 
 
 
