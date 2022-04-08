@@ -1,9 +1,11 @@
-import React from 'react'
+import React from "react";
 
-export default function Post({index,data,inclike,deslike}) {
-    
+export default function Post({index,data,inclike,deslike}) { 
+
     let {post_url,_id,like,dislike,post_caption} = data;
     let {firstname,lastname,picture_url} = data.posted_by;
+    
+    
   return (
     <>
          <div key={index} className="card p-3 mb-3 shadow p-3 mb-5 bg-body rounded border-0">
@@ -71,8 +73,9 @@ export default function Post({index,data,inclike,deslike}) {
                       <input
                         type="text"
                         className="form-control rounded-pill"
-                        id=""
+                        id="comment-box"
                         placeholder="Write a comment..."
+                                             
                       />
                     </div>
                   </div>

@@ -18,7 +18,6 @@ export default function Feeds(user,{suggestFriend}) {
 
 
   useEffect(() => {    
-    console.log(user);
     loaduser();    
     axios
       .get(`${API_URL}/posts/getPost`, { withCredentials: true })
@@ -119,6 +118,11 @@ export default function Feeds(user,{suggestFriend}) {
                     </div>
                   </div>
                 </div>
+              </div>
+              <div>
+              <div className="card">
+                <img src="https://images.unsplash.com/photo-1649374982881-752d262c113b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=500&q=60" className="card-img-top" alt="..." />                  
+               </div>
               </div>
             </div>
             {/* =======================================================================column 2nd ======================================================================== */}
