@@ -5,15 +5,8 @@ import { API_URL } from '../config';
 
 export default function Navbar({ user }) {
   function handleLogout() {
-    
     window.open(`${API_URL}/auth/logout`, '_self');
-    // axios
-    // .get(`${API_URL}/auth/loginUser`)
-    // .then((res) => console.log(res.data))
-    // .then((user) =>  setEmailLogin(user))
-    // .catch((err) => console.log(err.message));
   }
-
 
   return (
     <>
@@ -27,13 +20,20 @@ export default function Navbar({ user }) {
               />
             </Link>
           </div>
+
           <div className="d-flex position-relative">
             <Link to="/profile" className="nav-link text-dark">
               <div className="d-flex">
                 <div className="">
-                {('picture_url' in user)?<img src={user.picture_url} className="card-img-top small-round-pic  round-img" alt="..." />:<i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>}
-
-                  
+                  {'picture_url' in user ? (
+                    <img
+                      src={user.picture_url}
+                      className="card-img-top small-round-pic  round-img"
+                      alt="..."
+                    />
+                  ) : (
+                    <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
+                  )}
                 </div>
                 <div className="d-flex align-items-center ms-2">
                   {user.firstname + ' ' + user.lastname}
@@ -43,9 +43,10 @@ export default function Navbar({ user }) {
 
             <div className="d-flex align-items-center ms-2 round-img border rounded-circle icon-bg text-dark p-2">
               <Link to={'/'} className="text-dark">
-            <i className="fa-solid fa-house"></i></Link>
+                <i className="fa-solid fa-house"></i>
+              </Link>
             </div>
-           
+
             <div className="d-flex align-items-center ms-2 round-img border rounded-circle icon-bg text-dark p-2">
               <i className="fa-brands fa-facebook-messenger "></i>
             </div>

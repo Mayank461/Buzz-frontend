@@ -1,37 +1,24 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { API_URL } from "../config";
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { API_URL } from '../config';
+import UserlistWidget from './UserlistWidget';
 
-export default function Selfprofile(user) {
+export default function Selfprofile({ user, suggestFriend }) {
   const [inputs, setInputs] = useState({
-    firstname: "",
-    lastname: "",
-    designation: "",
-    website: "",
-    gender: "",
-    birthday: "",
-    city: "",
-    state: "",
-    zip: "",
+    firstname: '',
+    lastname: '',
+    designation: '',
+    website: '',
+    gender: '',
+    birthday: '',
+    city: '',
+    state: '',
+    zip: '',
   });
+
   const OnInputChange = (e) => {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
-    // console.log(e.target.value)
   };
-
-  // const [user, setUser] = useState({});
-
-  useEffect(() => {
-    // axios
-    //     .get(`${API_URL}/user/getUser`, { withCredentials: true })
-    //     .then((res) => {
-    //         setUser(res.data[0]);
-    //         console.log(user)
-    //     })
-    //     .catch((err) => console.log(err.message));
-
-    console.log(user.user);
-  }, []);
 
   const postData = async (e) => {
     e.preventDefault();
@@ -47,10 +34,10 @@ export default function Selfprofile(user) {
       zip,
     } = inputs;
     console.log(inputs);
-    const res = await fetch(`${API_URL}/users/updateUser/${user.user._id}`, {
-      method: "POST",
+    const res = await fetch(`${API_URL}/users/updateUser/${user._id}`, {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         firstname,
@@ -66,30 +53,30 @@ export default function Selfprofile(user) {
     });
     const result = await res.json();
     if (result.status === 422 || !result) {
-      console.log("success");
+      console.log('success');
     } else {
-      console.log("failed");
+      console.log('failed');
     }
   };
 
   const maleToggle = () => {
-    document.getElementById("female").checked = false;
-    document.getElementById("male").checked = true;
-    document.getElementById("labelMale").className += " bg-success";
-    document.getElementById("labelFemale").classList.remove("bg-success");
-    const setMale = "Male";
+    document.getElementById('female').checked = false;
+    document.getElementById('male').checked = true;
+    document.getElementById('labelMale').className += ' bg-success';
+    document.getElementById('labelFemale').classList.remove('bg-success');
+    const setMale = 'Male';
     setInputs({ ...inputs, gender: setMale });
   };
   const femaleToggle = () => {
-    document.getElementById("male").checked = false;
-    document.getElementById("female").checked = true;
-    document.getElementById("labelFemale").className += " bg-success";
-    document.getElementById("labelMale").classList.remove("bg-success");
-    const setFemale = "Female";
+    document.getElementById('male').checked = false;
+    document.getElementById('female').checked = true;
+    document.getElementById('labelFemale').className += ' bg-success';
+    document.getElementById('labelMale').classList.remove('bg-success');
+    const setFemale = 'Female';
     setInputs({ ...inputs, gender: setFemale });
   };
   return (
-    <div style={{ backgroundColor: "#F0F2F5" }}>
+    <div style={{ backgroundColor: '#F0F2F5' }}>
       <div className="container">
         <div className="row">
           <div className="col-md-9 bg-white mt-3 p-2">
@@ -99,15 +86,13 @@ export default function Selfprofile(user) {
                 className="coverpic"
               />
 
-              {"picture_url" in user.user ? (
-                <img src={user.user.picture_url} className="profilepic" />
+              {'picture_url' in user ? (
+                <img src={user.picture_url} className="profilepic" />
               ) : (
                 <i className="fa-solid fa-user fa-5x profilepic  d-flex justify-content-center align-items-center bg-warning"></i>
               )}
             </div>
-            <h1 className="mt-5">
-              {user.user.firstname + " " + user.user.lastname}
-            </h1>
+            <h1 className="mt-5">{user.firstname + ' ' + user.lastname}</h1>
             <div>
               <form method="POST">
                 {/* 1st Row  */}
@@ -292,38 +277,10 @@ export default function Selfprofile(user) {
           </div>
           {/**part for suggestion */}
           <div className="col-md-3 profile-sidebar mt-3">
-            <div className=" border p-2 scroll bg-white shadow-lg p-3 bg-body rounded border-0">
-              <div className="d-flex justify-content-between">
-                <div>Sugesstion</div>
-                <div>
-                  <div className="d-flex align-items-center ms-2 round-img border rounded-circle icon-bg  p-2">
-                    <i className="fa-solid fa-magnifying-glass-plus"></i>
-                  </div>
-                </div>
-              </div>
-
-              <div className="d-flex">
-                <div>
-                  <img
-                    src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                    className="card-img-top small-round-pic me-2  round-img"
-                    alt="..."
-                  />
-                </div>
-                <div className="d-flex align-items-center">Mayank Jaggi</div>
-              </div>
-
-              <div className="d-flex mt-2">
-                <div>
-                  <img
-                    src="https://images.unsplash.com/photo-1507438222021-237ff73669b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
-                    className="card-img-top small-round-pic me-2  round-img"
-                    alt="..."
-                  />
-                </div>
-                <div className="d-flex align-items-center">Mayank Jaggi</div>
-              </div>
-            </div>
+            <UserlistWidget
+              title="Friends Sugesstion"
+              friendList={suggestFriend}
+            />
           </div>
         </div>
       </div>
