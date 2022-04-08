@@ -1,8 +1,9 @@
 import axios from 'axios';
 import React, { useEffect, useReducer, useState } from 'react';
 import { API_URL } from '../config';
+import UserlistWidget from './UserlistWidget';
 
-export default function Feeds(user) {
+export default function Feeds(user,suggestFriend) {
   const [title, setTitle] = useState("")
   const [image, setImage] = useState("")
   const [url, setUrl] = useState("")
@@ -15,7 +16,7 @@ export default function Feeds(user) {
 
 
   useEffect(() => {
-    console.log("render")
+    console.log(suggestFriend)
     loaduser();
     console.log(posts)
     axios
@@ -152,6 +153,8 @@ export default function Feeds(user) {
                         /> */}
 
                         <div className='ms-2'>{userData.firstname + " " + userData.lastname}
+                        <div>{element._id}</div>
+                        
                         </div>
                       </div>
 
@@ -308,14 +311,9 @@ export default function Feeds(user) {
                     </div>
                   </div>
                 }
-
-
-
-
-
               </div>
               {/*============================================================================ Suggestuons ================================================================================== */}
-              <div className=" border p-2 scroll mt-3 bg-white shadow-lg p-3  bg-body rounded border-0">
+              {/* <div className=" border p-2 scroll mt-3 bg-white shadow-lg p-3  bg-body rounded border-0">
                 <div className="d-flex justify-content-between">
                   <div>Suggestions</div>
                   <div>
@@ -338,7 +336,11 @@ export default function Feeds(user) {
                   </div>
                 </div>
 
-              </div>
+              </div> */}
+                 <UserlistWidget
+                title="Friend Suggestions"
+                friendList={suggestFriend}
+              />
             </div> {/* closing 3rd column  */}
 
 

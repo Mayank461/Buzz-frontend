@@ -62,3 +62,10 @@
 /* .caption{
   width: 100%;
 } */
+
+.friend-req {
+  border: 2px solid #f1f1f1;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0px 0px 20px #f0f0f0;
+}
