@@ -77,7 +77,7 @@ export default function Feeds(user) {
           body: JSON.stringify({
             pic_url: data.url,
             caption: title,
-            user_id: userData._id
+            user_id: userData._id,            
           })
         })
 
@@ -89,6 +89,19 @@ export default function Feeds(user) {
     dispatch({ type: "increment" })
 
   }
+
+  const likepost = (e) => {
+    fetch(`${API_URL}/posts/like`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        userspost: userData._id,        
+      })
+    })    
+  }
+
   return (
     <>
       <div style={{ backgroundColor: '#F0F2F5' }}>
@@ -207,7 +220,7 @@ export default function Feeds(user) {
 
                     <div className="d-flex justify-content-between mt-3 border-top border-bottom p-2">
                       <div>
-                        <i className="fa-regular fa-thumbs-up me-2"></i>Like
+                        <i className="fa-regular fa-thumbs-up me-2" onClick={(e) => likepost(e)}></i>Like
                       </div>
                       <div>
                         <i className="fa-regular fa-thumbs-down me-2"></i>Dislike
