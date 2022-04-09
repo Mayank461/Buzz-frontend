@@ -44,7 +44,7 @@ export default function Post({ index, data, inclike, deslike, commentBox, userda
             )}
 
 
-            <div className="ms-2">{firstname + " " + lastname + _id}</div>
+            <div className="ms-2">{firstname + " " + lastname}</div>
           </div>
 
 
@@ -92,11 +92,11 @@ export default function Post({ index, data, inclike, deslike, commentBox, userda
 
         </div>
         <div className="ms-2 mb-2">{post_caption}</div>
-        <img src={post_url} className="card-img-top rounded-3" alt="..." />
+       {"post_url" in data? <img src={post_url} className="card-img-top rounded-3" alt="..." />:""}
 
         <div className="d-flex justify-content-between mt-2">
           <div className="d-flex">
-            <div>
+            <div className="me-2">
               <i className="fa-solid fa-thumbs-up bg-primary round-img text-white p-1 me-2"></i>
               {like.length}
             </div>
@@ -105,13 +105,13 @@ export default function Post({ index, data, inclike, deslike, commentBox, userda
               {dislike.length}
             </div>
           </div>
-          <div>
-            {comment.length}
+          <div className="me-1">
+            {comment.length} comments
           </div>
         </div>
 
         <div className="d-flex justify-content-between mt-3 border-top border-bottom p-2">
-          <div
+          <div className="pe-none"
             onClick={() => {
               inclike(_id);
             }}

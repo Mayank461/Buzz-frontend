@@ -3,6 +3,8 @@ import React, { useEffect, useReducer, useState } from "react";
 import { API_URL } from "../config";
 import Post from "./Post";
 import UserlistWidget from "./UserlistWidget";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Feeds(user) {
   const [title, setTitle] = useState("");
@@ -84,47 +86,108 @@ export default function Feeds(user) {
         `${API_URL}/posts/report`,
         {
           post_id: id,
-     
+
         },
         { withCredentials: true }
       )
       .then((res) => {
         setRefresh(refresh + 1)
-        alert("Reported Success")
+        toast("Reported Successfully");
       })
       .catch((err) => console.log(err.message));
   };
-
   const postDetails = () => {
-    const data = new FormData();
-    data.append("file", image);
-    data.append("upload_preset", "buzz-app");
-    data.append("cloud_name", "buzz-social-app");
-    fetch("https://api.cloudinary.com/v1_1/buzz-social-app/image/upload", {
-      method: "post",
-      body: data,
-    })
-      .then((res) => res.json())
-      .then((data) => {
+    const commentBox = document.getElementById('comment-box').value
+    const file = document.getElementById('file').value
+
+    // checking validation in post field 
+    if (commentBox === "" && file === "") {
+      alert("Please give input atleast one")
+    }
+    // checking atleast one input is given or not 
+    else if (commentBox === "" || file === "") {
+      //  if only caption is given from user 
+      if (commentBox !== "") {
         fetch(`${API_URL}/posts/userPost`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            pic_url: data.url,
+
             caption: title,
             user_id: userData._id,
           }),
         }).then((r) => setRefresh(refresh + 1));
-        alert("Your post uplaoded successfully");
-        // setCheck([...check, { post_url: url, post_caption: title }]);
-        setTitle("");
-        document.getElementById("file").value = "";
+        toast("Your post uplaoded successfully");
+      }
+      // if only picture is given from user side 
+      else {
+        const data = new FormData();
+        data.append("file", image);
+        data.append("upload_preset", "buzz-app");
+        data.append("cloud_name", "buzz-social-app");
+        fetch("https://api.cloudinary.com/v1_1/buzz-social-app/image/upload", {
+          method: "post",
+          body: data,
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            fetch(`${API_URL}/posts/userPost`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                pic_url: data.url,
+                user_id: userData._id,
+              }),
+            }).then((r) => setRefresh(refresh + 1));
+            // alert("Your post uplaoded successfully");
+            toast("Your post uplaoded successfully");
+            // setCheck([...check, { post_url: url, post_caption: title }]);
+            setTitle("");
+            document.getElementById("file").value = "";
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+
+    }
+    else {
+      const data = new FormData();
+      data.append("file", image);
+      data.append("upload_preset", "buzz-app");
+      data.append("cloud_name", "buzz-social-app");
+      fetch("https://api.cloudinary.com/v1_1/buzz-social-app/image/upload", {
+        method: "post",
+        body: data,
       })
-      .catch((err) => {
-        console.log(err);
-      });
+        .then((res) => res.json())
+        .then((data) => {
+          fetch(`${API_URL}/posts/userPost`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              pic_url: data.url,
+              caption: title,
+              user_id: userData._id,
+            }),
+          }).then((r) => setRefresh(refresh + 1));
+          // alert("Your post uplaoded successfully");
+          toast("Your post uplaoded successfully");
+          // setCheck([...check, { post_url: url, post_caption: title }]);
+          setTitle("");
+          document.getElementById("file").value = "";
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+
   };
   return (
     <>
@@ -188,9 +251,10 @@ export default function Feeds(user) {
                       <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
                     )}
                   </div>
-                  <div className="w-100">
+                  <div className="w-100 ms-2">
                     <input
                       type="text"
+                      id="comment-box"
                       className="caption p-2 rounded-pill form-control"
                       placeholder="Write Something in your mind"
                       value={title}
@@ -284,6 +348,7 @@ export default function Feeds(user) {
           </div>{" "}
           {/* Closing row  */}
         </div>
+        <ToastContainer />
       </div>
     </>
   );
