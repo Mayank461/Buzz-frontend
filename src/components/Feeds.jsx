@@ -63,6 +63,19 @@ export default function Feeds(user) {
       .then((res) => setRefresh(refresh + 1))
       .catch((err) => console.log(err.message));
   };
+  const commentBox = (id,message) => {
+    axios
+      .post(
+        `${API_URL}/posts/comment`,
+        {
+          post_id: id,
+          comment: message
+        },
+        { withCredentials: true }
+      )
+      .then((res) => setRefresh(refresh + 1))
+      .catch((err) => console.log(err.message));
+  };
 
   const postDetails = () => {
     const data = new FormData();
@@ -189,6 +202,8 @@ export default function Feeds(user) {
                       data={element}
                       inclike={Inlike}
                       deslike={unlike}
+                      commentBox={commentBox}
+                      userdata = {userData}                      
                     />
                   );
                 })
