@@ -57,31 +57,33 @@ export default function Post({ index, data, inclike, deslike, commentBox, userda
               {dislike.length}
             </div>
           </div>
-          <div>1 commment</div>
+          <div>
+            {comment.length}
+          </div>
         </div>
 
         <div className="d-flex justify-content-between mt-3 border-top border-bottom p-2">
-          <button
+          <div
             onClick={() => {
               inclike(_id);
             }}
           >
             <i className="fa-regular fa-thumbs-up me-2"></i>Like
-          </button>
-          <button
+          </div>
+          <div
             onClick={() => {
               deslike(_id);
             }}
           >
             <i className="fa-regular fa-thumbs-down me-2"></i>Dislike
-          </button>
-          <button
+          </div>
+          <div
             onClick={() => {
               commentBox(_id, commentmessage);
             }}
           >
             <i className="fa-regular fa-message me-2"></i>Comment
-          </button>
+          </div>
         </div>
         <div className="d-flex mt-3">
         {userdata.picture_url ? (
