@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useReducer, useState } from 'react';
 import { API_URL } from '../config';
-import Post from './Post';
+
 import UserlistWidget from './UserlistWidget';
 
 export default function Feeds(user) {
@@ -17,6 +17,7 @@ export default function Feeds(user) {
   // const [check, setCheck] = useState(reverseArray)
 
   useEffect(() => {
+    console.log()
     loaduser();
     axios
       .get(`${API_URL}/posts/getPost`, { withCredentials: true })
@@ -62,6 +63,20 @@ export default function Feeds(user) {
       .then((res) => setRefresh(refresh + 1))
       .catch((err) => console.log(err.message));
   };
+  const commentBox = (id,commentMsg) => {
+    // console.log(picture_url)
+    axios
+      .post(
+        `${API_URL}/posts/comment`,
+        {
+          post_id: id,
+          commentMsg:commentMsg
+        },
+        { withCredentials: true }
+      )
+      .then((res) => setRefresh(refresh + 1))
+      .catch((err) => console.log(err.message));
+  };
 
   const postDetails = () => {
     const data = new FormData();
@@ -75,9 +90,9 @@ export default function Feeds(user) {
       .then((res) => res.json())
       .then((data) => {
         fetch(`${API_URL}/posts/userPost`, {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json"
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             pic_url: data.url,
@@ -103,9 +118,15 @@ export default function Feeds(user) {
             <div className="col-md-3 mt-3">
               <div className="card p-5 shadow-lg p-3 mb-5 bg-body rounded border-0">
                 <div className="d-flex justify-content-center">
-                  {('picture_url' in userData) ? <img src={userData.picture_url} className="card-img-top small-round-pic  round-img" alt="..." /> : <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>}
-
-
+                  {'picture_url' in userData ? (
+                    <img
+                      src={userData.picture_url}
+                      className="card-img-top small-round-pic  round-img"
+                      alt="..."
+                    />
+                  ) : (
+                    <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
+                  )}
                 </div>
                 <div className="card-body">
                   <h5 className="card-title text-center">
@@ -141,18 +162,17 @@ export default function Feeds(user) {
                       <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
                     )}
                   </div>
-                  <div className='w-100'>
+                  <div className="w-100">
                     <input
                       type="text"
-                      className='caption p-2 rounded-pill form-control'
+                      className="caption p-2 rounded-pill form-control"
                       placeholder="Write Something in your mind"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                     />
                   </div>
-
                 </div>
-                <div className='text-center mt-2'>
+                <div className="text-center mt-2">
                   <input
                     type="file"
                     className=""
@@ -160,31 +180,18 @@ export default function Feeds(user) {
                     onChange={(e) => setImage(e.target.files[0])}
                   />
                 </div>
-                <div className='text-center mt-2'>
-                  <button className="btn btn-danger"
+                <div className="text-center mt-2">
+                  <button
+                    className="btn btn-danger"
                     onClick={() => postDetails()}
-
-                  >Submit
+                  >
+                    Submit
                   </button>
-
                 </div>
               </div>
 
-              {posts
-                .map((element, index) => {
-                  return (
-                    <Post
-                      index={index}
-                      data={element}
-                      inclike={Inlike}
-                      deslike={unlike}
-                    />
-                  );
-                })
-                .reverse()}
+             
             </div>
-
-
             {/* =============================================================================== column 3rd ================================================================================================== */}
             <div className="col-md-3 side-height mt-3 ">
               {/*========================================================================= Contacts ============================================================================== */}
@@ -198,7 +205,9 @@ export default function Feeds(user) {
                   </div>
                 </div>
 
-                {(friendList.length === 0) ? <div className='text-center'>You have no friends</div> :
+                {friendList.length === 0 ? (
+                  <div className="text-center">You have no friends</div>
+                ) : (
                   <div className="d-flex">
                     <div>
                       <img
@@ -211,7 +220,7 @@ export default function Feeds(user) {
                       Prashant Mishra
                     </div>
                   </div>
-                }
+                )}
               </div>
               {/*============================================================================ Suggestuons ================================================================================== */}
               <UserlistWidget

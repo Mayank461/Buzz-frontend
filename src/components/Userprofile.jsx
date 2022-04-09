@@ -9,6 +9,7 @@ export default function Userprofile({ suggestFriend, myData }) {
   const [refresh, setRefresh] = useState(0);
   const [user, setUser] = useState({});
   const { id } = useParams();
+  const [friendStatus,setFriendStatus] = useState("ADD FRIEND");
 
   let isFriend = myData.friends.myFriends
     .map(({ _id }) => _id === id)
@@ -21,7 +22,7 @@ export default function Userprofile({ suggestFriend, myData }) {
         setUser(res.data);
       })
       .catch((err) => console.log(err.message));
-  }, [refresh]);
+  }, []);
 
   function SendReq() {
     axios
@@ -30,7 +31,7 @@ export default function Userprofile({ suggestFriend, myData }) {
       })
       .then((res) => {
         alert(res.data.message);
-        setRefresh(refresh+1);
+        setFriendStatus("FRIEND REQUEST SENT");
       })
       .catch((err) => console.log(err.message));
   }
@@ -76,7 +77,7 @@ export default function Userprofile({ suggestFriend, myData }) {
                 </div>
               ) : (
                 <div onClick={SendReq} className="btn btn-primary me-3">
-                  ADD FRIEND
+                  {friendStatus}
                 </div>
               )}
               <button className="border boder-white">Visit Website</button>
