@@ -19,7 +19,7 @@ export default function Feeds(user) {
   useEffect(() => {
     console.log()
     loaduser();
-    console.log(user.user.friends.myFriends);
+    // console.log(user.user.friends.myFriends);
     axios
       .get(`${API_URL}/posts/getPost`, { withCredentials: true })
       .then((res) => {
@@ -75,6 +75,23 @@ export default function Feeds(user) {
         { withCredentials: true }
       )
       .then((res) => setRefresh(refresh + 1))
+      .catch((err) => console.log(err.message));
+  };
+  const reportPost = (id) => {
+    // console.log(id)
+    axios
+      .post(
+        `${API_URL}/posts/report`,
+        {
+          post_id: id,
+     
+        },
+        { withCredentials: true }
+      )
+      .then((res) => {
+        setRefresh(refresh + 1)
+        alert("Reported Success")
+      })
       .catch((err) => console.log(err.message));
   };
 
@@ -209,6 +226,7 @@ export default function Feeds(user) {
                       deslike={unlike}
                       commentBox={commentBox}
                       userdata={userData}
+                      reportPost={reportPost}
                     />
                   );
                 })

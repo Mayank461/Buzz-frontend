@@ -1,14 +1,27 @@
 import React, { useState, useEffect } from "react";
 
-export default function Post({ index, data, inclike, deslike, commentBox, userdata }) {
+export default function Post({ index, data, inclike, deslike, commentBox, userdata,reportPost }) {
   let { post_url, _id, like, dislike, comment, post_caption } = data;
   let { firstname, lastname, picture_url } = data.posted_by;
   const [commentmessage, setcommentmessage] = useState();
+  // const [ownId,setOwnId] = useState("")
+// const ownId= [];
+
+  // const changeId = (pid)=>{
+  //   // ownId=pid;
+  //   // setOwnId(pid);
+  //   ownId.push(pid)
+  //   console.log(ownId);
+  // }
+
+  
+
   const oninputchange = (e) => {
     setcommentmessage({ ...commentmessage, [e.target.name]: e.target.value });
+    
   };
   useEffect(() => {
-    console.log(userdata.picture_url);
+    // console.log( _id);
 
   });
 
@@ -30,18 +43,53 @@ export default function Post({ index, data, inclike, deslike, commentBox, userda
               <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
             )}
 
-            {/* <img
-                          src={.picture_url}
-                          className="card-img-top small-round-pic  round-img"
-                          alt="..."
-                        /> */}
 
-            <div className="ms-2">{firstname + " " + lastname}</div>
+            <div className="ms-2">{firstname + " " + lastname + _id}</div>
           </div>
 
-          <div className="d-flex align-items-center ms-2 round-img border rounded-circle icon-bg text-dark p-2">
-            <i className="fa-solid fa-ellipsis"></i>
+
+          {/* ========================================================Report System============================================================================== */}
+          <div className="">
+            <i className="fa-solid fa-ellipsis " id="dropdownMenuButton1" data-bs-toggle="dropdown"  >
+
+            </i>
+            <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+              <li><div className="dropdown-item"  data-bs-target="#exampleModal" onClick={() => { reportPost(_id);}}>Report</div></li>
+
+            </ul>
           </div>
+          {/* ========================================================Report System============================================================================== */}
+
+
+          {/* =============================================================Model============================================================================= */}
+          {/* <div className="modal fade" id="exampleModal" aria-labelledby="exampleModalLabel" >
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title" id="exampleModalLabel">Report System</h5>
+                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div className="modal-body">
+                  <div className="mb-3">
+                    <label htmlFor="exampleFormControlTextarea1" className="form-label">Report Your Query</label>
+                    <textarea className="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" className="btn btn-danger">Report</button>
+                </div>
+              </div>
+            </div>
+          </div> */}
+          {/* ======================================================================== Model====================================================================================== */}
+
+
+
+
+
+
+
         </div>
         <div className="ms-2 mb-2">{post_caption}</div>
         <img src={post_url} className="card-img-top rounded-3" alt="..." />
@@ -86,15 +134,15 @@ export default function Post({ index, data, inclike, deslike, commentBox, userda
           </div>
         </div>
         <div className="d-flex mt-3">
-        {userdata.picture_url ? (
-                  <img
-                    src={userdata.picture_url}
-                    className="card-img-top small-round-pic me-2  round-img"
-                    alt="..."
-                  />
-                ) : (
-                  <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
-                )}
+          {userdata.picture_url ? (
+            <img
+              src={userdata.picture_url}
+              className="card-img-top small-round-pic me-2  round-img"
+              alt="..."
+            />
+          ) : (
+            <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
+          )}
           <input
             type="text"
             className="form-control rounded-pill"
