@@ -64,6 +64,11 @@
 }
 
 .pointer {cursor: pointer;}
+.position-abs{
+  position:absolute;
+  top:20%;
+
+}
 
 .friend-req {
   border: 2px solid #f1f1f1;

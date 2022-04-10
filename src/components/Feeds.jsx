@@ -5,6 +5,7 @@ import Post from "./Post";
 import UserlistWidget from "./UserlistWidget";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Spinner from "./Spinner";
 
 export default function Feeds(user) {
   const [title, setTitle] = useState("");
@@ -15,6 +16,7 @@ export default function Feeds(user) {
   const [friendList, setFriendList] = useState([]);
   const [refresh, setRefresh] = useState(0);
   const [posts, setPosts] = useState([]);
+  const [loading,setLoading] = useState(false);
 
 
   useEffect(() => {
@@ -96,6 +98,8 @@ export default function Feeds(user) {
       .catch((err) => console.log(err.message));
   };
   const postDetails = () => {
+    setLoading(true);
+
     const commentBox = document.getElementById('comment-box').value
     const file = document.getElementById('file').value
 
@@ -144,7 +148,6 @@ export default function Feeds(user) {
               }),
             }).then((r) => setRefresh(refresh + 1));
             toast.success('Post uploaded successfully')
-            // setCheck([...check, { post_url: url, post_caption: title }]);
             setTitle("");
             document.getElementById("file").value = "";
           })
@@ -178,9 +181,10 @@ export default function Feeds(user) {
               user_id: userData._id,
             }),
           }).then((r) => setRefresh(refresh + 1));
-          // alert("Your post uplaoded successfully");
+          setLoading(false);
           toast.success("Your post uplaoded successfully");
-          // setCheck([...check, { post_url: url, post_caption: title }]);
+  
+
           setTitle("");
           document.getElementById("file").value = "";
         })
@@ -197,7 +201,7 @@ export default function Feeds(user) {
           <div className="row">
             {/* ================================================================== column 1st  ====================================================================*/}
             <div className="col-md-3 mt-3">
-              <div className="card p-5 shadow-lg p-3 mb-5 bg-body rounded border-0">
+              <div className="card p-5 shadow-lg p-3 mb-2 bg-body rounded border-0">
                 <div className="d-flex justify-content-center">
                   {"picture_url" in userData ? (
                     <img
@@ -228,17 +232,20 @@ export default function Feeds(user) {
                 </div>
               </div>
               <div>
-                <div className="card">
+                <div className="card ">
                   <img
-                    src="https://images.unsplash.com/photo-1649374982881-752d262c113b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=500&q=60"
-                    className="card-img-top"
+                    src="https://media-s3-us-east-1.ceros.com/abbott/images/2020/06/18/5003c26bb33afd98eb9dc65ba64e18d0/asset-1.png?imageOpt=1"
+                    className="card-img-top position-relative"
                     alt="..."
                   />
+                  <div className="position-abs">
+                 <img className=" p-5  " src="https://static1.tothenew.com/blog/wp-content/themes/ttn/images/social-logo.png"></img>
+                 </div>
                 </div>
               </div>
             </div>
             {/* =======================================================================column 2nd ======================================================================== */}
-            <div className="col-md-6  scroll-mid mt-3 ">
+            <div className="col-md-6  scroll-mid mt-3  position-relative">
               <div className="shadow p-3 mb-4 bg-body rounded">
                 <div className="d-flex align-items-center">
                   <div className="">
@@ -278,9 +285,12 @@ export default function Feeds(user) {
                   >
                     Submit
                   </button>
+              
+             
                 </div>
+                {loading? <Spinner/>:""}
               </div>
-
+           
               {posts
                 .map((element, index) => {
                   return (
