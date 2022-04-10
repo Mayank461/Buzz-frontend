@@ -32,6 +32,10 @@ export default function Selfprofile({ user, suggestFriend }) {
     {
       toast.warn("Please fill the details");
     }
+    else if(inputs.firstname== '' || inputs.lastname=== '' || inputs.gender=== '' || inputs.birthday=== '')
+    {
+      toast.warn("Please fill the details");
+    }
     else{
       const {
         firstname,

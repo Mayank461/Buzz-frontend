@@ -6,6 +6,7 @@ import UserlistWidget from "./UserlistWidget";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Spinner from "./Spinner";
+import { Link } from "react-router-dom";
 
 export default function Feeds(user) {
   
@@ -23,7 +24,7 @@ export default function Feeds(user) {
 
 
   useEffect(() => {
-    
+    console.log(friendList)
 
     loaduser();
 
@@ -354,7 +355,7 @@ export default function Feeds(user) {
                     <div>
                       {friendList.map((element, index) => {
                         return (
-                          <div className="d-flex " key={index}>
+                          <Link className="d-flex text-decoration-none mt-2 " key={index}  to={'/profile/' + element._id}>
                             <div>
                               {element.picture_url ? (
                                 <img
@@ -363,13 +364,13 @@ export default function Feeds(user) {
                                   alt="..."
                                 />
                               ) : (
-                                <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
+                                <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning text-dark d-flex justify-content-center align-items-center"></i>
                               )}
                             </div>
-                            <div className="ms-2 d-flex align-items-center">
+                            <div className="ms-2 d-flex align-items-center text-dark">
                               {element.firstname + " " + element.lastname}
                             </div>
-                          </div>
+                          </Link>
                         );
                       })}
                     </div>
