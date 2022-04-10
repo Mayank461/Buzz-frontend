@@ -5,16 +5,20 @@ import UserlistWidget from './UserlistWidget';
 
 export default function Selfprofile({ user, suggestFriend }) {
   const [inputs, setInputs] = useState({
-    firstname: '',
-    lastname: '',
-    designation: '',
-    website: '',
-    gender: '',
-    birthday: '',
-    city: '',
-    state: '',
-    zip: '',
+    firstname: user.firstname,
+    lastname: user.lastname,
+    designation: user.designation,
+    website: user.website,
+    gender: user.gender,
+    birthday: user.birthday,
+    city: user.city,
+    state: user.state,
+    zip: user.zip,
   });
+
+  useEffect(()=>{
+    // console.log(user);
+  })
 
   const OnInputChange = (e) => {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
@@ -51,6 +55,7 @@ export default function Selfprofile({ user, suggestFriend }) {
         zip,
       }),
     });
+    alert("data updated successfully")
     const result = await res.json();
     if (result.status === 422 || !result) {
       console.log('success');
@@ -101,6 +106,7 @@ export default function Selfprofile({ user, suggestFriend }) {
                     <label htmlFor="floatingInput">First Name</label>
                     <input
                       type="text"
+                      value={inputs.firstname}
                       className="form-control mt-2"
                       id="exampleInputEmail1"
                       aria-describedby="emailHelp"
@@ -113,6 +119,7 @@ export default function Selfprofile({ user, suggestFriend }) {
                     <label htmlFor="floatingInput">Last Name</label>
                     <input
                       type="text"
+                      value={inputs.lastname}
                       className="form-control mt-2"
                       id="exampleInputEmail1"
                       aria-describedby="emailHelp"
@@ -131,6 +138,7 @@ export default function Selfprofile({ user, suggestFriend }) {
                     <br />
                     <select
                       name="designation"
+                      value={inputs.designation}
                       onChange={(e) => OnInputChange(e)}
                       className="form-control mt-2"
                     >
@@ -149,6 +157,7 @@ export default function Selfprofile({ user, suggestFriend }) {
                     <label htmlFor="floatingInput">My Website</label>
                     <input
                       type="text"
+                      value={inputs.website}
                       className="form-control mt-2"
                       id="exampleInputEmail1"
                       aria-describedby="emailHelp"
@@ -166,6 +175,7 @@ export default function Selfprofile({ user, suggestFriend }) {
                     <div className="border p-1 mt-2">
                       <input
                         type="radio"
+                       
                         className="btn-check"
                         name="gender"
                         id="male"
@@ -205,6 +215,7 @@ export default function Selfprofile({ user, suggestFriend }) {
                     <input
                       type="date"
                       className="form-control mt-2"
+                      value={inputs.birthday}
                       id="exampleInputEmail1"
                       aria-describedby="emailHelp"
                       name="birthday"
@@ -220,6 +231,7 @@ export default function Selfprofile({ user, suggestFriend }) {
                     <label htmlFor="floatingInput">City</label>
                     <input
                       type="text"
+                      value={inputs.city}
                       className="form-control mt-2"
                       id="exampleInputEmail1"
                       name="city"
@@ -234,6 +246,7 @@ export default function Selfprofile({ user, suggestFriend }) {
                       <select
                         name="state"
                         id="state"
+                        value={inputs.state}
                         onChange={(e) => OnInputChange(e)}
                         className="form-control mt-2"
                       >
@@ -252,6 +265,7 @@ export default function Selfprofile({ user, suggestFriend }) {
                         className="form-control mt-2"
                         id="exampleInputEmail1"
                         name="zip"
+                        value={inputs.zip}
                         aria-describedby="emailHelp"
                         placeholder="Zip"
                         onChange={(e) => OnInputChange(e)}

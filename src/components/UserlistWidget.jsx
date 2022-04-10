@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 function UserlistWidget({ title, friendList }) {
   return (
-    <div className=" border p-2 scroll bg-white shadow-lg p-3 mb-4 bg-body rounded border-0">
+    <div className=" border p-2 scroll bg-white shadow-lg p-3 mb-4 bg-body rounded border-0 mt-3">
       <div className="d-flex justify-content-between">
         <h6>{title}</h6>
         <div>
