@@ -58,6 +58,7 @@ export default function Post({ index, data, inclike, deslike, commentBox, userda
             </div>
           </div>
           <div>
+          <i class="fa-solid fa-message bg-white p-1 me-2"></i>
             {comment.length}
           </div>
         </div>
