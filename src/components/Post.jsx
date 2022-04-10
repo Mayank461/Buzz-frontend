@@ -1,20 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createContext } from "react";
 
 export default function Post({ index, data, inclike, deslike, commentBox, userdata, reportPost }) {
+  
   let { post_url, _id, like, dislike, comment, post_caption } = data;
   let { firstname, lastname, picture_url } = data.posted_by;
   const [commentmessage, setcommentmessage] = useState();
-  // const [ownId,setOwnId] = useState("")
-  // const ownId= [];
-
-  // const changeId = (pid)=>{
-  //   // ownId=pid;
-  //   // setOwnId(pid);
-  //   ownId.push(pid)
-  //   console.log(ownId);
-  // }
+ 
 
   let toggle = true;
+
+
+  // useEffect(()=>{
+  //   console.log(data)
+  // })
 
   const oninputchange = (e) => {
     setcommentmessage({ ...commentmessage, [e.target.name]: e.target.value });
@@ -40,6 +38,7 @@ export default function Post({ index, data, inclike, deslike, commentBox, userda
 
   return (
     <>
+  
       <div
         key={index}
         className="card p-3 mb-3 shadow p-3 mb-5 bg-body rounded border-0"
@@ -57,7 +56,7 @@ export default function Post({ index, data, inclike, deslike, commentBox, userda
             )}
 
 
-            <div className="ms-2">{firstname + " " + lastname}</div>
+            <div className="ms-2 fw-bold">{firstname + " " + lastname}</div>
           </div>
 
 
@@ -177,7 +176,7 @@ export default function Post({ index, data, inclike, deslike, commentBox, userda
           </div>
           <div onClick={() => {
               commentBox(_id, commentmessage);
-            }} className="d-flex align-items-center justify-content-center  rounded-circle border border-success p-2  " >  <i className="fa-solid fa-2x fa-paper-plane text-success circle p-2"></i></div>
+            }} className="d-flex align-items-center pointer justify-content-center  rounded-circle border border-success p-2  " >  <i className="fa-solid fa-2x fa-paper-plane text-success circle p-2"></i></div>
          
           </div>
         </div>
@@ -203,6 +202,7 @@ export default function Post({ index, data, inclike, deslike, commentBox, userda
         })}
         </div>
       </div>
+  
     </>
   );
 }

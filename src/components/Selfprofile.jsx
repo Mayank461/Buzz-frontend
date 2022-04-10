@@ -2,6 +2,8 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { API_URL } from '../config';
 import UserlistWidget from './UserlistWidget';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Selfprofile({ user, suggestFriend }) {
   const [inputs, setInputs] = useState({
@@ -16,8 +18,8 @@ export default function Selfprofile({ user, suggestFriend }) {
     zip: user.zip,
   });
 
-  useEffect(()=>{
-    // console.log(user);
+  useEffect(() => {
+    console.log(inputs);
   })
 
   const OnInputChange = (e) => {
@@ -26,24 +28,12 @@ export default function Selfprofile({ user, suggestFriend }) {
 
   const postData = async (e) => {
     e.preventDefault();
-    const {
-      firstname,
-      lastname,
-      designation,
-      website,
-      gender,
-      birthday,
-      city,
-      state,
-      zip,
-    } = inputs;
-    console.log(inputs);
-    const res = await fetch(`${API_URL}/users/updateUser/${user._id}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    if(inputs.firstname== undefined || inputs.lastname=== undefined || inputs.gender=== undefined || inputs.birthday=== undefined)
+    {
+      toast.warn("Please fill the details");
+    }
+    else{
+      const {
         firstname,
         lastname,
         designation,
@@ -53,15 +43,34 @@ export default function Selfprofile({ user, suggestFriend }) {
         city,
         state,
         zip,
-      }),
-    });
-    alert("data updated successfully")
-    const result = await res.json();
-    if (result.status === 422 || !result) {
-      console.log('success');
-    } else {
-      console.log('failed');
+      } = inputs;
+      console.log(inputs);
+      const res = await fetch(`${API_URL}/users/updateUser/${user._id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstname,
+          lastname,
+          designation,
+          website,
+          gender,
+          birthday,
+          city,
+          state,
+          zip,
+        }),
+      }).then((res)=>{toast.success("data updated successfully")}).catch((err)=>{toast.error('Something wents wrong!!!')})
+      
+      const result = await res.json();
+      if (result.status === 422 || !result) {
+        console.log('success');
+      } else {
+        console.log('failed');
+      }
     }
+   
   };
 
   const maleToggle = () => {
@@ -79,12 +88,28 @@ export default function Selfprofile({ user, suggestFriend }) {
     document.getElementById('labelMale').classList.remove('bg-success');
     const setFemale = 'Female';
     setInputs({ ...inputs, gender: setFemale });
+
+
   };
+  const reset = () => {
+    setInputs({
+      firstname: '',
+      lastname: '',
+      designation: '',
+      website: '',
+      gender: '',
+      birthday: '',
+      city: '',
+      state: '',
+      zip: '',
+    })
+  }
   return (
+    <>
     <div style={{ backgroundColor: '#F0F2F5' }}>
       <div className="container">
         <div className="row">
-          <div className="col-md-9 bg-white mt-3 p-2">
+          <div className="col-md-9 bg-white mt-3 p-2 shadow-lg  bg-body rounded">
             <div className="position-relative">
               <img
                 src="https://images.unsplash.com/photo-1495277493816-4c359911b7f1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1165&q=80"
@@ -175,7 +200,7 @@ export default function Selfprofile({ user, suggestFriend }) {
                     <div className="border p-1 mt-2">
                       <input
                         type="radio"
-                       
+
                         className="btn-check"
                         name="gender"
                         id="male"
@@ -282,15 +307,16 @@ export default function Selfprofile({ user, suggestFriend }) {
                   >
                     Save
                   </button>
-                  <button className="btn border border-primary ">
-                    ResetAll
-                  </button>
+                  <div className="btn border border-primary " onClick={reset}>
+                ResetAll
+              </div>
                 </div>
               </form>
+             
             </div>
           </div>
           {/**part for suggestion */}
-          <div className="col-md-3 profile-sidebar mt-3">
+          <div className="col-md-3 profile-sidebar mt-0">
             <UserlistWidget
               title="Friends Sugesstion"
               friendList={suggestFriend}
@@ -299,5 +325,7 @@ export default function Selfprofile({ user, suggestFriend }) {
         </div>
       </div>
     </div>
+    <ToastContainer theme="colored" />
+    </>
   );
 }

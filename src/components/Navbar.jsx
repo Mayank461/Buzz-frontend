@@ -4,9 +4,15 @@ import { Link } from 'react-router-dom';
 import { API_URL } from '../config';
 
 export default function Navbar({ user }) {
+  const [friendRequest,setFriendRequest] = useState(0);
   function handleLogout() {
     window.open(`${API_URL}/auth/logout`, '_self');
   }
+
+  useEffect(()=>{
+    setFriendRequest(user.friends.myFriendRequests.length)
+ 
+  })
 
   return (
     <>
@@ -58,7 +64,7 @@ export default function Navbar({ user }) {
                 <i className="fa-solid fa-user"></i>
               </Link>
               <div className="round-img bg-danger p-1 text-white incoming position-absolute bottom-50 end-0">
-                1
+                {friendRequest}
               </div>
             </div>
             <div

@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useReducer, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import { API_URL } from "../config";
 import Post from "./Post";
 import UserlistWidget from "./UserlistWidget";
@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Spinner from "./Spinner";
 
 export default function Feeds(user) {
+  
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
   const [url, setUrl] = useState("");
@@ -17,25 +18,40 @@ export default function Feeds(user) {
   const [refresh, setRefresh] = useState(0);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [count,setCount] = useState(0)
+  // let count = 0
 
 
   useEffect(() => {
-    console.log(userData)
+    
+
     loaduser();
-    // console.log(user.user.friends.myFriends);
+
     axios
       .get(`${API_URL}/posts/getPost`, { withCredentials: true })
       .then((res) => {
         setPosts(res.data);
+        // counting the total number of post of login user 
+        let a=0;
+        const c = res.data.map((element)=>{
+          
+             if(element.posted_by._id === user.user._id)
+             {
+               a++
+             }
+         })
+         setCount(a)
       })
       .catch((err) => console.log(err.message));
   }, [refresh]);
+
 
   const loaduser = () => {
     setUserData(user.user);
 
     setFriendList(user.user.friends.myFriends);
   };
+ 
   function logout() {
     axios
       .get(`${API_URL}/auth/logout`, { withCredentials: true })
@@ -79,6 +95,7 @@ export default function Feeds(user) {
       )
       .then((res) => setRefresh(refresh + 1))
       .catch((err) => console.log(err.message));
+
   };
   const reportPost = (id) => {
     // console.log(id)
@@ -93,7 +110,7 @@ export default function Feeds(user) {
       )
       .then((res) => {
         setRefresh(refresh + 1)
-        toast("Reported Successfully");
+        toast.success("Reported Successfully");
       })
       .catch((err) => console.log(err.message));
   };
@@ -225,12 +242,12 @@ export default function Feeds(user) {
                   <p className="card-text text-center">Newly Recruit at TTN </p>
                   <div className="d-flex justify-content-between mt-4">
                     <div>
-                      <div className="text-center">234</div>
-                      <div>Profile Views</div>
+                      <div className="text-center">{user.user.friends.myFriends.length}</div>
+                      <div>Friends</div>
                     </div>
                     <div className="vr border"></div>
                     <div>
-                      <div className="text-center">10</div>
+                      <div className="text-center">{count}</div>
                       <div>Post</div>
                     </div>
                   </div>
