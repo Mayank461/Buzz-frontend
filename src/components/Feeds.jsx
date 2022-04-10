@@ -14,12 +14,11 @@ export default function Feeds(user) {
   const [allUsers, setAllUsers] = useState([]);
   const [friendList, setFriendList] = useState([]);
   const [refresh, setRefresh] = useState(0);
-  // const reverseArray = (user.user.posts).concat().reverse();
   const [posts, setPosts] = useState([]);
-  // const [check, setCheck] = useState(reverseArray)
+
 
   useEffect(() => {
-    console.log()
+    console.log(userData.picture_url)
     loaduser();
     // console.log(user.user.friends.myFriends);
     axios
@@ -102,7 +101,8 @@ export default function Feeds(user) {
 
     // checking validation in post field 
     if (commentBox === "" && file === "") {
-      alert("Please give input atleast one")
+   
+      toast.warn('Please give atleast one input');
     }
     // checking atleast one input is given or not 
     else if (commentBox === "" || file === "") {
@@ -119,7 +119,7 @@ export default function Feeds(user) {
             user_id: userData._id,
           }),
         }).then((r) => setRefresh(refresh + 1));
-        toast("Your post uplaoded successfully");
+        toast.success("Your post uplaoded successfully");
       }
       // if only picture is given from user side 
       else {
@@ -143,8 +143,7 @@ export default function Feeds(user) {
                 user_id: userData._id,
               }),
             }).then((r) => setRefresh(refresh + 1));
-            // alert("Your post uplaoded successfully");
-            toast("Your post uplaoded successfully");
+            toast.success('Post uploaded successfully')
             // setCheck([...check, { post_url: url, post_caption: title }]);
             setTitle("");
             document.getElementById("file").value = "";
@@ -155,6 +154,8 @@ export default function Feeds(user) {
       }
 
     }
+
+    // if both caption and picture  inputs are given in post
     else {
       const data = new FormData();
       data.append("file", image);
@@ -178,7 +179,7 @@ export default function Feeds(user) {
             }),
           }).then((r) => setRefresh(refresh + 1));
           // alert("Your post uplaoded successfully");
-          toast("Your post uplaoded successfully");
+          toast.success("Your post uplaoded successfully");
           // setCheck([...check, { post_url: url, post_caption: title }]);
           setTitle("");
           document.getElementById("file").value = "";
@@ -328,7 +329,7 @@ export default function Feeds(user) {
                                 <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
                               )}
                             </div>
-                            <div className="d-flex align-items-center">
+                            <div className="ms-2 d-flex align-items-center">
                               {element.firstname + " " + element.lastname}
                             </div>
                           </div>
@@ -348,8 +349,9 @@ export default function Feeds(user) {
           </div>{" "}
           {/* Closing row  */}
         </div>
-        <ToastContainer />
+      
       </div>
+      <ToastContainer theme="colored"/>
     </>
   );
 }

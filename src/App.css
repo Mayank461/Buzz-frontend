@@ -59,9 +59,11 @@
   visibility: none;
 
 }
-/* .caption{
-  width: 100%;
-} */
+.circle {
+  clip-path: circle(50% at 50% 50%);
+}
+
+.pointer {cursor: pointer;}
 
 .friend-req {
   border: 2px solid #f1f1f1;
