@@ -69,6 +69,25 @@
   top:20%;
 
 }
+.myFile{
+  outline: none;
+  color: transparent;
+  box-sizing: border-box;
+  cursor: pointer;
+  width: 50px;
+  transition: 0.5s;
+}
+.myFile::-webkit-file-upload-button{
+  visibility: hidden;
+}
+.myFile::before{
+  content: '\f87c';
+  font-family: fontAwesome;
+  font-size: 30px;
+  color: green;
+  display: inline-block;
+  -webkit-user-select: none;
+}
 
 .friend-req {
   border: 2px solid #f1f1f1;

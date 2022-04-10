@@ -166,7 +166,7 @@ export default function Post({ index, data, inclike, deslike, commentBox, userda
           <div className="form-control d-flex align-items-center border-0 " >
             <input
               type="text"
-              className="form-control  rounded-pill mw-100  p-2"
+              className="form-control  rounded-pill  p-2"
 
               placeholder="Write a comment..."
               onChange={(e) => oninputchange(e)}

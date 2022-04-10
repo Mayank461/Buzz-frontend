@@ -16,11 +16,11 @@ export default function Feeds(user) {
   const [friendList, setFriendList] = useState([]);
   const [refresh, setRefresh] = useState(0);
   const [posts, setPosts] = useState([]);
-  const [loading,setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
 
   useEffect(() => {
-    console.log(userData.picture_url)
+    console.log(userData)
     loaduser();
     // console.log(user.user.friends.myFriends);
     axios
@@ -98,18 +98,19 @@ export default function Feeds(user) {
       .catch((err) => console.log(err.message));
   };
   const postDetails = () => {
-    setLoading(true);
+
 
     const commentBox = document.getElementById('comment-box').value
     const file = document.getElementById('file').value
 
     // checking validation in post field 
     if (commentBox === "" && file === "") {
-   
+
       toast.warn('Please give atleast one input');
     }
     // checking atleast one input is given or not 
     else if (commentBox === "" || file === "") {
+      setLoading(true);
       //  if only caption is given from user 
       if (commentBox !== "") {
         fetch(`${API_URL}/posts/userPost`, {
@@ -123,10 +124,12 @@ export default function Feeds(user) {
             user_id: userData._id,
           }),
         }).then((r) => setRefresh(refresh + 1));
+        setLoading(false);
         toast.success("Your post uplaoded successfully");
       }
       // if only picture is given from user side 
       else {
+        setLoading(true);
         const data = new FormData();
         data.append("file", image);
         data.append("upload_preset", "buzz-app");
@@ -147,6 +150,7 @@ export default function Feeds(user) {
                 user_id: userData._id,
               }),
             }).then((r) => setRefresh(refresh + 1));
+            setLoading(false);
             toast.success('Post uploaded successfully')
             setTitle("");
             document.getElementById("file").value = "";
@@ -160,6 +164,7 @@ export default function Feeds(user) {
 
     // if both caption and picture  inputs are given in post
     else {
+      setLoading(true);
       const data = new FormData();
       data.append("file", image);
       data.append("upload_preset", "buzz-app");
@@ -183,7 +188,7 @@ export default function Feeds(user) {
           }).then((r) => setRefresh(refresh + 1));
           setLoading(false);
           toast.success("Your post uplaoded successfully");
-  
+
 
           setTitle("");
           document.getElementById("file").value = "";
@@ -239,8 +244,8 @@ export default function Feeds(user) {
                     alt="..."
                   />
                   <div className="position-abs">
-                 <img className=" p-5  " src="https://static1.tothenew.com/blog/wp-content/themes/ttn/images/social-logo.png"></img>
-                 </div>
+                    <img className=" p-5  " src="https://static1.tothenew.com/blog/wp-content/themes/ttn/images/social-logo.png"></img>
+                  </div>
                 </div>
               </div>
             </div>
@@ -259,38 +264,43 @@ export default function Feeds(user) {
                       <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
                     )}
                   </div>
-                  <div className="w-100 ms-2">
+                  <div className="w-100 ms-2 me-2">
                     <input
                       type="text"
                       id="comment-box"
                       className="caption p-2 rounded-pill form-control"
-                      placeholder="Write Something in your mind"
+                      placeholder={`What's on your mind ${userData.firstname} ${userData.lastname} ?`}
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                     />
                   </div>
+                  <div className="text-center mt-2 d-flex align-items-center">
+
+                    <input
+                      type="file"
+                      className="myFile"
+                      id="file"
+                      onChange={(e) => setImage(e.target.files[0])}
+                    />
+                  </div>
+
                 </div>
-                <div className="text-center mt-2">
-                  <input
-                    type="file"
-                    className=""
-                    id="file"
-                    onChange={(e) => setImage(e.target.files[0])}
-                  />
-                </div>
-                <div className="text-center mt-2">
+
+
+                <div className="text-center d-grid gap-2 w-100 mt-5 text-center mt-2">
                   <button
-                    className="btn btn-danger"
+                    className="btn btn-success rounded-pill"
                     onClick={() => postDetails()}
                   >
-                    Submit
+                  Uplaod
+                  
                   </button>
-              
-             
+
+
                 </div>
-                {loading? <Spinner/>:""}
+                {loading ? <Spinner /> : ""}
               </div>
-           
+
               {posts
                 .map((element, index) => {
                   return (
@@ -359,9 +369,9 @@ export default function Feeds(user) {
           </div>{" "}
           {/* Closing row  */}
         </div>
-      
+
       </div>
-      <ToastContainer theme="colored"/>
+      <ToastContainer theme="colored" />
     </>
   );
 }
