@@ -9,6 +9,7 @@ import Navbar from './components/Navbar';
 import Userprofile from './components/Userprofile';
 import Selfprofile from './components/Selfprofile';
 import Friends from './components/Friends';
+import Admin from './components/Admin';
 
 function App() {
   const [user, setUser] = useState(false);
@@ -69,6 +70,11 @@ function App() {
           </Routes>
         </>
       )}
+
+      <Routes>
+      <Route path="/admin" element={<Admin user={user}/>} />
+        <Route/>
+      </Routes>
     </BrowserRouter>
   );
 }

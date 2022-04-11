@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 import { API_URL } from "../config";
 import Post from "./Post";
 import UserlistWidget from "./UserlistWidget";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Spinner from "./Spinner";
 import { Link } from "react-router-dom";
 import DefaultCard from "./DefaultCard";
@@ -23,12 +23,9 @@ export default function Feeds(user) {
   const [count, setCount] = useState(0)
   // let count = 0
 
-
   useEffect(() => {
-    console.log(friendList)
-
+    console.log(userData);
     loaduser();
-
     axios
       .get(`${API_URL}/posts/getPost`, { withCredentials: true })
       .then((res) => {
@@ -113,31 +110,27 @@ export default function Feeds(user) {
         `${API_URL}/posts/report`,
         {
           post_id: id,
-
         },
         { withCredentials: true }
       )
       .then((res) => {
-        setRefresh(refresh + 1)
+        setRefresh(refresh + 1);
         toast.success("Reported Successfully");
       })
       .catch((err) => console.log(err.message));
   };
   const postDetails = () => {
+    const commentBox = document.getElementById("comment-box").value;
+    const file = document.getElementById("file").value;
 
-
-    const commentBox = document.getElementById('comment-box').value
-    const file = document.getElementById('file').value
-
-    // checking validation in post field 
+    // checking validation in post field
     if (commentBox === "" && file === "") {
-
-      toast.warn('Please give atleast one input');
+      toast.warn("Please give atleast one input");
     }
-    // checking atleast one input is given or not 
+    // checking atleast one input is given or not
     else if (commentBox === "" || file === "") {
       setLoading(true);
-      //  if only caption is given from user 
+      //  if only caption is given from user
       if (commentBox !== "") {
         fetch(`${API_URL}/posts/userPost`, {
           method: "POST",
@@ -145,7 +138,6 @@ export default function Feeds(user) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-
             caption: title,
             user_id: userData._id,
           }),
@@ -153,7 +145,7 @@ export default function Feeds(user) {
         setLoading(false);
         toast.success("Your post uplaoded successfully");
       }
-      // if only picture is given from user side 
+      // if only picture is given from user side
       else {
         setLoading(true);
         const data = new FormData();
@@ -177,7 +169,7 @@ export default function Feeds(user) {
               }),
             }).then((r) => setRefresh(refresh + 1));
             setLoading(false);
-            toast.success('Post uploaded successfully')
+            toast.success("Post uploaded successfully");
             setTitle("");
             document.getElementById("file").value = "";
           })
@@ -185,7 +177,6 @@ export default function Feeds(user) {
             console.log(err);
           });
       }
-
     }
 
     // if both caption and picture  inputs are given in post
@@ -215,7 +206,6 @@ export default function Feeds(user) {
           setLoading(false);
           toast.success("Your post uplaoded successfully");
 
-
           setTitle("");
           document.getElementById("file").value = "";
         })
@@ -223,7 +213,6 @@ export default function Feeds(user) {
           console.log(err);
         });
     }
-
   };
   return (
     <>
@@ -270,7 +259,10 @@ export default function Feeds(user) {
                     alt="..."
                   />
                   <div className="position-abs">
-                    <img className=" p-5  " src="https://static1.tothenew.com/blog/wp-content/themes/ttn/images/social-logo.png"></img>
+                    <img
+                      className=" p-5  "
+                      src="https://static1.tothenew.com/blog/wp-content/themes/ttn/images/social-logo.png"
+                    ></img>
                   </div>
                 </div>
               </div>
@@ -309,20 +301,16 @@ export default function Feeds(user) {
                       onChange={(e) => setImage(e.target.files[0])}
                     />
                   </div>
-
                 </div>
 
-
-                <div className="text-center d-grid gap-2 w-100 mt-5 text-center mt-2">
+                <div className="text-center d-flex justify-content-center d-grid gap-2  mt-5 text-center mt-2">
+                  
                   <button
-                    className="btn btn-success rounded-pill"
+                    className="btn btn-success rounded-pill w-75 "
                     onClick={() => postDetails()}
                   >
                     Uplaod
-
                   </button>
-
-
                 </div>
                 {loading ? <Spinner /> : ""}
               </div>
@@ -349,7 +337,7 @@ export default function Feeds(user) {
             {/* =============================================================================== column 3rd ================================================================================================== */}
             <div className="col-md-3 side-height mt-3 ">
               {/*========================================================================= Contacts ============================================================================== */}
-              <div className=" border p-2 scroll bg-white shadow-lg p-3 mb-4 bg-body rounded border-0">
+              <div className=" border p-2 scroll bg-white shadow-lg p-3 mb-2 bg-body rounded border-0">
                 <div className="d-flex justify-content-between">
                   <div>Contacts</div>
                   <div>
@@ -398,7 +386,6 @@ export default function Feeds(user) {
           </div>{" "}
           {/* Closing row  */}
         </div>
-
       </div>
       <ToastContainer theme="colored" />
     </>

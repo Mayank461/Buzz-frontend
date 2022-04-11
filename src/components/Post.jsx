@@ -41,7 +41,7 @@ export default function Post({ index, data, inclike, deslike, commentBox, userda
   
       <div
         key={index}
-        className="card p-3 mb-3 shadow p-3 mb-5 bg-body rounded border-0"
+        className="card p-3 mb-3 shadow p-3  bg-body rounded border-0"
       >
         <div className="d-flex justify-content-between align-items-center mb-2">
           <div className="d-flex align-items-center">
