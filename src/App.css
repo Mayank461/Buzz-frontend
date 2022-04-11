@@ -81,7 +81,7 @@
   visibility: hidden;
 }
 .myFile::before{
-  content: '\f87c';
+  content: '\f1c5';
   font-family: fontAwesome;
   font-size: 30px;
   color: green;
