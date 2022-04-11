@@ -24,10 +24,11 @@ export default function Selfprofile({ user, suggestFriend }) {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/posts/getchangeprofile`, { withCredentials: true })
+      .get(`${API_URL}/users/${user._id}`, { withCredentials: true })
       .then((res) => {
         // console.log(res.data[0].posted_by.picture_url);
-        setUserData(res.data[0].posted_by.picture_url);       
+        setUserData(res.data.picture_url);  
+        // console.log(res.data.picture_url);     
       })
       .catch((err) => console.log(err.message));
   },[Refresh]);
@@ -75,7 +76,9 @@ export default function Selfprofile({ user, suggestFriend }) {
           state,
           zip,
         }),
-      }).then((res)=>{toast.success("data updated successfully")}).catch((err)=>{toast.error('Something wents wrong!!!')})
+      }).then((res)=>{toast.success("data updated successfully")
+    setRfresh(Refresh+1)
+    }).catch((err)=>{toast.error('Something wents wrong!!!')})
       
       const result = await res.json();
       if (result.status === 422 || !result) {
