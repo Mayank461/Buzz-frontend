@@ -52,7 +52,8 @@ export default function Post({ index, data, inclike, deslike, commentBox, userda
                 alt="..."
               />
             ) : (
-              <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-light d-flex justify-content-center align-items-center"></i>
+              <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img text-success d-flex justify-content-center align-items-center" style={{ backgroundColor: "#F0F2F5" }}></i>
+             
             )}
 
 
