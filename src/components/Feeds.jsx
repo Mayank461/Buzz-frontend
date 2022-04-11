@@ -1,13 +1,16 @@
 import axios from "axios";
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { API_URL } from "../config";
 import Post from "./Post";
 import UserlistWidget from "./UserlistWidget";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Spinner from "./Spinner";
+import { Link } from "react-router-dom";
+import DefaultCard from "./DefaultCard";
 
 export default function Feeds(user) {
+
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
   const [url, setUrl] = useState("");
@@ -17,6 +20,8 @@ export default function Feeds(user) {
   const [refresh, setRefresh] = useState(0);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [count, setCount] = useState(0)
+  // let count = 0
 
   useEffect(() => {
     console.log(userData);
@@ -25,15 +30,26 @@ export default function Feeds(user) {
       .get(`${API_URL}/posts/getPost`, { withCredentials: true })
       .then((res) => {
         setPosts(res.data);
+        // counting the total number of post of login user 
+        let a = 0;
+        const c = res.data.map((element) => {
+
+          if (element.posted_by._id === user.user._id) {
+            a++
+          }
+        })
+        setCount(a)
       })
       .catch((err) => console.log(err.message));
   }, [refresh]);
+
 
   const loaduser = () => {
     setUserData(user.user);
 
     setFriendList(user.user.friends.myFriends);
   };
+
   function logout() {
     axios
       .get(`${API_URL}/auth/logout`, { withCredentials: true })
@@ -66,7 +82,12 @@ export default function Feeds(user) {
       .catch((err) => console.log(err.message));
   };
   const commentBox = (id, message) => {
-    axios
+    if(message=== undefined || message ==='')
+    {
+      toast.warn("Comment box is empty... write something")
+    }
+    else{
+      axios
       .post(
         `${API_URL}/posts/comment`,
         {
@@ -77,6 +98,10 @@ export default function Feeds(user) {
       )
       .then((res) => setRefresh(refresh + 1))
       .catch((err) => console.log(err.message));
+
+    }
+
+
   };
   const reportPost = (id) => {
     // console.log(id)
@@ -215,12 +240,12 @@ export default function Feeds(user) {
                   <p className="card-text text-center">Newly Recruit at TTN </p>
                   <div className="d-flex justify-content-between mt-4">
                     <div>
-                      <div className="text-center">234</div>
-                      <div>Profile Views</div>
+                      <div className="text-center">{user.user.friends.myFriends.length}</div>
+                      <div>Friends</div>
                     </div>
                     <div className="vr border"></div>
                     <div>
-                      <div className="text-center">10</div>
+                      <div className="text-center">{count}</div>
                       <div>Post</div>
                     </div>
                   </div>
@@ -267,7 +292,8 @@ export default function Feeds(user) {
                       onChange={(e) => setTitle(e.target.value)}
                     />
                   </div>
-                  <div className="text-center mt-2 d-flex align-items-center">
+                  <div className="text-center  ">
+
                     <input
                       type="file"
                       className="myFile"
@@ -288,6 +314,7 @@ export default function Feeds(user) {
                 {loading ? <Spinner /> : ""}
               </div>
 
+
               {posts
                 .map((element, index) => {
                   return (
@@ -303,7 +330,9 @@ export default function Feeds(user) {
                   );
                 })
                 .reverse()}
-            </div>
+
+                <DefaultCard/>
+                            </div>
             {/* =============================================================================== column 3rd ================================================================================================== */}
             <div className="col-md-3 side-height mt-3 ">
               {/*========================================================================= Contacts ============================================================================== */}
@@ -324,7 +353,7 @@ export default function Feeds(user) {
                     <div>
                       {friendList.map((element, index) => {
                         return (
-                          <div className="d-flex " key={index}>
+                          <Link className="d-flex text-decoration-none mt-2 " key={index} to={'/profile/' + element._id}>
                             <div>
                               {element.picture_url ? (
                                 <img
@@ -333,13 +362,13 @@ export default function Feeds(user) {
                                   alt="..."
                                 />
                               ) : (
-                                <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
+                                <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img text-success d-flex justify-content-center align-items-center" style={{ backgroundColor: "#F0F2F5" }}></i>
                               )}
                             </div>
-                            <div className="ms-2 d-flex align-items-center">
+                            <div className="ms-2 d-flex align-items-center text-dark">
                               {element.firstname + " " + element.lastname}
                             </div>
-                          </div>
+                          </Link>
                         );
                       })}
                     </div>

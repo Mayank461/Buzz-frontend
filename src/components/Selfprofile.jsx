@@ -2,8 +2,14 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { API_URL } from '../config';
 import UserlistWidget from './UserlistWidget';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Spinner from './Spinner';
 
 export default function Selfprofile({ user, suggestFriend }) {
+  const [toogle,setToogle] = useState(false);
+  const [userdata,setUserData] = useState("");
+  const [Refresh,setRfresh] = useState(0);
   const [inputs, setInputs] = useState({
     firstname: user.firstname,
     lastname: user.lastname,
@@ -16,9 +22,15 @@ export default function Selfprofile({ user, suggestFriend }) {
     zip: user.zip,
   });
 
-  useEffect(()=>{
-    // console.log(user);
-  })
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/posts/getchangeprofile`, { withCredentials: true })
+      .then((res) => {
+        // console.log(res.data[0].posted_by.picture_url);
+        setUserData(res.data[0].posted_by.picture_url);       
+      })
+      .catch((err) => console.log(err.message));
+  },[Refresh]);
 
   const OnInputChange = (e) => {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
@@ -26,24 +38,16 @@ export default function Selfprofile({ user, suggestFriend }) {
 
   const postData = async (e) => {
     e.preventDefault();
-    const {
-      firstname,
-      lastname,
-      designation,
-      website,
-      gender,
-      birthday,
-      city,
-      state,
-      zip,
-    } = inputs;
-    console.log(inputs);
-    const res = await fetch(`${API_URL}/users/updateUser/${user._id}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    if(inputs.firstname== undefined || inputs.lastname=== undefined || inputs.gender=== undefined || inputs.birthday=== undefined)
+    {
+      toast.warn("Please fill the details");
+    }
+    else if(inputs.firstname== '' || inputs.lastname=== '' || inputs.gender=== '' || inputs.birthday=== '')
+    {
+      toast.warn("Please fill the details");
+    }
+    else{
+      const {
         firstname,
         lastname,
         designation,
@@ -53,15 +57,34 @@ export default function Selfprofile({ user, suggestFriend }) {
         city,
         state,
         zip,
-      }),
-    });
-    alert("data updated successfully")
-    const result = await res.json();
-    if (result.status === 422 || !result) {
-      console.log('success');
-    } else {
-      console.log('failed');
+      } = inputs;
+      console.log(inputs);
+      const res = await fetch(`${API_URL}/users/updateUser/${user._id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstname,
+          lastname,
+          designation,
+          website,
+          gender,
+          birthday,
+          city,
+          state,
+          zip,
+        }),
+      }).then((res)=>{toast.success("data updated successfully")}).catch((err)=>{toast.error('Something wents wrong!!!')})
+      
+      const result = await res.json();
+      if (result.status === 422 || !result) {
+        console.log('success');
+      } else {
+        console.log('failed');
+      }
     }
+   
   };
 
   const maleToggle = () => {
@@ -79,25 +102,99 @@ export default function Selfprofile({ user, suggestFriend }) {
     document.getElementById('labelMale').classList.remove('bg-success');
     const setFemale = 'Female';
     setInputs({ ...inputs, gender: setFemale });
+
+
   };
+  const reset = () => {
+    setInputs({
+      firstname: '',
+      lastname: '',
+      designation: '',
+      website: '',
+      gender: '',
+      birthday: '',
+      city: '',
+      state: '',
+      zip: '',
+    })
+  }
+  const inputpic =(e) =>{
+    // setImage(e.target.files[0]);  
+    // console.log(image);
+    setToogle(true); 
+        const data = new FormData();
+        data.append("file", e.target.files[0]);
+        data.append("upload_preset", "buzz-app-pic");
+        data.append("cloud_name", "buzz-social-app");
+        fetch("https://api.cloudinary.com/v1_1/buzz-social-app/image/upload", {
+          method: "post",
+          body: data,
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            fetch(`${API_URL}/posts/changeprofile`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                pic_url: data.url,
+                user_id: user._id                
+              }),
+            }).then((r) => setRfresh(Refresh+1));
+              
+            toast.success("Picture change successfully"); 
+            setToogle(false);
+            
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+  }
   return (
+    <>
     <div style={{ backgroundColor: '#F0F2F5' }}>
       <div className="container">
         <div className="row">
-          <div className="col-md-9 bg-white mt-3 p-2">
-            <div className="position-relative">
-              <img
-                src="https://images.unsplash.com/photo-1495277493816-4c359911b7f1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1165&q=80"
-                className="coverpic"
-              />
+          <div className="col-md-9 bg-white mt-3 p-2 shadow-lg  bg-body rounded">
+          <div className="">
+                <div className=''>
+                <img
+                  src="https://images.unsplash.com/photo-1495277493816-4c359911b7f1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1165&q=80"
+                  className="coverpic"
+                />
+                </div>
+                <div className='position-relative profilepic mid'>
+                  <div className=''>
+                  {'picture_url' in user ? (
+                    <img src={userdata} className="profilepic" />
+                  ) : (
+                    <i className="fa-solid fa-user fa-5x profilepic d-flex justify-content-center align-items-center bg-warning"></i>
+                  )}               
+                  
+                  </div>
+                  
+               <div className='position-absolute bottom-0 end-0'>
+               {/* <i className="fa-solid fa-2x fa-camera me-1"></i> */}
+               <input type='file' className='camera' onChange={(e) => {inputpic(e)}} />
+               </div>
+                
+                </div>
+                
 
-              {'picture_url' in user ? (
-                <img src={user.picture_url} className="profilepic" />
-              ) : (
-                <i className="fa-solid fa-user fa-5x profilepic  d-flex justify-content-center align-items-center bg-warning"></i>
-              )}
-            </div>
-            <h1 className="mt-5">{user.firstname + ' ' + user.lastname}</h1>
+              </div>
+              <div className='d-flex '> 
+                <div>
+                <h1 className="mt-2">{user.firstname + ' ' + user.lastname}</h1>
+                  </div> 
+                  <div className='d-flex align-items-center'>
+                  {toogle ? <Spinner></Spinner> : '' }
+                    </div>         
+              
+             
+              </div>
+            
+            
             <div>
               <form method="POST">
                 {/* 1st Row  */}
@@ -175,7 +272,7 @@ export default function Selfprofile({ user, suggestFriend }) {
                     <div className="border p-1 mt-2">
                       <input
                         type="radio"
-                       
+
                         className="btn-check"
                         name="gender"
                         id="male"
@@ -282,15 +379,16 @@ export default function Selfprofile({ user, suggestFriend }) {
                   >
                     Save
                   </button>
-                  <button className="btn border border-primary ">
-                    ResetAll
-                  </button>
+                  <div className="btn border border-primary " onClick={reset}>
+                ResetAll
+              </div>
                 </div>
               </form>
+             
             </div>
           </div>
           {/**part for suggestion */}
-          <div className="col-md-3 profile-sidebar mt-3">
+          <div className="col-md-3 profile-sidebar mt-0">
             <UserlistWidget
               title="Friends Sugesstion"
               friendList={suggestFriend}
@@ -299,5 +397,7 @@ export default function Selfprofile({ user, suggestFriend }) {
         </div>
       </div>
     </div>
+    <ToastContainer theme="colored" />
+    </>
   );
 }

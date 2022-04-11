@@ -58,7 +58,7 @@ export default function Userprofile({ suggestFriend, myData }) {
             />
             <img
               src={user.picture_url || require('../images/blank-profile.png')}
-              className="profilepic"
+              className="size"
             />
           </div>
           <div className="mx-4 ">

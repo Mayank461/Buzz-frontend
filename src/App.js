@@ -15,6 +15,8 @@ function App() {
   const [SFriend, setSFriend] = useState([]);
   useEffect(() => {
     fetchUser();
+
+    console.log(user)
   }, []);
 
   function fetchUser() {
