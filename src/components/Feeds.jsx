@@ -20,17 +20,18 @@ export default function Feeds(user) {
   const [count, setCount] = useState(0);
   const [pagination, setPagination] = useState({
     page: 0,
-    limit: 5,
-    total: 5,
+    limit: 2,
+    total: 2,
   });
   // let count = 0
 
   useEffect(() => {
-    loaduser();
-    loadPost(0, 5);
-  }, [refresh]);
+    loadPost(pagination.page);
+  }, [pagination.page]);
 
   useEffect(() => {
+    loaduser();
+
     window.addEventListener('scroll', handleScroll);
 
     axios
@@ -53,12 +54,15 @@ export default function Feeds(user) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  function handleScroll() {}
-
-  function loadMore() {
-    setPagination((pre) => ({ ...pre, page: pre.page + 1 }));
-    loadPost(pagination.page + 1);
+  function handleScroll() {
+    if (
+      Math.round(window.innerHeight + window.scrollY) >=
+      Math.round(document.body.scrollHeight)
+    ) {
+      setPagination((pre) => ({ ...pre, page: pre.page + 1 }));
+    }
   }
+
   function loadPost(page = pagination.page, limit = pagination.limit) {
     axios
       .get(`${API_URL}/posts/getPost?page=${page}&limit=${limit}`, {
@@ -70,7 +74,6 @@ export default function Feeds(user) {
 
   const loaduser = () => {
     setUserData(user.user);
-
     setFriendList(user.user.friends.myFriends);
   };
 
@@ -83,7 +86,9 @@ export default function Feeds(user) {
         },
         { withCredentials: true }
       )
-      .then((res) => setRefresh(refresh + 1))
+      .then((res) => {
+        setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)));
+      })
       .catch((err) => console.log(err.message));
   };
   const unlike = (id) => {
@@ -95,7 +100,9 @@ export default function Feeds(user) {
         },
         { withCredentials: true }
       )
-      .then((res) => setRefresh(refresh + 1))
+      .then((res) =>
+        setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)))
+      )
       .catch((err) => console.log(err.message));
   };
   const commentBox = (id, message) => {
@@ -108,7 +115,9 @@ export default function Feeds(user) {
         },
         { withCredentials: true }
       )
-      .then((res) => setRefresh(refresh + 1))
+      .then((res) =>
+        setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)))
+      )
       .catch((err) => console.log(err.message));
   };
   const reportPost = (id) => {
@@ -122,7 +131,7 @@ export default function Feeds(user) {
         { withCredentials: true }
       )
       .then((res) => {
-        setRefresh(refresh + 1);
+        setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)));
         toast.success('Reported Successfully');
       })
       .catch((err) => console.log(err.message));
@@ -149,7 +158,9 @@ export default function Feeds(user) {
             caption: title,
             user_id: userData._id,
           }),
-        }).then((r) => setRefresh(refresh + 1));
+        }).then((r) => {});
+        setPosts([]);
+        loadPost();
         setLoading(false);
         toast.success('Your post uplaoded successfully');
       }
@@ -175,7 +186,10 @@ export default function Feeds(user) {
                 pic_url: data.url,
                 user_id: userData._id,
               }),
-            }).then((r) => setRefresh(refresh + 1));
+            }).then((r) => {
+              setPosts([]);
+              loadPost();
+            });
             setLoading(false);
             toast.success('Post uploaded successfully');
             setTitle('');
@@ -210,7 +224,10 @@ export default function Feeds(user) {
               caption: title,
               user_id: userData._id,
             }),
-          }).then((r) => setRefresh(refresh + 1));
+          }).then((r) => {
+            setPosts([]);
+            loadPost();
+          });
           setLoading(false);
           toast.success('Your post uplaoded successfully');
 
@@ -338,12 +355,12 @@ export default function Feeds(user) {
               })}
 
               <div className="d-flex mb-4">
-                {console.log(pagination.total, 'total')}
-                {console.log(posts, 'len')}
                 {pagination.total !== posts.length && (
                   <div
                     className="btn btn-outline-dark mx-auto"
-                    onClick={loadMore}
+                    onClick={() =>
+                      setPagination((pre) => ({ ...pre, page: pre.page + 1 }))
+                    }
                   >
                     Load More
                   </div>
