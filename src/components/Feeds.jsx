@@ -13,9 +13,9 @@ export default function Feeds(user) {
 
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
-  const [url, setUrl] = useState("");
+  // const [url, setUrl] = useState("");
   const [userData, setUserData] = useState({});
-  const [allUsers, setAllUsers] = useState([]);
+  // const [allUsers, setAllUsers] = useState([]);
   const [friendList, setFriendList] = useState([]);
   const [refresh, setRefresh] = useState(0);
   const [posts, setPosts] = useState([]);
@@ -24,7 +24,6 @@ export default function Feeds(user) {
   // let count = 0
 
   useEffect(() => {
-    console.log(userData);
     loaduser();
     axios
       .get(`${API_URL}/posts/getPost`, { withCredentials: true })

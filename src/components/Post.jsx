@@ -29,14 +29,10 @@ export default function Post({ index, data, inclike, deslike, commentBox, userda
     else {
       box.style.display = "none"
       toggle = true;
-
     }
-
-
-
   }
 
-  return (
+   return (
     <>
   
       <div
@@ -100,7 +96,7 @@ export default function Post({ index, data, inclike, deslike, commentBox, userda
               inclike(_id);
             }}
           >
-            <i className="fa-regular fa-thumbs-up me-2"></i>Like
+          <i className="fa-regular fa-thumbs-up me-2"></i>Like
           </div>
           <div
            className="pointer"

@@ -245,12 +245,15 @@ export default function Selfprofile({ user, suggestFriend }) {
                       <option value="" disabled="true" selected="true">
                         Select Designation
                       </option>
-                      <option value="Co-Founder">Co-Founder</option>
-                      <option value="Software-Developer">
-                        Software-Developer
-                      </option>
-                      <option value="Tech Support">Tech Support</option>
-                      <option value="HR-Depatment">HR-Depatment</option>
+                      <option value="Co-Founder">1.Co-Founder</option>
+                      <option value="Co-Founder">2.Cheif-Technical-Officer</option>
+                      <option value="Co-Founder">3.Cheif-finecial-officer</option>
+                      <option value="Software-Developer">4.Software-Developer</option>
+                      <option value="Tech Support">5.Tech Support</option>
+                      <option value="HR-Depatment">6.HR-Depatment</option>
+                      <option value="Account-Department">7.Account-Department</option>
+                      <option value="Sales-Department">8.Sales-Department</option>
+                      <option value="OTT-Department">9.OTT-Department</option>
                     </select>
                   </div>
                   <div className="col-md-4">
@@ -352,10 +355,43 @@ export default function Selfprofile({ user, suggestFriend }) {
                       >
                         <option value="" disabled="true" selected="true">
                           Select State
-                        </option>
-                        <option value="New Delhi">New Delhi</option>
-                        <option value="Uttar Pradesh">Utter Pradesh</option>
-                        <option value="Bihar">Bihar</option>
+                        </option>                        
+                        <option value="Andaman and Nicobar (UT)">1.Andaman and Nicobar (UT)</option>
+                        <option value="Andhra Pradesh">2.Andhra Pradesh</option>
+                        <option value="Arunachal Pradesh">3.Arunachal Pradesh</option>
+                        <option value="Assam">4.Assam</option>
+                        <option value="Chandigarh (UT)">5.Chandigarh (UT)</option>
+                        <option value="Chhattisgarh">6.Chhattisgarh</option>
+                        <option value="Dadra and Nagar Haveli (UT)">7.Dadra and Nagar Haveli (UT)</option>
+                        <option value="Bihar">8.Bihar</option>
+                        <option value="Daman and Diu (UT)">9.Daman and Diu (UT)</option>
+                        <option value="Delhi">10.Delhi</option>
+                        <option value="Goa">11.Goa</option>
+                        <option value="Gujarat">12.Gujarat</option>
+                        <option value="Haryana">13.Haryana</option>
+                        <option value="Himachal Pradesh">14.Himachal Pradesh</option>
+                        <option value="Jammu and Kashmir">15.Jammu and Kashmir</option>
+                        <option value="Jharkhand">16.Jharkhand</option>
+                        <option value="Karnataka">17.Karnataka</option>
+                        <option value="Kerala">18.Kerala</option>
+                        <option value="Lakshadweep (UT)">19.Lakshadweep (UT)</option>
+                        <option value="Madhya Pradesh">20.Madhya Pradesh</option>
+                        <option value="Maharashtra">21.Maharashtra</option>
+                        <option value="Manipur">22.Manipur</option>
+                        <option value="Meghalaya">23.Meghalaya</option>
+                        <option value="Mizoram">24.Mizoram</option>
+                        <option value="Nagaland">25.Nagaland</option>
+                        <option value="Orissa">26.Orissa</option>
+                        <option value="Puducherry (UT)">27.Puducherry (UT)</option>
+                        <option value="Punjab">28.Punjab</option>
+                        <option value="Rajasthan">29.Rajasthan</option>
+                        <option value="Sikkim">30.Sikkim</option>
+                        <option value="Tamil Nadu">31.Tamil Nadu</option>
+                        <option value="Telangana">32.Telangana</option>
+                        <option value="Tripura">33.Tripura</option>
+                        <option value="Uttar Pradesh">34.Uttar Pradesh</option>
+                        <option value="Uttarakhand">35.Uttarakhand</option>
+                        <option value="West Bengal">36.West Bengal</option>
                       </select>
                     </div>
                     <div className="col">
@@ -377,7 +413,7 @@ export default function Selfprofile({ user, suggestFriend }) {
                 <div className="d-flex mt-5">
                   <button
                     type="submit"
-                    className="btn btn-primary me-3"
+                    className="btn btn-success me-3"
                     onClick={postData}
                   >
                     Save
