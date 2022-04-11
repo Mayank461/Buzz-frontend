@@ -1,63 +1,78 @@
-import axios from "axios";
-import React, {  useEffect, useState } from "react";
-import { API_URL } from "../config";
-import Post from "./Post";
-import UserlistWidget from "./UserlistWidget";
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { API_URL } from '../config';
+import Post from './Post';
+import UserlistWidget from './UserlistWidget';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Spinner from "./Spinner";
+import Spinner from './Spinner';
 
 export default function Feeds(user) {
-  
-  const [title, setTitle] = useState("");
-  const [image, setImage] = useState("");
-  const [url, setUrl] = useState("");
+  const [title, setTitle] = useState('');
+  const [image, setImage] = useState('');
+  const [url, setUrl] = useState('');
   const [userData, setUserData] = useState({});
   const [allUsers, setAllUsers] = useState([]);
   const [friendList, setFriendList] = useState([]);
   const [refresh, setRefresh] = useState(0);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [count,setCount] = useState(0)
+  const [count, setCount] = useState(0);
+  const [pagination, setPagination] = useState({
+    page: 0,
+    limit: 5,
+    total: 5,
+  });
   // let count = 0
 
-
   useEffect(() => {
-    
-
     loaduser();
-
-    axios
-      .get(`${API_URL}/posts/getPost`, { withCredentials: true })
-      .then((res) => {
-        setPosts(res.data);
-        // counting the total number of post of login user 
-        let a=0;
-        const c = res.data.map((element)=>{
-          
-             if(element.posted_by._id === user.user._id)
-             {
-               a++
-             }
-         })
-         setCount(a)
-      })
-      .catch((err) => console.log(err.message));
+    loadPost(0, 5);
   }, [refresh]);
 
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+
+    axios
+      .get(`${API_URL}/posts/getPost?page=0&limit=10000000000000000`, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        // counting the total number of post of login user
+        let a = 0;
+        const c = res.data.map((element) => {
+          if (element.posted_by._id === user.user._id) {
+            a++;
+          }
+        });
+        setCount(a);
+        setPagination((pre) => ({ ...pre, total: res.data.length }));
+      })
+      .catch((err) => console.log(err.message));
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  function handleScroll() {}
+
+  function loadMore() {
+    setPagination((pre) => ({ ...pre, page: pre.page + 1 }));
+    loadPost(pagination.page + 1);
+  }
+  function loadPost(page = pagination.page, limit = pagination.limit) {
+    axios
+      .get(`${API_URL}/posts/getPost?page=${page}&limit=${limit}`, {
+        withCredentials: true,
+      })
+      .then((res) => setPosts((prev) => [...prev, ...res.data]))
+      .catch((err) => console.log(err.message));
+  }
 
   const loaduser = () => {
     setUserData(user.user);
 
     setFriendList(user.user.friends.myFriends);
   };
- 
-  function logout() {
-    axios
-      .get(`${API_URL}/auth/logout`, { withCredentials: true })
-      .then((res) => console.log(res.data[1]))
-      .catch((err) => console.log(err.message));
-  }
 
   const Inlike = (id) => {
     axios
@@ -95,7 +110,6 @@ export default function Feeds(user) {
       )
       .then((res) => setRefresh(refresh + 1))
       .catch((err) => console.log(err.message));
-
   };
   const reportPost = (id) => {
     // console.log(id)
@@ -104,63 +118,58 @@ export default function Feeds(user) {
         `${API_URL}/posts/report`,
         {
           post_id: id,
-
         },
         { withCredentials: true }
       )
       .then((res) => {
-        setRefresh(refresh + 1)
-        toast.success("Reported Successfully");
+        setRefresh(refresh + 1);
+        toast.success('Reported Successfully');
       })
       .catch((err) => console.log(err.message));
   };
   const postDetails = () => {
+    const commentBox = document.getElementById('comment-box').value;
+    const file = document.getElementById('file').value;
 
-
-    const commentBox = document.getElementById('comment-box').value
-    const file = document.getElementById('file').value
-
-    // checking validation in post field 
-    if (commentBox === "" && file === "") {
-
+    // checking validation in post field
+    if (commentBox === '' && file === '') {
       toast.warn('Please give atleast one input');
     }
-    // checking atleast one input is given or not 
-    else if (commentBox === "" || file === "") {
+    // checking atleast one input is given or not
+    else if (commentBox === '' || file === '') {
       setLoading(true);
-      //  if only caption is given from user 
-      if (commentBox !== "") {
+      //  if only caption is given from user
+      if (commentBox !== '') {
         fetch(`${API_URL}/posts/userPost`, {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-
             caption: title,
             user_id: userData._id,
           }),
         }).then((r) => setRefresh(refresh + 1));
         setLoading(false);
-        toast.success("Your post uplaoded successfully");
+        toast.success('Your post uplaoded successfully');
       }
-      // if only picture is given from user side 
+      // if only picture is given from user side
       else {
         setLoading(true);
         const data = new FormData();
-        data.append("file", image);
-        data.append("upload_preset", "buzz-app");
-        data.append("cloud_name", "buzz-social-app");
-        fetch("https://api.cloudinary.com/v1_1/buzz-social-app/image/upload", {
-          method: "post",
+        data.append('file', image);
+        data.append('upload_preset', 'buzz-app');
+        data.append('cloud_name', 'buzz-social-app');
+        fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
+          method: 'post',
           body: data,
         })
           .then((res) => res.json())
           .then((data) => {
             fetch(`${API_URL}/posts/userPost`, {
-              method: "POST",
+              method: 'POST',
               headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
               },
               body: JSON.stringify({
                 pic_url: data.url,
@@ -168,34 +177,33 @@ export default function Feeds(user) {
               }),
             }).then((r) => setRefresh(refresh + 1));
             setLoading(false);
-            toast.success('Post uploaded successfully')
-            setTitle("");
-            document.getElementById("file").value = "";
+            toast.success('Post uploaded successfully');
+            setTitle('');
+            document.getElementById('file').value = '';
           })
           .catch((err) => {
             console.log(err);
           });
       }
-
     }
 
     // if both caption and picture  inputs are given in post
     else {
       setLoading(true);
       const data = new FormData();
-      data.append("file", image);
-      data.append("upload_preset", "buzz-app");
-      data.append("cloud_name", "buzz-social-app");
-      fetch("https://api.cloudinary.com/v1_1/buzz-social-app/image/upload", {
-        method: "post",
+      data.append('file', image);
+      data.append('upload_preset', 'buzz-app');
+      data.append('cloud_name', 'buzz-social-app');
+      fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
+        method: 'post',
         body: data,
       })
         .then((res) => res.json())
         .then((data) => {
           fetch(`${API_URL}/posts/userPost`, {
-            method: "POST",
+            method: 'POST',
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify({
               pic_url: data.url,
@@ -204,28 +212,26 @@ export default function Feeds(user) {
             }),
           }).then((r) => setRefresh(refresh + 1));
           setLoading(false);
-          toast.success("Your post uplaoded successfully");
+          toast.success('Your post uplaoded successfully');
 
-
-          setTitle("");
-          document.getElementById("file").value = "";
+          setTitle('');
+          document.getElementById('file').value = '';
         })
         .catch((err) => {
           console.log(err);
         });
     }
-
   };
   return (
     <>
-      <div style={{ backgroundColor: "#F0F2F5" }}>
+      <div style={{ backgroundColor: '#F0F2F5' }}>
         <div className="container">
           <div className="row">
             {/* ================================================================== column 1st  ====================================================================*/}
             <div className="col-md-3 mt-3">
               <div className="card p-5 shadow-lg p-3 mb-2 bg-body rounded border-0">
                 <div className="d-flex justify-content-center">
-                  {"picture_url" in userData ? (
+                  {'picture_url' in userData ? (
                     <img
                       src={userData.picture_url}
                       className="card-img-top small-round-pic  round-img"
@@ -237,12 +243,14 @@ export default function Feeds(user) {
                 </div>
                 <div className="card-body">
                   <h5 className="card-title text-center">
-                    {userData.firstname + " " + userData.lastname}
+                    {userData.firstname + ' ' + userData.lastname}
                   </h5>
                   <p className="card-text text-center">Newly Recruit at TTN </p>
                   <div className="d-flex justify-content-between mt-4">
                     <div>
-                      <div className="text-center">{user.user.friends.myFriends.length}</div>
+                      <div className="text-center">
+                        {user.user.friends.myFriends.length}
+                      </div>
                       <div>Friends</div>
                     </div>
                     <div className="vr border"></div>
@@ -261,17 +269,20 @@ export default function Feeds(user) {
                     alt="..."
                   />
                   <div className="position-abs">
-                    <img className=" p-5  " src="https://static1.tothenew.com/blog/wp-content/themes/ttn/images/social-logo.png"></img>
+                    <img
+                      className=" p-5  "
+                      src="https://static1.tothenew.com/blog/wp-content/themes/ttn/images/social-logo.png"
+                    ></img>
                   </div>
                 </div>
               </div>
             </div>
             {/* =======================================================================column 2nd ======================================================================== */}
-            <div className="col-md-6  scroll-mid mt-3  position-relative">
+            <div className="col-md-6   mt-3  position-relative">
               <div className="shadow p-3 mb-4 bg-body rounded">
                 <div className="d-flex align-items-center">
                   <div className="">
-                    {"picture_url" in userData ? (
+                    {'picture_url' in userData ? (
                       <img
                         src={userData.picture_url}
                         className="card-img-top small-round-pic  round-img"
@@ -292,7 +303,6 @@ export default function Feeds(user) {
                     />
                   </div>
                   <div className="text-center mt-2 d-flex align-items-center">
-
                     <input
                       type="file"
                       className="myFile"
@@ -300,39 +310,45 @@ export default function Feeds(user) {
                       onChange={(e) => setImage(e.target.files[0])}
                     />
                   </div>
-
                 </div>
-
 
                 <div className="text-center d-grid gap-2 w-100 mt-5 text-center mt-2">
                   <button
                     className="btn btn-success rounded-pill"
                     onClick={() => postDetails()}
                   >
-                  Uplaod
-                  
+                    Uplaod
                   </button>
-
-
                 </div>
-                {loading ? <Spinner /> : ""}
+                {loading ? <Spinner /> : ''}
               </div>
 
-              {posts
-                .map((element, index) => {
-                  return (
-                    <Post
-                      index={index}
-                      data={element}
-                      inclike={Inlike}
-                      deslike={unlike}
-                      commentBox={commentBox}
-                      userdata={userData}
-                      reportPost={reportPost}
-                    />
-                  );
-                })
-                .reverse()}
+              {posts.map((element, index) => {
+                return (
+                  <Post
+                    index={index}
+                    data={element}
+                    inclike={Inlike}
+                    deslike={unlike}
+                    commentBox={commentBox}
+                    userdata={userData}
+                    reportPost={reportPost}
+                  />
+                );
+              })}
+
+              <div className="d-flex mb-4">
+                {console.log(pagination.total, 'total')}
+                {console.log(posts, 'len')}
+                {pagination.total !== posts.length && (
+                  <div
+                    className="btn btn-outline-dark mx-auto"
+                    onClick={loadMore}
+                  >
+                    Load More
+                  </div>
+                )}
+              </div>
             </div>
             {/* =============================================================================== column 3rd ================================================================================================== */}
             <div className="col-md-3 side-height mt-3 ">
@@ -367,7 +383,7 @@ export default function Feeds(user) {
                               )}
                             </div>
                             <div className="ms-2 d-flex align-items-center">
-                              {element.firstname + " " + element.lastname}
+                              {element.firstname + ' ' + element.lastname}
                             </div>
                           </div>
                         );
@@ -378,15 +394,14 @@ export default function Feeds(user) {
               </div>
               {/*============================================================================ Suggestuons ================================================================================== */}
               <UserlistWidget
-                title={"Friends Sugesstions"}
+                title={'Friends Sugesstions'}
                 friendList={user.suggestFriend}
               />
-            </div>{" "}
+            </div>{' '}
             {/* closing 3rd column  */}
-          </div>{" "}
+          </div>{' '}
           {/* Closing row  */}
         </div>
-
       </div>
       <ToastContainer theme="colored" />
     </>
