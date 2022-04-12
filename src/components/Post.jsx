@@ -135,7 +135,7 @@ export default function Post({ index, data, inclike, deslike, commentBox, userda
             <input
               type="text"
               className="form-control  rounded-pill  p-2"
-
+              id='com-ref'
               placeholder="Write a comment..."
               onChange={(e) => oninputchange(e)}
 

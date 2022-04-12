@@ -13,9 +13,9 @@ export default function Feeds(user) {
 
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
-  // const [url, setUrl] = useState("");
+  const [url, setUrl] = useState("");
   const [userData, setUserData] = useState({});
-  // const [allUsers, setAllUsers] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
   const [friendList, setFriendList] = useState([]);
   const [refresh, setRefresh] = useState(0);
   const [posts, setPosts] = useState([]);
@@ -174,6 +174,8 @@ export default function Feeds(user) {
         loadPost();
         setLoading(false);
         toast.success('Your post uplaoded successfully');
+        setTitle('');
+        document.getElementById('file').value = '';
     
       }
       // if only picture is given from user side
@@ -261,7 +263,7 @@ export default function Feeds(user) {
         <div className="container">
           <div className="row">
            
-          <div className="col-md-3 sticky side-height mt-3 ">
+            <div className="col-md-3 sticky side-height mt-3 ">
               {/*========================================================================= column 1st ============================================================================== */}
               <div className="card p-5 shadow-lg p-3 mb-2 bg-body rounded border-0">
                 <div className="d-flex justify-content-center">
@@ -356,7 +358,7 @@ export default function Feeds(user) {
                 </div>
                 {loading ? <Spinner /> : ''}
               </div>
-
+                 
               {posts.map((element, index) => {
                 return (
                   <Post
@@ -370,6 +372,7 @@ export default function Feeds(user) {
                   />
                 );
               })}
+            
               {posts.length>0 ?"":  <DefaultCard></DefaultCard>}
             
 
@@ -387,7 +390,7 @@ export default function Feeds(user) {
               </div>
             </div>
             {/* =============================================================================== column 3rd ================================================================================================== */}
-            <div className="col-md-3 side-height mt-3 sticky ">
+            <div className="col-md-3 sticky side-height mt-3 ">
               {/*========================================================================= Contacts ============================================================================== */}
               <div className=" border p-2 scroll bg-white shadow-lg p-3 mb-4 bg-body rounded border-0">
                 <div className="d-flex justify-content-between">
@@ -406,7 +409,11 @@ export default function Feeds(user) {
                     <div>
                       {friendList.map((element, index) => {
                         return (
-                          <Link className="d-flex text-decoration-none mt-2 " key={index} to={'/profile/' + element._id}>
+                          <Link
+                            className="d-flex text-decoration-none mt-2 "
+                            key={index}
+                            to={'/profile/' + element._id}
+                          >
                             <div>
                               {element.picture_url ? (
                                 <img
@@ -421,7 +428,7 @@ export default function Feeds(user) {
                                 ></i>
                               )}
                             </div>
-                            <div className="ms-2 d-flex align-items-center">
+                            <div className="ms-2 d-flex text-dark align-items-center">
                               {element.firstname + ' ' + element.lastname}
                             </div>
                           </Link>
@@ -436,7 +443,7 @@ export default function Feeds(user) {
                 title={'Friends Sugesstions'}
                 friendList={user.suggestFriend}
               />
-            </div>{' '}
+            </div>
             {/* closing 3rd column  */}
           </div>{' '}
           {/* Closing row  */}
@@ -445,4 +452,5 @@ export default function Feeds(user) {
       <ToastContainer theme="colored" />
     </>
   );
+
 }
