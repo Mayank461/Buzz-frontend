@@ -65,7 +65,7 @@ export default function Userprofile({ suggestFriend, myData, refresh }) {
             />
           </div>
           <div className="mx-4 ">
-            <h1 className="mt-5">{user.firstname + ' ' + user.lastname}</h1>
+            <h1 className="mt-5"> {"firstname" in user?user.firstname + ' ' + user.lastname:"Unknown User"}</h1>
             <p>{user.bio} </p>
             <p>
               {`${user?.city} , ${user?.state} , India | ${user?.friends?.myFriends?.length}  Friend`}

@@ -188,7 +188,7 @@ export default function Selfprofile({ user, suggestFriend }) {
               </div>
               <div className='d-flex '> 
                 <div>
-                <h1 className="mt-2">{user.firstname + ' ' + user.lastname}</h1>
+                <h1 className="mt-2 ms-3">{"firstname" in user?user.firstname + ' ' + user.lastname:"Edit Profile"}</h1>
                   </div> 
                   <div className='d-flex align-items-center'>
                   {toogle ? <Spinner></Spinner> : '' }

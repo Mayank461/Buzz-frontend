@@ -279,7 +279,8 @@ export default function Feeds(user) {
                 </div>
                 <div className="card-body">
                   <h5 className="card-title text-center">
-                    {userData.firstname + ' ' + userData.lastname}
+                  {"firstname" in userData?userData.firstname + ' ' + userData.lastname:"Edit Profile"}
+                   
                   </h5>
                   <p className="card-text text-center">Newly Recruit at TTN </p>
                   <div className="d-flex justify-content-between mt-4">
@@ -429,7 +430,7 @@ export default function Feeds(user) {
                               )}
                             </div>
                             <div className="ms-2 d-flex text-dark align-items-center">
-                              {element.firstname + ' ' + element.lastname}
+                            {"firstname" in element?element.firstname + ' ' + element.lastname:"Unknown User"}
                             </div>
                           </Link>
                         );
