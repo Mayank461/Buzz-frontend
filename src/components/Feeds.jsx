@@ -260,8 +260,9 @@ export default function Feeds(user) {
       <div style={{ backgroundColor: '#F0F2F5' }}>
         <div className="container">
           <div className="row">
-            {/* ================================================================== column 1st  ====================================================================*/}
-            <div className="col-md-3 mt-3">
+           
+            <div className="col-md-3 sticky side-height mt-3 ">
+              {/*========================================================================= column 1st ============================================================================== */}
               <div className="card p-5 shadow-lg p-3 mb-2 bg-body rounded border-0">
                 <div className="d-flex justify-content-center">
                   {'picture_url' in userData ? (
@@ -298,7 +299,7 @@ export default function Feeds(user) {
                 <div className="card ">
                   <img
                     src="https://media-s3-us-east-1.ceros.com/abbott/images/2020/06/18/5003c26bb33afd98eb9dc65ba64e18d0/asset-1.png?imageOpt=1"
-                    className="card-img-top position-relative"
+                    className="card-img-top position-relative "
                     alt="..."
                   />
                   <div className="position-abs">
@@ -355,7 +356,7 @@ export default function Feeds(user) {
                 </div>
                 {loading ? <Spinner /> : ''}
               </div>
-
+                 
               {posts.map((element, index) => {
                 return (
                   <Post
@@ -369,6 +370,7 @@ export default function Feeds(user) {
                   />
                 );
               })}
+            
               {posts.length>0 ?"":  <DefaultCard></DefaultCard>}
             
 
@@ -386,7 +388,7 @@ export default function Feeds(user) {
               </div>
             </div>
             {/* =============================================================================== column 3rd ================================================================================================== */}
-            <div className="col-md-3 side-height mt-3 ">
+            <div className="col-md-3 sticky side-height mt-3 ">
               {/*========================================================================= Contacts ============================================================================== */}
               <div className=" border p-2 scroll bg-white shadow-lg p-3 mb-4 bg-body rounded border-0">
                 <div className="d-flex justify-content-between">
@@ -439,7 +441,7 @@ export default function Feeds(user) {
                 title={'Friends Sugesstions'}
                 friendList={user.suggestFriend}
               />
-            </div>{' '}
+            </div>
             {/* closing 3rd column  */}
           </div>{' '}
           {/* Closing row  */}

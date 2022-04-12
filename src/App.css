@@ -127,3 +127,7 @@
 .camera:hover{
   background-color: #F0F2F5;
 }
+.sticky{
+  position: sticky;
+  top: 0;
+}
