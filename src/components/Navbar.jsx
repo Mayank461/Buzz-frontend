@@ -16,7 +16,7 @@ export default function Navbar({ user }) {
 
   return (
     <>
-      <nav className="navbar navbar-light bg-light p-0">
+      <nav className="navbar  navbar-light bg-light p-0">
         <div className="container-fluid">
           <div>
             <Link to={'/'}>
@@ -42,8 +42,7 @@ export default function Navbar({ user }) {
                   )}
                 </div>
                 <div className="d-flex align-items-center ms-2">
-                  {/* add funtionality for new user */}
-                  {user.firstname + ' ' + user.lastname}
+                  {"firstname" in user?user.firstname + ' ' + user.lastname:"Edit Profile"}
                 </div>
               </div>
             </Link>
