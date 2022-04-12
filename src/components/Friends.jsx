@@ -3,14 +3,15 @@ import React from 'react';
 import { API_URL } from '../config';
 import UserlistWidget from './UserlistWidget';
 
-function Friends({ user }) {
+function Friends({ user, refresh }) {
   function handleConfirmRequest(id) {
     axios
       .get(`${API_URL}/users/confirmRequest/${id}`, {
         withCredentials: true,
       })
       .then((res) => {
-        alert('Friend added');
+        refresh();
+        // alert('Friend added');
       })
       .catch((err) => console.log(err.message));
   }
@@ -20,7 +21,8 @@ function Friends({ user }) {
         withCredentials: true,
       })
       .then((res) => {
-        alert('Request cancelled');
+        refresh();
+        // alert('Request cancelled');
       })
       .catch((err) => console.log(err.message));
   }

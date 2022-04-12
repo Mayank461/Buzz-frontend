@@ -20,42 +20,66 @@ export default function Feeds(user) {
   const [refresh, setRefresh] = useState(0);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
+  const [pagination, setPagination] = useState({
+    page: 0,
+    limit: 4,
+    total: 4,
+  });
   // let count = 0
 
   useEffect(() => {
-    console.log(userData);
+    loadPost(pagination.page);
+    
+  }, [pagination.page]);
+
+  useEffect(() => {
     loaduser();
+
+    window.addEventListener('scroll', handleScroll);
+
     axios
-      .get(`${API_URL}/posts/getPost`, { withCredentials: true })
+      .get(`${API_URL}/posts/getPost?page=0&limit=10000000000000000`, {
+        withCredentials: true,
+      })
       .then((res) => {
-        setPosts(res.data);
-        // counting the total number of post of login user 
+        // counting the total number of post of login user
         let a = 0;
         const c = res.data.map((element) => {
-
           if (element.posted_by._id === user.user._id) {
-            a++
+            a++;
           }
-        })
-        setCount(a)
+        });
+        setCount(a);
+        setPagination((pre) => ({ ...pre, total: res.data.length }));
       })
       .catch((err) => console.log(err.message));
+
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [refresh]);
 
+  function handleScroll() {
+    if (
+      Math.round(window.innerHeight + window.scrollY) >=
+      Math.round(document.body.scrollHeight)
+    ) {
+      setPagination((pre) => ({ ...pre, page: pre.page + 1 }));
+    }
+  }
+
+  function loadPost(page = pagination.page, limit = pagination.limit) {
+    axios
+      .get(`${API_URL}/posts/getPost?page=${page}&limit=${limit}`, {
+        withCredentials: true,
+      })
+      .then((res) => setPosts((prev) => [...prev, ...res.data]))
+      .catch((err) => console.log(err.message));
+  }
 
   const loaduser = () => {
     setUserData(user.user);
-
     setFriendList(user.user.friends.myFriends);
   };
-
-  function logout() {
-    axios
-      .get(`${API_URL}/auth/logout`, { withCredentials: true })
-      .then((res) => console.log(res.data[1]))
-      .catch((err) => console.log(err.message));
-  }
 
   const Inlike = (id) => {
     axios
@@ -66,7 +90,9 @@ export default function Feeds(user) {
         },
         { withCredentials: true }
       )
-      .then((res) => setRefresh(refresh + 1))
+      .then((res) => {
+        setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)));
+      })
       .catch((err) => console.log(err.message));
   };
   const unlike = (id) => {
@@ -78,7 +104,9 @@ export default function Feeds(user) {
         },
         { withCredentials: true }
       )
-      .then((res) => setRefresh(refresh + 1))
+      .then((res) =>
+        setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)))
+      )
       .catch((err) => console.log(err.message));
   };
   const commentBox = (id, message) => {
@@ -96,13 +124,12 @@ export default function Feeds(user) {
         },
         { withCredentials: true }
       )
-      .then((res) => setRefresh(refresh + 1))
+      .then((res) =>
+        setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)))
+      )
       .catch((err) => console.log(err.message));
-
-    }
-
-
-  };
+  }
+}
   const reportPost = (id) => {
     // console.log(id)
     axios
@@ -114,64 +141,72 @@ export default function Feeds(user) {
         { withCredentials: true }
       )
       .then((res) => {
-        setRefresh(refresh + 1);
-        toast.success("Reported Successfully");
+        setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)));
+        toast.success('Reported Successfully');
       })
       .catch((err) => console.log(err.message));
   };
   const postDetails = () => {
-    const commentBox = document.getElementById("comment-box").value;
-    const file = document.getElementById("file").value;
+    const commentBox = document.getElementById('comment-box').value;
+    const file = document.getElementById('file').value;
 
     // checking validation in post field
-    if (commentBox === "" && file === "") {
-      toast.warn("Please give atleast one input");
+    if (commentBox === '' && file === '') {
+      toast.warn('Please give atleast one input');
     }
     // checking atleast one input is given or not
-    else if (commentBox === "" || file === "") {
+    else if (commentBox === '' || file === '') {
       setLoading(true);
       //  if only caption is given from user
-      if (commentBox !== "") {
+      if (commentBox !== '') {
         fetch(`${API_URL}/posts/userPost`, {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             caption: title,
             user_id: userData._id,
           }),
-        }).then((r) => setRefresh(refresh + 1));
+        }).then((r) => { setRefresh(refresh+1)});
+       
+        setPosts([]);
+        loadPost();
         setLoading(false);
-        toast.success("Your post uplaoded successfully");
+        toast.success('Your post uplaoded successfully');
+    
       }
       // if only picture is given from user side
       else {
         setLoading(true);
         const data = new FormData();
-        data.append("file", image);
-        data.append("upload_preset", "buzz-app");
-        data.append("cloud_name", "buzz-social-app");
-        fetch("https://api.cloudinary.com/v1_1/buzz-social-app/image/upload", {
-          method: "post",
+        data.append('file', image);
+        data.append('upload_preset', 'buzz-app');
+        data.append('cloud_name', 'buzz-social-app');
+        fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
+          method: 'post',
           body: data,
         })
           .then((res) => res.json())
           .then((data) => {
             fetch(`${API_URL}/posts/userPost`, {
-              method: "POST",
+              method: 'POST',
               headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
               },
               body: JSON.stringify({
                 pic_url: data.url,
                 user_id: userData._id,
               }),
-            }).then((r) => setRefresh(refresh + 1));
+            }).then((r) => {
+             setRefresh(refresh+1)
+              setPosts([]);
+              loadPost();
+            });
             setLoading(false);
-            toast.success("Post uploaded successfully");
-            setTitle("");
-            document.getElementById("file").value = "";
+            toast.success('Post uploaded successfully');
+            setTitle('');
+            document.getElementById('file').value = '';
           })
           .catch((err) => {
             console.log(err);
@@ -183,47 +218,53 @@ export default function Feeds(user) {
     else {
       setLoading(true);
       const data = new FormData();
-      data.append("file", image);
-      data.append("upload_preset", "buzz-app");
-      data.append("cloud_name", "buzz-social-app");
-      fetch("https://api.cloudinary.com/v1_1/buzz-social-app/image/upload", {
-        method: "post",
+      data.append('file', image);
+      data.append('upload_preset', 'buzz-app');
+      data.append('cloud_name', 'buzz-social-app');
+      fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
+        method: 'post',
         body: data,
       })
         .then((res) => res.json())
         .then((data) => {
           fetch(`${API_URL}/posts/userPost`, {
-            method: "POST",
+            method: 'POST',
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify({
               pic_url: data.url,
               caption: title,
               user_id: userData._id,
             }),
-          }).then((r) => setRefresh(refresh + 1));
+          }).then((r) => {
+          setRefresh(refresh+1)
+            setPosts([]);
+            loadPost();
+          });
           setLoading(false);
-          toast.success("Your post uplaoded successfully");
+          toast.success('Your post uplaoded successfully');
 
-          setTitle("");
-          document.getElementById("file").value = "";
+          setTitle('');
+          document.getElementById('file').value = '';
         })
         .catch((err) => {
           console.log(err);
         });
     }
   };
+
+  
   return (
     <>
-      <div style={{ backgroundColor: "#F0F2F5" }}>
+      <div style={{ backgroundColor: '#F0F2F5' }}>
         <div className="container">
           <div className="row">
             {/* ================================================================== column 1st  ====================================================================*/}
             <div className="col-md-3 mt-3">
               <div className="card p-5 shadow-lg p-3 mb-2 bg-body rounded border-0">
                 <div className="d-flex justify-content-center">
-                  {"picture_url" in userData ? (
+                  {'picture_url' in userData ? (
                     <img
                       src={userData.picture_url}
                       className="card-img-top small-round-pic  round-img"
@@ -235,12 +276,14 @@ export default function Feeds(user) {
                 </div>
                 <div className="card-body">
                   <h5 className="card-title text-center">
-                    {userData.firstname + " " + userData.lastname}
+                    {userData.firstname + ' ' + userData.lastname}
                   </h5>
                   <p className="card-text text-center">Newly Recruit at TTN </p>
                   <div className="d-flex justify-content-between mt-4">
                     <div>
-                      <div className="text-center">{user.user.friends.myFriends.length}</div>
+                      <div className="text-center">
+                        {user.user.friends.myFriends.length}
+                      </div>
                       <div>Friends</div>
                     </div>
                     <div className="vr border"></div>
@@ -268,11 +311,11 @@ export default function Feeds(user) {
               </div>
             </div>
             {/* =======================================================================column 2nd ======================================================================== */}
-            <div className="col-md-6  scroll-mid mt-3  position-relative">
+            <div className="col-md-6   mt-3  position-relative">
               <div className="shadow p-3 mb-4 bg-body rounded">
                 <div className="d-flex align-items-center">
                   <div className="">
-                    {"picture_url" in userData ? (
+                    {'picture_url' in userData ? (
                       <img
                         src={userData.picture_url}
                         className="card-img-top small-round-pic  round-img"
@@ -292,8 +335,7 @@ export default function Feeds(user) {
                       onChange={(e) => setTitle(e.target.value)}
                     />
                   </div>
-                  <div className="text-center  ">
-
+                  <div className="text-center mt-2 d-flex align-items-center">
                     <input
                       type="file"
                       className="myFile"
@@ -303,41 +345,50 @@ export default function Feeds(user) {
                   </div>
                 </div>
 
-                <div className="text-center d-flex justify-content-center d-grid gap-2  mt-5 text-center mt-2">
-                  
+                <div className="text-center d-grid gap-2 w-100 mt-5 text-center mt-2">
                   <button
-                    className="btn btn-success rounded-pill w-75 "
+                    className="btn btn-success rounded-pill"
                     onClick={() => postDetails()}
                   >
                     Uplaod
                   </button>
                 </div>
-                {loading ? <Spinner /> : ""}
+                {loading ? <Spinner /> : ''}
               </div>
 
+              {posts.map((element, index) => {
+                return (
+                  <Post
+                    index={index}
+                    data={element}
+                    inclike={Inlike}
+                    deslike={unlike}
+                    commentBox={commentBox}
+                    userdata={userData}
+                    reportPost={reportPost}
+                  />
+                );
+              })}
+              {posts.length>0 ?"":  <DefaultCard></DefaultCard>}
+            
 
-              {posts
-                .map((element, index) => {
-                  return (
-                    <Post
-                      index={index}
-                      data={element}
-                      inclike={Inlike}
-                      deslike={unlike}
-                      commentBox={commentBox}
-                      userdata={userData}
-                      reportPost={reportPost}
-                    />
-                  );
-                })
-                .reverse()}
-
-                <DefaultCard/>
-                            </div>
+              <div className="d-flex mb-4">
+                {pagination.total !== posts.length && (
+                  <div
+                    className="btn btn-outline-dark mx-auto"
+                    onClick={() =>
+                      setPagination((pre) => ({ ...pre, page: pre.page + 1 }))
+                    }
+                  >
+                    Load More
+                  </div>
+                )}
+              </div>
+            </div>
             {/* =============================================================================== column 3rd ================================================================================================== */}
             <div className="col-md-3 side-height mt-3 ">
               {/*========================================================================= Contacts ============================================================================== */}
-              <div className=" border p-2 scroll bg-white shadow-lg p-3 mb-2 bg-body rounded border-0">
+              <div className=" border p-2 scroll bg-white shadow-lg p-3 mb-4 bg-body rounded border-0">
                 <div className="d-flex justify-content-between">
                   <div>Contacts</div>
                   <div>
@@ -354,7 +405,11 @@ export default function Feeds(user) {
                     <div>
                       {friendList.map((element, index) => {
                         return (
-                          <Link className="d-flex text-decoration-none mt-2 " key={index} to={'/profile/' + element._id}>
+                          <Link
+                            className="d-flex text-decoration-none mt-2 "
+                            key={index}
+                            to={'/profile/' + element._id}
+                          >
                             <div>
                               {element.picture_url ? (
                                 <img
@@ -363,11 +418,14 @@ export default function Feeds(user) {
                                   alt="..."
                                 />
                               ) : (
-                                <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img text-success d-flex justify-content-center align-items-center" style={{ backgroundColor: "#F0F2F5" }}></i>
+                                <i
+                                  className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img text-success d-flex justify-content-center align-items-center"
+                                  style={{ backgroundColor: '#F0F2F5' }}
+                                ></i>
                               )}
                             </div>
-                            <div className="ms-2 d-flex align-items-center text-dark">
-                              {element.firstname + " " + element.lastname}
+                            <div className="ms-2 d-flex align-items-center">
+                              {element.firstname + ' ' + element.lastname}
                             </div>
                           </Link>
                         );
@@ -378,16 +436,17 @@ export default function Feeds(user) {
               </div>
               {/*============================================================================ Suggestuons ================================================================================== */}
               <UserlistWidget
-                title={"Friends Sugesstions"}
+                title={'Friends Sugesstions'}
                 friendList={user.suggestFriend}
               />
-            </div>{" "}
+            </div>{' '}
             {/* closing 3rd column  */}
-          </div>{" "}
+          </div>{' '}
           {/* Closing row  */}
         </div>
       </div>
       <ToastContainer theme="colored" />
     </>
   );
+
 }
