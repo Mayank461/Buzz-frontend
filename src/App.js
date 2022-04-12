@@ -67,12 +67,13 @@ function App() {
         <>
           <Routes>
             <Route path="*" element={<Login fetchUser={fetchUser} />} />
+            <Route exact path="/admin" element={<Admin user={user}/>} />
           </Routes>
         </>
       )}
 
       <Routes>
-      <Route path="/admin" element={<Admin user={user}/>} />
+      
         <Route/>
       </Routes>
     </BrowserRouter>

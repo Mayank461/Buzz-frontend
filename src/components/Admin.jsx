@@ -48,7 +48,7 @@ export default function Admin(user) {
                    {post.map(element=>{  
                        if(element.report.length>0)
                        return (
-                       <div className="col-md-4 shadow-lg p-3 mb-5 bg-body rounded">
+                       <div className="col-md-3 shadow-lg p-3 mb-3 ms-3 bg-body rounded">
                        <div className="">
                            {/* <img src="..." className="card-img-top" alt="..." /> */}
                            <div className="card-body">

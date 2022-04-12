@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { API_URL } from '../config';
+import UserlistWidget from "./UserlistWidget";
+import { ToastContainer, toast } from "react-toastify";
 
 export default function Login({ fetchUser }) {
   async function handleGAuth(e) {
@@ -20,10 +22,10 @@ export default function Login({ fetchUser }) {
     const { userEmail, userPassword } = inputs;
 
     if (userEmail == '' || userPassword == '')
-      return alert('Please fill the login details');
+      return toast.warning('Please fill the login details');
 
     if (userEmail.split('@')[1] !== 'tothenew.com')
-      return alert('Only ToTheNew email can be used');
+      return toast.error('Only ToTheNew email can be used');
 
     axios
       .post(
@@ -122,6 +124,7 @@ export default function Login({ fetchUser }) {
           </div>
         </div>
       </div>
+      <ToastContainer theme="colored" />
     </>
   );
 }
