@@ -85,7 +85,7 @@ export default function Userprofile({ suggestFriend, myData, refresh }) {
                   {friendStatus}
                 </div>
               )}
-              <button className="border boder-white">Visit Website</button>
+             <a rel="noopener noreferrer" href={user.website} target="_blank" className='btn btn-outline-dark' >Link Here</a>
             </div>
           </div>
         </div>
