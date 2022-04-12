@@ -26,10 +26,10 @@ export default function DefaultCard() {
                     <i className="fa-solid fa-ellipsis " id="dropdownMenuButton1" data-bs-toggle="dropdown"  >
 
                     </i>
-                    <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    {/* <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                       <li><div className="dropdown-item" data-bs-target="#exampleModal">Report</div></li>
 
-                    </ul>
+                    </ul> */}
                   </div>
                   {/* ========================================================Report System============================================================================== */}
 

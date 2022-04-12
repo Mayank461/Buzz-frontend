@@ -37,7 +37,7 @@ export default function Post({ index, data, inclike, deslike, commentBox, userda
   
       <div
         key={index}
-        className="card p-3 mb-3 shadow p-3 mb-5 bg-body rounded border-0"
+        className="card p-3 mb-3 shadow p-3  bg-body rounded border-0"
       >
         <div className="d-flex justify-content-between align-items-center mb-2">
           <div className="d-flex align-items-center">
@@ -48,7 +48,8 @@ export default function Post({ index, data, inclike, deslike, commentBox, userda
                 alt="..."
               />
             ) : (
-              <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-light d-flex justify-content-center align-items-center"></i>
+              <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img text-success d-flex justify-content-center align-items-center" style={{ backgroundColor: "#F0F2F5" }}></i>
+             
             )}
 
 

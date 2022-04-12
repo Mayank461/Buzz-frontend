@@ -3,21 +3,25 @@ import Login from './components/Login';
 import Feeds from './components/Feeds';
 import axios from 'axios';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { API_URL } from './config';
 import Navbar from './components/Navbar';
 import Userprofile from './components/Userprofile';
 import Selfprofile from './components/Selfprofile';
 import Friends from './components/Friends';
+import Admin from './components/Admin';
 
 function App() {
   const [user, setUser] = useState(false);
   const [SFriend, setSFriend] = useState([]);
+  const [refresh, setRefresh] = useState(true);
+
   useEffect(() => {
     fetchUser();
+    
+  }, [refresh]);
 
-    console.log(user)
-  }, []);
+  const toggleRefresh = () => setRefresh((p) => !p);
 
   function fetchUser() {
     axios
@@ -37,7 +41,7 @@ function App() {
       })
       .catch((err) => console.log(err.message));
 
-      console.log(SFriend)
+    console.log(SFriend);
   }
 
   return (
@@ -54,11 +58,21 @@ function App() {
               path="/profile"
               element={<Selfprofile user={user} suggestFriend={SFriend} />}
             />
-            <Route exact path="/friends" element={<Friends user={user} />} />
+            <Route
+              exact
+              path="/friends"
+              element={<Friends user={user} refresh={toggleRefresh} />}
+            />
             <Route
               exact
               path="/profile/:id/"
-              element={<Userprofile myData={user} suggestFriend={SFriend} />}
+              element={
+                <Userprofile
+                  myData={user}
+                  suggestFriend={SFriend}
+                  refresh={toggleRefresh}
+                />
+              }
             />
           </Routes>
         </>
@@ -66,9 +80,12 @@ function App() {
         <>
           <Routes>
             <Route path="*" element={<Login fetchUser={fetchUser} />} />
+            <Route exact path="/admin" element={<Admin user={user}/>} />
           </Routes>
         </>
       )}
+
+ 
     </BrowserRouter>
   );
 }

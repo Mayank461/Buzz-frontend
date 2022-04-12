@@ -4,16 +4,18 @@ import { useParams } from 'react-router-dom';
 import { API_URL } from '../config';
 import UserlistWidget from './UserlistWidget';
 
-
-export default function Userprofile({ suggestFriend, myData }) {
-  const [refresh, setRefresh] = useState(0);
+export default function Userprofile({ suggestFriend, myData, refresh }) {
   const [user, setUser] = useState({});
   const { id } = useParams();
-  const [friendStatus,setFriendStatus] = useState("ADD FRIEND");
+  const [friendStatus, setFriendStatus] = useState('ADD FRIEND');
 
   let isFriend = myData.friends.myFriends
     .map(({ _id }) => _id === id)
     .includes(true);
+
+  let isPending =
+    myData.friends.mySentRequests.map(({ _id }) => _id === id).includes(true) ||
+    myData.friends.myFriendRequests.map(({ _id }) => _id === id).includes(true);
 
   useEffect(() => {
     axios
@@ -30,8 +32,8 @@ export default function Userprofile({ suggestFriend, myData }) {
         withCredentials: true,
       })
       .then((res) => {
-        alert(res.data.message);
-        setFriendStatus("FRIEND REQUEST SENT");
+        refresh();
+        // alert(res.data.message);
       })
       .catch((err) => console.log(err.message));
   }
@@ -42,7 +44,8 @@ export default function Userprofile({ suggestFriend, myData }) {
         withCredentials: true,
       })
       .then((res) => {
-        alert(res.data.message);
+        refresh();
+        // alert(res.data.message);
       })
       .catch((err) => console.log(err.message));
   }
@@ -75,6 +78,8 @@ export default function Userprofile({ suggestFriend, myData }) {
                 <div onClick={DeleteFriend} className="btn btn-danger me-3">
                   REMOVE FRIEND
                 </div>
+              ) : isPending ? (
+                <div className="btn btn-dark me-3">Request Pending</div>
               ) : (
                 <div onClick={SendReq} className="btn btn-primary me-3">
                   {friendStatus}
