@@ -174,6 +174,8 @@ export default function Feeds(user) {
         loadPost();
         setLoading(false);
         toast.success('Your post uplaoded successfully');
+        setTitle('');
+        document.getElementById('file').value = '';
     
       }
       // if only picture is given from user side
@@ -336,7 +338,7 @@ export default function Feeds(user) {
                       onChange={(e) => setTitle(e.target.value)}
                     />
                   </div>
-                  <div className="text-center mt-2 d-flex align-items-center">
+                  <div className="text-center d-flex align-items-center">
                     <input
                       type="file"
                       className="myFile"
@@ -426,7 +428,7 @@ export default function Feeds(user) {
                                 ></i>
                               )}
                             </div>
-                            <div className="ms-2 d-flex align-items-center">
+                            <div className="ms-2 d-flex text-dark align-items-center">
                               {element.firstname + ' ' + element.lastname}
                             </div>
                           </Link>
