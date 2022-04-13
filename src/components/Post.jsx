@@ -1,6 +1,6 @@
 import React, { useState, useEffect, createContext, useRef } from "react";
 
-export default function Post({ index, data, inclike, deslike, commentBox, userdata, reportPost }) {
+export default function Post({ index, data, inclike, deslike, commentBox, userdata, reportPost ,uid }) {
 
   let { post_url, _id, like, dislike, comment, post_caption } = data;
   let { firstname, lastname, picture_url } = data.posted_by;
@@ -101,7 +101,7 @@ export default function Post({ index, data, inclike, deslike, commentBox, userda
               inclike(_id);
             }}
           >
-            {data.like.includes(data.posted_by._id) ? (<><i className="fa-regular text-primary fa-thumbs-up me-2"></i>Unlike</>) : (<><i className="fa-regular fa-thumbs-up me-2"></i>Like</>)}
+            {data.like.includes(uid) ? (<><i className="fa-regular text-primary fa-thumbs-up me-2"></i>Unlike</>) : (<><i className="fa-regular fa-thumbs-up me-2"></i>Like</>)}
           </div>
           <div
             className="pointer"
@@ -109,7 +109,7 @@ export default function Post({ index, data, inclike, deslike, commentBox, userda
               deslike(_id);
             }}
           >
-            {data.dislike.includes(data.posted_by._id) ? (<> <i className="fa-regular text-danger fa-thumbs-down me-2"></i>Disliked</>) : (<><i className="fa-regular fa-thumbs-down me-2"></i>Dislike</>)}
+            {data.dislike.includes(uid) ? (<> <i className="fa-regular text-danger fa-thumbs-down me-2"></i>Disliked</>) : (<><i className="fa-regular fa-thumbs-down me-2"></i>Dislike</>)}
           </div>
           <div
 

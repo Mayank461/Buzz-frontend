@@ -369,6 +369,7 @@ export default function Feeds(user) {
                     commentBox={commentBox}
                     userdata={userData}
                     reportPost={reportPost}
+                    uid ={userData._id}
                   />
                 );
               })}

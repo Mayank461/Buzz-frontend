@@ -1,15 +1,15 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { API_URL } from '../config';
-import UserlistWidget from './UserlistWidget';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import Spinner from './Spinner';
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { API_URL } from "../config";
+import UserlistWidget from "./UserlistWidget";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Spinner from "./Spinner";
 
-export default function Selfprofile({ user, suggestFriend, refresh }) {
+export default function Selfprofile({ user, suggestFriend }) {
   const [toogle, setToogle] = useState(false);
   const [userdata, setUserData] = useState("");
-  const [Refresh, setRefresh] = useState(0);
+  const [Refresh, setRfresh] = useState(0);
   const [inputs, setInputs] = useState({
     firstname: user.firstname,
     lastname: user.lastname,
@@ -26,7 +26,9 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
     axios
       .get(`${API_URL}/users/${user._id}`, { withCredentials: true })
       .then((res) => {
+        // console.log(res.data[0].posted_by.picture_url);
         setUserData(res.data.picture_url);
+        // console.log(res.data.picture_url);
       })
       .catch((err) => console.log(err.message));
   }, [Refresh]);
@@ -37,13 +39,21 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
 
   const postData = async (e) => {
     e.preventDefault();
-    if (inputs.firstname == undefined || inputs.lastname === undefined || inputs.gender === undefined || inputs.birthday === undefined) {
+    if (
+      inputs.firstname == undefined ||
+      inputs.lastname === undefined ||
+      inputs.gender === undefined ||
+      inputs.birthday === undefined
+    ) {
       toast.warn("Please fill the details");
-    }
-    else if (inputs.firstname == '' || inputs.lastname === '' || inputs.gender === '' || inputs.birthday === '') {
+    } else if (
+      inputs.firstname == "" ||
+      inputs.lastname === "" ||
+      inputs.gender === "" ||
+      inputs.birthday === ""
+    ) {
       toast.warn("Please fill the details");
-    }
-    else {
+    } else {
       const {
         firstname,
         lastname,
@@ -57,9 +67,9 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
       } = inputs;
       console.log(inputs);
       const res = await fetch(`${API_URL}/users/updateUser/${user._id}`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           firstname,
@@ -72,54 +82,56 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
           state,
           zip,
         }),
-      }).then((res) => {
-        toast.success("data updated successfully")
-        setRefresh(Refresh + 1)
-      }).catch((err) => { toast.error('Something wents wrong!!!') })
+      })
+        .then((res) => {
+          toast.success("data updated successfully");
+          setRfresh(Refresh + 1);
+        })
+        .catch((err) => {
+          toast.error("Something wents wrong!!!");
+        });
 
       const result = await res.json();
       if (result.status === 422 || !result) {
-        console.log('success');
+        console.log("success");
       } else {
-        console.log('failed');
+        console.log("failed");
       }
     }
-
   };
 
   const maleToggle = () => {
-    document.getElementById('female').checked = false;
-    document.getElementById('male').checked = true;
-    document.getElementById('labelMale').className += ' bg-success';
-    document.getElementById('labelFemale').classList.remove('bg-success');
-    const setMale = 'Male';
+    document.getElementById("female").checked = false;
+    document.getElementById("male").checked = true;
+    document.getElementById("labelMale").className += " bg-success";
+    document.getElementById("labelFemale").classList.remove("bg-success");
+    const setMale = "Male";
     setInputs({ ...inputs, gender: setMale });
   };
   const femaleToggle = () => {
-    document.getElementById('male').checked = false;
-    document.getElementById('female').checked = true;
-    document.getElementById('labelFemale').className += ' bg-success';
-    document.getElementById('labelMale').classList.remove('bg-success');
-    const setFemale = 'Female';
+    document.getElementById("male").checked = false;
+    document.getElementById("female").checked = true;
+    document.getElementById("labelFemale").className += " bg-success";
+    document.getElementById("labelMale").classList.remove("bg-success");
+    const setFemale = "Female";
     setInputs({ ...inputs, gender: setFemale });
-
-
   };
   const reset = () => {
     setInputs({
-      firstname: '',
-      lastname: '',
-      designation: '',
-      website: '',
-      gender: '',
-      birthday: '',
-      city: '',
-      state: '',
-      zip: '',
-    })
-  }
+      firstname: "",
+      lastname: "",
+      designation: "",
+      website: "",
+      gender: "",
+      birthday: "",
+      city: "",
+      state: "",
+      zip: "",
+    });
+  };
   const inputpic = (e) => {
-
+    // setImage(e.target.files[0]);
+    // console.log(image);
     setToogle(true);
     const data = new FormData();
     data.append("file", e.target.files[0]);
@@ -138,65 +150,62 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
           },
           body: JSON.stringify({
             pic_url: data.url,
-            user_id: user._id
+            user_id: user._id,
           }),
-        }).then((r) => {
-          setRefresh(Refresh + 1)
-
-          refresh();
-
-        });
+        }).then((r) => setRfresh(Refresh + 1));
 
         toast.success("Picture change successfully");
         setToogle(false);
-
       })
       .catch((err) => {
         console.log(err);
       });
-  }
+  };
   return (
     <>
-      <div style={{ backgroundColor: '#F0F2F5' }}>
+      <div style={{ backgroundColor: "#F0F2F5" }}>
         <div className="container">
           <div className="row">
             <div className="col-md-9 bg-white mt-3 p-2 shadow-lg  bg-body rounded">
               <div className="">
-                <div className=''>
+                <div className="">
                   <img
                     src="https://images.unsplash.com/photo-1495277493816-4c359911b7f1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1165&q=80"
                     className="coverpic"
                   />
                 </div>
-                <div className='position-relative profilepic mid'>
-                  <div className=''>
-                    {'picture_url' in user ? (
+                <div className="position-relative profilepic mid">
+                  <div className="">
+                    {"picture_url" in user ? (
                       <img src={userdata} className="profilepic" />
                     ) : (
                       <i className="fa-solid fa-user fa-5x profilepic d-flex justify-content-center align-items-center bg-warning"></i>
                     )}
-
                   </div>
 
-                  <div className='position-absolute bottom-0 end-0'>
-                    <input type='file' className='camera' onChange={(e) => { inputpic(e) }} />
+                  <div className="position-absolute bottom-0 end-0">
+                    {/* <i className="fa-solid fa-2x fa-camera me-1"></i> */}
+                    <input
+                      type="file"
+                      className="camera"
+                      onChange={(e) => {
+                        inputpic(e);
+                      }}
+                    />
                   </div>
-
                 </div>
-
-
               </div>
-              <div className='d-flex '>
+              <div className="d-flex ">
                 <div>
-                  <h1 className="mt-2 ms-3">{"firstname" in user ? user.firstname + ' ' + user.lastname : "Edit Profile"}</h1>
+                  {/* add functionality for new user */}
+                  <h1 className="mt-2">
+                  {"firstname" in user?user.firstname + ' ' + user.lastname:"Edit Profile"}
+                  </h1>
                 </div>
-                <div className='d-flex align-items-center'>
-                  {toogle ? <Spinner></Spinner> : ''}
+                <div className="d-flex align-items-center">
+                  {toogle ? <Spinner></Spinner> : ""}
                 </div>
-
-
               </div>
-
 
               <div>
                 <form method="POST">
@@ -246,11 +255,24 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
                           Select Designation
                         </option>
                         <option value="Co-Founder">Co-Founder</option>
+                        <option value="Co-Founder">
+                          Cheif-Technical-Officer
+                        </option>
+                        <option value="Co-Founder">
+                          Cheif-finecial-officer
+                        </option>
                         <option value="Software-Developer">
                           Software-Developer
                         </option>
                         <option value="Tech Support">Tech Support</option>
                         <option value="HR-Depatment">HR-Depatment</option>
+                        <option value="Account-Department">
+                          Account-Department
+                        </option>
+                        <option value="Sales-Department">
+                          Sales-Department
+                        </option>
+                        <option value="OTT-Department">OTT-Department</option>
                       </select>
                     </div>
                     <div className="col-md-4">
@@ -275,7 +297,6 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
                       <div className="border p-1 mt-2">
                         <input
                           type="radio"
-
                           className="btn-check"
                           name="gender"
                           id="male"
@@ -353,9 +374,66 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
                           <option value="" disabled="true" selected="true">
                             Select State
                           </option>
-                          <option value="New Delhi">New Delhi</option>
-                          <option value="Uttar Pradesh">Utter Pradesh</option>
+                          <option value="Andaman and Nicobar (UT)">
+                            Andaman and Nicobar (UT)
+                          </option>
+                          <option value="Andhra Pradesh">
+                            Andhra Pradesh
+                          </option>
+                          <option value="Arunachal Pradesh">
+                            Arunachal Pradesh
+                          </option>
+                          <option value="Assam">Assam</option>
+                          <option value="Chandigarh (UT)">
+                            Chandigarh (UT)
+                          </option>
+                          <option value="Chhattisgarh">Chhattisgarh</option>
+                          <option value="Dadra and Nagar Haveli (UT)">
+                            Dadra and Nagar Haveli (UT)
+                          </option>
                           <option value="Bihar">Bihar</option>
+                          <option value="Daman and Diu (UT)">
+                            Daman and Diu (UT)
+                          </option>
+                          <option value="Delhi">Delhi</option>
+                          <option value="Goa">Goa</option>
+                          <option value="Gujarat">Gujarat</option>
+                          <option value="Haryana">Haryana</option>
+                          <option value="Himachal Pradesh">
+                            Himachal Pradesh
+                          </option>
+                          <option value="Jammu and Kashmir">
+                            Jammu and Kashmir
+                          </option>
+                          <option value="Jharkhand">Jharkhand</option>
+                          <option value="Karnataka">Karnataka</option>
+                          <option value="Kerala">Kerala</option>
+                          <option value="Lakshadweep (UT)">
+                            Lakshadweep (UT)
+                          </option>
+                          <option value="Madhya Pradesh">
+                            Madhya Pradesh
+                          </option>
+                          <option value="Maharashtra">Maharashtra</option>
+                          <option value="Manipur">Manipur</option>
+                          <option value="Meghalaya">Meghalaya</option>
+                          <option value="Mizoram">Mizoram</option>
+                          <option value="Nagaland">Nagaland</option>
+                          <option value="Orissa">Orissa</option>
+                          <option value="Puducherry (UT)">
+                            Puducherry (UT)
+                          </option>
+                          <option value="Punjab">Punjab</option>
+                          <option value="Rajasthan">Rajasthan</option>
+                          <option value="Sikkim">Sikkim</option>
+                          <option value="Tamil Nadu">Tamil Nadu</option>
+                          <option value="Telangana">Telangana</option>
+                          <option value="Tripura">Tripura</option>
+                          <option value="Uttar Pradesh">
+                            Uttar Pradesh
+                          </option>
+                          <option value="Uttarakhand">Uttarakhand</option>
+                          <option value="West Bengal">West Bengal</option>
                         </select>
                       </div>
                       <div className="col">
@@ -377,7 +455,7 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
                   <div className="d-flex mt-5">
                     <button
                       type="submit"
-                      className="btn btn-primary me-3"
+                      className="btn btn-success me-3"
                       onClick={postData}
                     >
                       Save
@@ -387,11 +465,10 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
                     </div>
                   </div>
                 </form>
-
               </div>
             </div>
             {/**part for suggestion */}
-            <div className="col-md-3 profile-sidebar mt-3">
+            <div className="col-md-3 profile-sidebar mt-0">
               <UserlistWidget
                 title="Friends Sugesstion"
                 friendList={suggestFriend}
