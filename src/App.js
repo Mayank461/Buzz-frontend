@@ -48,7 +48,7 @@ function App() {
     <BrowserRouter>
       {user ? (
         <>
-          <Navbar user={user} />
+          <Navbar user={user}  />
           <Routes>
             <Route
               path="/"
@@ -56,7 +56,7 @@ function App() {
             />
             <Route
               path="/profile"
-              element={<Selfprofile user={user} suggestFriend={SFriend} />}
+              element={<Selfprofile user={user} refresh={toggleRefresh} suggestFriend={SFriend} />}
             />
             <Route
               exact

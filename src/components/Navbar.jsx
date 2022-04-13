@@ -4,15 +4,19 @@ import { Link } from 'react-router-dom';
 import { API_URL } from '../config';
 
 export default function Navbar({ user }) {
-  const [friendRequest,setFriendRequest] = useState(0);
+
+
+
+  const [friendRequest, setFriendRequest] = useState(0);
   function handleLogout() {
     window.open(`${API_URL}/auth/logout`, '_self');
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     setFriendRequest(user.friends.myFriendRequests.length)
- 
-  })
+
+  }, [])
+
 
   return (
     <>
@@ -42,7 +46,7 @@ export default function Navbar({ user }) {
                   )}
                 </div>
                 <div className="d-flex align-items-center ms-2">
-                  {"firstname" in user?user.firstname + ' ' + user.lastname:"Edit Profile"}
+                  {"firstname" in user ? user.firstname + ' ' + user.lastname : "Edit Profile"}
                 </div>
               </div>
             </Link>

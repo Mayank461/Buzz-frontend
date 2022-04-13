@@ -26,8 +26,8 @@ function UserlistWidget({ title, friendList }) {
             />
           </div>
           <div className="d-flex align-items-center text-dark">
-          {"firstname" in friend?friend.firstname + ' ' + friend.lastname:"Unknown User"}
-            
+            {"firstname" in friend ? friend.firstname + ' ' + friend.lastname : "Unknown User"}
+
           </div>
         </Link>
       ))}

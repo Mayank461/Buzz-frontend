@@ -13,9 +13,7 @@ export default function Feeds(user) {
 
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
-  const [url, setUrl] = useState("");
   const [userData, setUserData] = useState({});
-  const [allUsers, setAllUsers] = useState([]);
   const [friendList, setFriendList] = useState([]);
   const [refresh, setRefresh] = useState(0);
   const [posts, setPosts] = useState([]);
@@ -26,11 +24,10 @@ export default function Feeds(user) {
     limit: 4,
     total: 4,
   });
-  // let count = 0
 
   useEffect(() => {
     loadPost(pagination.page);
-    
+
   }, [pagination.page]);
 
   useEffect(() => {
@@ -109,27 +106,29 @@ export default function Feeds(user) {
       )
       .catch((err) => console.log(err.message));
   };
-  const commentBox = (id, message) => {
-    if(message=== undefined || message ==='')
-    {
+  const commentBox = (id, message, commentInput) => {
+    if (message === undefined || message === '') {
       toast.warn("Comment box is empty... write something")
     }
-    else{
+    else {
       axios
-      .post(
-        `${API_URL}/posts/comment`,
-        {
-          post_id: id,
-          comment: message,
-        },
-        { withCredentials: true }
-      )
-      .then((res) =>
-        setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)))
-      )
-      .catch((err) => console.log(err.message));
+        .post(
+          `${API_URL}/posts/comment`,
+          {
+            post_id: id,
+            comment: message,
+          },
+          { withCredentials: true }
+        )
+        .then((res) => {
+          commentInput.current.value = ""
+
+          setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)))
+        }
+        )
+        .catch((err) => console.log(err.message));
+    }
   }
-}
   const reportPost = (id) => {
     // console.log(id)
     axios
@@ -168,15 +167,15 @@ export default function Feeds(user) {
             caption: title,
             user_id: userData._id,
           }),
-        }).then((r) => { setRefresh(refresh+1)});
-       
+        }).then((r) => { setRefresh(refresh + 1) });
+
         setPosts([]);
         loadPost();
         setLoading(false);
         toast.success('Your post uplaoded successfully');
         setTitle('');
         document.getElementById('file').value = '';
-    
+
       }
       // if only picture is given from user side
       else {
@@ -201,7 +200,7 @@ export default function Feeds(user) {
                 user_id: userData._id,
               }),
             }).then((r) => {
-             setRefresh(refresh+1)
+              setRefresh(refresh + 1)
               setPosts([]);
               loadPost();
             });
@@ -240,7 +239,7 @@ export default function Feeds(user) {
               user_id: userData._id,
             }),
           }).then((r) => {
-          setRefresh(refresh+1)
+            setRefresh(refresh + 1)
             setPosts([]);
             loadPost();
           });
@@ -256,13 +255,13 @@ export default function Feeds(user) {
     }
   };
 
-  
+
   return (
     <>
       <div style={{ backgroundColor: '#F0F2F5' }}>
         <div className="container">
           <div className="row">
-           
+
             <div className="col-md-3 sticky side-height mt-3 ">
               {/*========================================================================= column 1st ============================================================================== */}
               <div className="card p-5 shadow-lg p-3 mb-2 bg-body rounded border-0">
@@ -279,8 +278,8 @@ export default function Feeds(user) {
                 </div>
                 <div className="card-body">
                   <h5 className="card-title text-center">
-                  {"firstname" in userData?userData.firstname + ' ' + userData.lastname:"Edit Profile"}
-                   
+                    {"firstname" in userData ? userData.firstname + ' ' + userData.lastname : "Edit Profile"}
+
                   </h5>
                   <p className="card-text text-center">Newly Recruit at TTN </p>
                   <div className="d-flex justify-content-between mt-4">
@@ -359,7 +358,7 @@ export default function Feeds(user) {
                 </div>
                 {loading ? <Spinner /> : ''}
               </div>
-                 
+
               {posts.map((element, index) => {
                 return (
                   <Post
@@ -373,9 +372,9 @@ export default function Feeds(user) {
                   />
                 );
               })}
-            
-              {posts.length>0 ?"":  <DefaultCard></DefaultCard>}
-            
+
+              {posts.length > 0 ? "" : <DefaultCard></DefaultCard>}
+
 
               <div className="d-flex mb-4">
                 {pagination.total !== posts.length && (
@@ -430,7 +429,7 @@ export default function Feeds(user) {
                               )}
                             </div>
                             <div className="ms-2 d-flex text-dark align-items-center">
-                            {"firstname" in element?element.firstname + ' ' + element.lastname:"Unknown User"}
+                              {"firstname" in element ? element.firstname + ' ' + element.lastname : "Unknown User"}
                             </div>
                           </Link>
                         );

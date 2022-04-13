@@ -45,7 +45,7 @@ export default function Login({ fetchUser }) {
   return (
     <>
       <div className=''>
-            
+
         <div className="container ">
           <div className="d-flex justify-content-center align-items-center vh-100">
             <div className=" d-flex justify-content-center align-items-center row shadow-lg p-3 mb-5 bg-body rounded p-5 w-100 h-75 ">

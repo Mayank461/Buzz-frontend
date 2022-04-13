@@ -41,35 +41,35 @@ export default function Admin(user) {
     }
     return (
         <div className='container mt-5'>
-         
-                <h1 className='text-center'>Admin Panel</h1>
-                <hr></hr>
-            
-                    <div className="container ">
-                        <div className="row gy-5 ">
-                            {post.map((element,index)=>{
-                                if(element.report.length>0)
-                                return(
-                                    <div className="col-4   ">
+
+            <h1 className='text-center'>Admin Panel</h1>
+            <hr></hr>
+
+            <div className="container ">
+                <div className="row gy-5 ">
+                    {post.map((element, index) => {
+                        if (element.report.length > 0)
+                            return (
+                                <div className="col-4   ">
                                     <div className="p-3 shadow-lg bg-body rounded bg-light ">
                                         <div className="">
-                                        
+
                                             <div className="card-body">
                                                 <h5 className="card-title">Reported Post Details</h5>
                                                 <hr></hr>
                                                 <p className="card-text fw-bold">{element.post_caption}</p>
-    
-                                                <p className="card-text">{"post_url" in element ?<img className='reportedPic' src={element.post_url}/>:<img className='reportedPic' src='https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/330px-No-Image-Placeholder.svg.png'/>}</p>
-                                                <button  className="btn btn-danger" onClick={(e)=>delPost(e,element._id)}>Delete this post</button>
+
+                                                <p className="card-text">{"post_url" in element ? <img className='reportedPic' src={element.post_url} /> : <img className='reportedPic' src='https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/330px-No-Image-Placeholder.svg.png' />}</p>
+                                                <button className="btn btn-danger" onClick={(e) => delPost(e, element._id)}>Delete this post</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                )
-                            })}
-                        </div>
-                    </div>
-       
+                            )
+                    })}
+                </div>
+            </div>
+
         </div>
     )
 }
