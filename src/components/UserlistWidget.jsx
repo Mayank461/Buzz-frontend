@@ -3,13 +3,11 @@ import { Link } from 'react-router-dom';
 
 function UserlistWidget({ title, friendList }) {
   return (
-    <div className=" border p-2 scroll bg-white shadow-lg p-3 bg-body rounded border-0 ">
+    <div className=" border p-2  scroll bg-white shadow-lg p-3 bg-body rounded border-0 ">
       <div className="d-flex justify-content-between">
         <h6>{title}</h6>
         <div>
-          <div className="d-flex align-items-center ms-2 round-img border rounded-circle icon-bg  p-2">
-            <i className="fa-solid fa-magnifying-glass-plus"></i>
-          </div>
+        
         </div>
       </div>
 

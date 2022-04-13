@@ -148,7 +148,7 @@ export default function Post({ index, data, inclike, deslike, commentBox, userda
 
               </div>
               <div onClick={() => {
-                commentBox(_id, commentmessage, commentInput);
+                commentBox(_id, commentmessage, commentInput,setcommentmessage);
 
               }} className="d-flex align-items-center pointer justify-content-center  rounded-circle border border-success p-2  " >  <i className="fa-solid fa-2x fa-paper-plane text-success circle p-2"></i></div>
 

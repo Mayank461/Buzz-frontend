@@ -106,7 +106,7 @@ export default function Feeds(user) {
       )
       .catch((err) => console.log(err.message));
   };
-  const commentBox = (id, message, commentInput) => {
+  const commentBox = (id, message, commentInput,setcommentmessage) => {
     if (message === undefined || message === '') {
       toast.warn("Comment box is empty... write something")
     }
@@ -122,6 +122,7 @@ export default function Feeds(user) {
         )
         .then((res) => {
           commentInput.current.value = ""
+          setcommentmessage("");
 
           setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)))
         }
@@ -297,8 +298,9 @@ export default function Feeds(user) {
                   </div>
                 </div>
               </div>
-              <div>
-                <div className="card ">
+              <div className="">
+                <div className="card">
+                
                   <img
                     src="https://media-s3-us-east-1.ceros.com/abbott/images/2020/06/18/5003c26bb33afd98eb9dc65ba64e18d0/asset-1.png?imageOpt=1"
                     className="card-img-top position-relative "
@@ -310,6 +312,8 @@ export default function Feeds(user) {
                       src="https://static1.tothenew.com/blog/wp-content/themes/ttn/images/social-logo.png"
                     ></img>
                   </div>
+                 
+                
                 </div>
               </div>
             </div>
@@ -397,9 +401,6 @@ export default function Feeds(user) {
                 <div className="d-flex justify-content-between">
                   <div>Contacts</div>
                   <div>
-                    <div className="d-flex align-items-center ms-2 round-img border rounded-circle icon-bg  p-2">
-                      <i className="fa-solid fa-magnifying-glass-plus"></i>
-                    </div>
                   </div>
                 </div>
 

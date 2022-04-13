@@ -5,19 +5,9 @@ import { API_URL } from '../config';
 
 export default function Navbar({ user }) {
 
-
-
-  const [friendRequest, setFriendRequest] = useState(0);
   function handleLogout() {
     window.open(`${API_URL}/auth/logout`, '_self');
   }
-
-  useEffect(() => {
-    setFriendRequest(user.friends.myFriendRequests.length)
-
-  }, [])
-
-
   return (
     <>
       <nav className="navbar  navbar-light bg-light p-0">
@@ -56,10 +46,6 @@ export default function Navbar({ user }) {
                 <i className="fa-solid fa-house"></i>
               </Link>
             </div>
-
-            <div className="d-flex align-items-center ms-2 round-img border rounded-circle icon-bg text-dark p-2">
-              <i className="fa-brands fa-facebook-messenger "></i>
-            </div>
             <div className="position-relative d-flex ">
               <Link
                 to={'/friends'}
@@ -68,12 +54,12 @@ export default function Navbar({ user }) {
                 <i className="fa-solid fa-user"></i>
               </Link>
               <div className="round-img bg-danger p-1 text-white incoming position-absolute bottom-50 end-0">
-                {friendRequest}
+                {user.friends.myFriendRequests.length}
               </div>
             </div>
             <div
               onClick={handleLogout}
-              className="d-flex align-items-center ms-2 round-img border rounded-circle icon-bg text-dark p-2 pointer"
+              className="d-flex align-items-center ms-2 me-3 round-img border rounded-circle icon-bg text-dark p-2 pointer"
             >
               <i className="fa fa-sign-out "></i>
             </div>

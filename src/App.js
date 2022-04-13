@@ -30,6 +30,7 @@ function App() {
       })
       .then((res) => res.data)
       .then(({ user, success }) => {
+      
         success && setUser(user);
         user &&
           axios
@@ -39,7 +40,7 @@ function App() {
             .then((res) => setSFriend([...res.data]))
             .catch((err) => console.log(err.message));
       })
-      .catch((err) => console.log(err.message));
+      .catch((err) => console.log(err));
 
     console.log(SFriend);
   }

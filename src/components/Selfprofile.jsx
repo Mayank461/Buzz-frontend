@@ -6,7 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Spinner from "./Spinner";
 
-export default function Selfprofile({ user, suggestFriend }) {
+export default function Selfprofile({ user, suggestFriend ,refresh }) {
   const [toogle, setToogle] = useState(false);
   const [userdata, setUserData] = useState("");
   const [Refresh, setRfresh] = useState(0);
@@ -86,6 +86,7 @@ export default function Selfprofile({ user, suggestFriend }) {
         .then((res) => {
           toast.success("data updated successfully");
           setRfresh(Refresh + 1);
+          refresh()
         })
         .catch((err) => {
           toast.error("Something wents wrong!!!");
@@ -152,9 +153,12 @@ export default function Selfprofile({ user, suggestFriend }) {
             pic_url: data.url,
             user_id: user._id,
           }),
-        }).then((r) => setRfresh(Refresh + 1));
+        }).then((r) =>{
+          refresh();
+          setRfresh(Refresh + 1)});
 
         toast.success("Picture change successfully");
+       
         setToogle(false);
       })
       .catch((err) => {
@@ -468,7 +472,7 @@ export default function Selfprofile({ user, suggestFriend }) {
               </div>
             </div>
             {/**part for suggestion */}
-            <div className="col-md-3 profile-sidebar mt-0">
+            <div className="col-md-3 profile-sidebar mt-3">
               <UserlistWidget
                 title="Friends Sugesstion"
                 friendList={suggestFriend}

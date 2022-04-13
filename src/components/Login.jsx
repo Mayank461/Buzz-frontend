@@ -39,7 +39,7 @@ export default function Login({ fetchUser }) {
       .then(() => {
         fetchUser();
       })
-      .catch((err) => console.log(err.message));
+      .catch((err) => toast.error("Invalid Credentials"));
   };
 
   return (
@@ -99,14 +99,6 @@ export default function Login({ fetchUser }) {
                       id="exampleFormControlInput1"
                       placeholder="Password"
                     />
-                    <div className="d-flex justify-content-between mt-4">
-                      <div className="ms-1 font-family font-size">
-                        Remember me
-                      </div>
-                      <div className="font-family fw-bolder font-size">
-                        Forgot Password?
-                      </div>
-                    </div>
 
                     <div className="text-center d-grid gap-1 mt-3">
                       <button

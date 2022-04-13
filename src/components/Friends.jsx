@@ -2,6 +2,8 @@ import axios from 'axios';
 import React from 'react';
 import { API_URL } from '../config';
 import UserlistWidget from './UserlistWidget';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Friends({ user, refresh }) {
   function handleConfirmRequest(id) {
@@ -11,7 +13,7 @@ function Friends({ user, refresh }) {
       })
       .then((res) => {
         refresh();
-        // alert('Friend added');
+      toast.success("Friend added")
       })
       .catch((err) => console.log(err.message));
   }
@@ -22,12 +24,13 @@ function Friends({ user, refresh }) {
       })
       .then((res) => {
         refresh();
-        // alert('Request cancelled');
+        toast.success("Friend request cancelled")
       })
       .catch((err) => console.log(err.message));
   }
 
   return (
+    <>
     <div>
       <div className="row justify-content-center pt-5">
         <div className="col-8">
@@ -126,6 +129,8 @@ function Friends({ user, refresh }) {
         </div>
       </div>
     </div>
+    <ToastContainer theme="colored" />
+</>
   );
 }
 

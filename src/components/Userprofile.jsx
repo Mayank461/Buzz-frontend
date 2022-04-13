@@ -24,7 +24,7 @@ export default function Userprofile({ suggestFriend, myData, refresh }) {
         setUser(res.data);
       })
       .catch((err) => console.log(err.message));
-  }, []);
+  }, [id]);
 
   function SendReq() {
     axios
@@ -83,7 +83,7 @@ export default function Userprofile({ suggestFriend, myData, refresh }) {
                   {friendStatus}
                 </div>
               )}
-              <button className="border boder-white">Visit Website</button>
+              <a rel="noopener noreferrer" href={user.website} target="_blank" className='btn btn-outline-dark' >Visit Website</a>
             </div>
           </div>
         </div>
