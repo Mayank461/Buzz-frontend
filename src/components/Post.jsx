@@ -8,9 +8,6 @@ export default function Post({ index, data, inclike, deslike, commentBox, userda
 
   const commentInput = useRef(null);
 
-  useEffect(() => {
-    console.log(data.posted_by._id)
-  })
 
   let toggle = true;
 
@@ -67,7 +64,7 @@ export default function Post({ index, data, inclike, deslike, commentBox, userda
 
             </i>
             <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-              <li><div className="dropdown-item" data-bs-target="#exampleModal" onClick={() => { reportPost(_id); }}>Report</div></li>
+              <li><div className="dropdown-item" data-bs-target="#exampleModal" onClick={() => { reportPost(data); }}>Report</div></li>
 
             </ul>
           </div>

@@ -130,17 +130,20 @@ export default function Feeds(user) {
         .catch((err) => console.log(err.message));
     }
   }
-  const reportPost = (id) => {
-    // console.log(id)
+  const reportPost = (data) => {
+    // console.log(data);
+    // console.log(user.user._id);
     axios
       .post(
         `${API_URL}/posts/report`,
         {
-          post_id: id,
+          // post_id: id,
+          data:data,
         },
         { withCredentials: true }
       )
       .then((res) => {
+
         setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)));
         toast.success('Reported Successfully');
       })

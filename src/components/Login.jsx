@@ -20,6 +20,7 @@ export default function Login({ fetchUser }) {
   const postLoginData = async (e) => {
     e.preventDefault();
     const { userEmail, userPassword } = inputs;
+    
 
     if (userEmail == '' || userPassword == '')
       return toast.warning('Please fill the login details');
@@ -100,7 +101,7 @@ export default function Login({ fetchUser }) {
                       placeholder="Password"
                     />
 
-                    <div className="text-center d-grid gap-1 mt-3">
+                    <div className="text-center d-grid gap-1 mt-5">
                       <button
                         type="submit"
                         onClick={postLoginData}
