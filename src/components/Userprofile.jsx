@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { API_URL } from '../config';
+import { ApiUserInfo_url,ApiSentReq_url,ApiDelreq_url } from '../config';
 import UserlistWidget from './UserlistWidget';
 
 export default function Userprofile({ suggestFriend, myData, refresh }) {
@@ -18,7 +18,7 @@ export default function Userprofile({ suggestFriend, myData, refresh }) {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/users/` + id, { withCredentials: true })
+      .get(`${ApiUserInfo_url}` + id, { withCredentials: true })
       .then((res) => {
         setUser(res.data);
       })
@@ -27,7 +27,7 @@ export default function Userprofile({ suggestFriend, myData, refresh }) {
 
   function SendReq() {
     axios
-      .get(`${API_URL}/users/sendRequest/` + id, {
+      .get(`${ApiSentReq_url}` + id, {
         withCredentials: true,
       })
       .then((res) => {
@@ -38,7 +38,7 @@ export default function Userprofile({ suggestFriend, myData, refresh }) {
 
   function DeleteFriend() {
     axios
-      .get(`${API_URL}/users/deleteRequest/` + id, {
+      .get(`${ApiDelreq_url}` + id, {
         withCredentials: true,
       })
       .then((res) => {

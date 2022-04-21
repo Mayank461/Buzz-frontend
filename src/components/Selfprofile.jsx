@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { API_URL } from "../config";
+import { ApiUpdateUserDetails_url,ApiUserDp_url } from "../config";
 import UserlistWidget from "./UserlistWidget";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -24,7 +24,7 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/users/${user._id}`, { withCredentials: true })
+      .get(`${ApiUserDp_url}${user._id}`, { withCredentials: true })
       .then((res) => {        
         setUserData(res.data.picture_url);       
       })
@@ -64,7 +64,7 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
         zip,
       } = inputs;
       console.log(inputs);
-      const res = await fetch(`${API_URL}/users/updateUser/${user._id}`, {
+      const res = await fetch(`${ApiUpdateUserDetails_url}${user._id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -140,7 +140,7 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        fetch(`${API_URL}/users/updateUser/${user._id}`, {
+        fetch(`${ApiUpdateUserDetails_url}${user._id}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

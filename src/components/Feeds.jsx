@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { API_URL } from "../config";
+import {ApiLike_url,ApiUnlike_url,ApiComment_url,ApiReport_url,ApiUser_url,ApiLimit_url,ApiLoadPage_url} from "../config"
 import Post from "./Post";
 import UserlistWidget from "./UserlistWidget";
 import { ToastContainer, toast } from "react-toastify";
@@ -36,7 +36,7 @@ export default function Feeds(user) {
     window.addEventListener('scroll', handleScroll);
 
     axios
-      .get(`${API_URL}/posts/getPost?page=0&limit=10000000000000000`, {
+      .get(`${ApiLimit_url}`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -66,7 +66,7 @@ export default function Feeds(user) {
 
   function loadPost(page = pagination.page, limit = pagination.limit) {
     axios
-      .get(`${API_URL}/posts/getPost?page=${page}&limit=${limit}`, {
+      .get(`${ApiLoadPage_url}${page}&limit=${limit}`, {
         withCredentials: true,
       })
       .then((res) => setPosts((prev) => [...prev, ...res.data]))
@@ -81,7 +81,7 @@ export default function Feeds(user) {
   const Inlike = (id) => {
     axios
       .post(
-        `${API_URL}/posts/like`,
+        `${ApiLike_url}`,
         {
           post_id: id,
         },
@@ -95,7 +95,7 @@ export default function Feeds(user) {
   const unlike = (id) => {
     axios
       .post(
-        `${API_URL}/posts/unlike`,
+        `${ApiUnlike_url}`,
         {
           post_id: id,
         },
@@ -113,7 +113,7 @@ export default function Feeds(user) {
     else {
       axios
         .post(
-          `${API_URL}/posts/comment`,
+          `${ApiComment_url}`,
           {
             post_id: id,
             comment: message,
@@ -133,7 +133,7 @@ export default function Feeds(user) {
   const reportPost = (id) => {
       axios
       .post(
-        `${API_URL}/posts/report`,
+        `${ApiReport_url}`,
         {
           post_id: id,
         },
@@ -155,7 +155,7 @@ export default function Feeds(user) {
       toast.warn('Please give atleast one input');
     }
     else if (commentBox !== '') {
-      fetch(`${API_URL}/posts/userPost`, {
+      fetch(`${ApiUser_url}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -185,7 +185,7 @@ export default function Feeds(user) {
         })
           .then((res) => res.json())
           .then((data) => {
-            fetch(`${API_URL}/posts/userPost`, {
+            fetch(`${ApiUser_url}`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -220,7 +220,7 @@ export default function Feeds(user) {
           })
             .then((res) => res.json())
             .then((data) => {
-              fetch(`${API_URL}/posts/userPost`, {
+              fetch(`${ApiUser_url}`, {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',

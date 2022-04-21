@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React from 'react';
-import { API_URL } from '../config';
+import { ApiDeleteReq_url,ApiConfirmReq_url } from '../config';
 import UserlistWidget from './UserlistWidget';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 function Friends({ user, refresh }) {
   function handleConfirmRequest(id) {
     axios
-      .get(`${API_URL}/users/confirmRequest/${id}`, {
+      .get(`${ApiConfirmReq_url}${id}`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -19,7 +19,7 @@ function Friends({ user, refresh }) {
   }
   function handleDeleteRequest(id) {
     axios
-      .get(`${API_URL}/users/deleteRequest/${id}`, {
+      .get(`${ApiDeleteReq_url}${id}`, {
         withCredentials: true,
       })
       .then((res) => {
