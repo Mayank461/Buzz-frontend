@@ -141,8 +141,7 @@
 }
 .seemore{
   cursor: pointer;
-  display: flex;
-  align-self: flex-end;
+  color: blue; 
   text-align: end;
 }
 

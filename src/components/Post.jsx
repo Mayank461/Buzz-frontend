@@ -13,7 +13,7 @@ export default function Post({
   let { post_url, _id, like, dislike, comment, post_caption } = data;
   let { firstname, lastname, picture_url } = data.posted_by;
   const [commentmessage, setcommentmessage] = useState();
-  const [loadmore, setloadmore] = useState(false);
+  const [loadmore, setloadmore] = useState(true);
 
   const commentInput = useRef(null);
 
@@ -211,14 +211,14 @@ export default function Post({
                     {element.message}
                   </div>
                 </div>
-                <span
+                <div
                   className="seemore"
                   onClick={() => {
                     setloadmore((p) => !p);
                   }}
                 >
                   See More...
-                </span>
+                </div>
               </>
             );
           })}

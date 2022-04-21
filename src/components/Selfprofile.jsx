@@ -140,14 +140,13 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        fetch(`${API_URL}/posts/changeprofile`, {
+        fetch(`${API_URL}/users/updateUser/${user._id}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            pic_url: data.url,
-            user_id: user._id,
+            pic_url: data.url,           
           }),
         }).then((r) =>{
           refresh();

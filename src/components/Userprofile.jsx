@@ -7,8 +7,7 @@ import UserlistWidget from './UserlistWidget';
 export default function Userprofile({ suggestFriend, myData, refresh }) {
   const [user, setUser] = useState({});
   const { id } = useParams();
-  const [friendStatus, setFriendStatus] = useState('ADD FRIEND');
-
+ 
   let isFriend = myData.friends.myFriends
     .map(({ _id }) => _id === id)
     .includes(true);
@@ -78,7 +77,7 @@ export default function Userprofile({ suggestFriend, myData, refresh }) {
                 <div className="btn btn-dark me-3">Request Pending</div>
               ) : (
                 <div onClick={SendReq} className="btn btn-primary me-3">
-                  {friendStatus}
+                 ADD FRIEND
                 </div>
               )}
               <a rel="noopener noreferrer" href={user.website} target="_blank" className='btn btn-outline-dark' >Visit Website</a>
