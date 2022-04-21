@@ -7,8 +7,7 @@ export default function Admin(user) {
   const [refresh, setRefresh] = useState(0);
 
   const { id } = useParams();
-  useEffect(() => {
-    console.log(post);
+  useEffect(() => {    
     axios
       .get(`${API_URL}/posts/allPost`)
       .then((res) => {
@@ -16,8 +15,7 @@ export default function Admin(user) {
       })
       .catch((err) => console.log(err.message));
   }, [refresh]);
-  const delPost = (e, id) => {
-    console.log(id);
+  const delPost = (e, id) => {   
     fetch(`${API_URL}/posts/delReport`, {
       method: "POST",
       headers: {
@@ -27,8 +25,7 @@ export default function Admin(user) {
         id: id,
       }),
     }).then((r) => {
-      setRefresh(refresh + 1);
-      console.log(r);
+      setRefresh(refresh + 1);      
     });
   };
   return (
