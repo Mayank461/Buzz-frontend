@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { API_URL } from "../config";
+import {ApiLike_url,ApiUnlike_url,ApiComment_url,ApiReport_url,ApiUser_url,ApiLimit_url,ApiLoadPage_url} from "../config"
 import Post from "./Post";
 import UserlistWidget from "./UserlistWidget";
 import { ToastContainer, toast } from "react-toastify";
@@ -36,7 +36,7 @@ export default function Feeds(user) {
     window.addEventListener('scroll', handleScroll);
 
     axios
-      .get(`${API_URL}/posts/getPost?page=0&limit=10000000000000000`, {
+      .get(`${ApiLimit_url}`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -66,7 +66,7 @@ export default function Feeds(user) {
 
   function loadPost(page = pagination.page, limit = pagination.limit) {
     axios
-      .get(`${API_URL}/posts/getPost?page=${page}&limit=${limit}`, {
+      .get(`${ApiLoadPage_url}${page}&limit=${limit}`, {
         withCredentials: true,
       })
       .then((res) => setPosts((prev) => [...prev, ...res.data]))
@@ -81,7 +81,7 @@ export default function Feeds(user) {
   const Inlike = (id) => {
     axios
       .post(
-        `${API_URL}/posts/like`,
+        `${ApiLike_url}`,
         {
           post_id: id,
         },
@@ -95,7 +95,7 @@ export default function Feeds(user) {
   const unlike = (id) => {
     axios
       .post(
-        `${API_URL}/posts/unlike`,
+        `${ApiUnlike_url}`,
         {
           post_id: id,
         },
@@ -113,7 +113,7 @@ export default function Feeds(user) {
     else {
       axios
         .post(
-          `${API_URL}/posts/comment`,
+          `${ApiComment_url}`,
           {
             post_id: id,
             comment: message,
@@ -131,10 +131,9 @@ export default function Feeds(user) {
     }
   }
   const reportPost = (id) => {
-    // console.log(id)
-    axios
+      axios
       .post(
-        `${API_URL}/posts/report`,
+        `${ApiReport_url}`,
         {
           post_id: id,
         },
@@ -146,6 +145,7 @@ export default function Feeds(user) {
       })
       .catch((err) => console.log(err.message));
   };
+  
   const postDetails = () => {
     const commentBox = document.getElementById('comment-box').value;
     const file = document.getElementById('file').value;
@@ -154,33 +154,27 @@ export default function Feeds(user) {
     if (commentBox === '' && file === '') {
       toast.warn('Please give atleast one input');
     }
-    // checking atleast one input is given or not
-    else if (commentBox === '' || file === '') {
+    else if (commentBox !== '') {
+      fetch(`${ApiUser_url}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          caption: title,
+          user_id: userData._id,
+        }),
+      }).then((r) => { setRefresh(refresh + 1) });
+
+      setPosts([]);
+      loadPost();
+      setLoading(false);
+      toast.success('Your post uplaoded successfully');
+      setTitle('');
+      document.getElementById('file').value = '';
+    }
+    else if(file !== ''){
       setLoading(true);
-      //  if only caption is given from user
-      if (commentBox !== '') {
-        fetch(`${API_URL}/posts/userPost`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            caption: title,
-            user_id: userData._id,
-          }),
-        }).then((r) => { setRefresh(refresh + 1) });
-
-        setPosts([]);
-        loadPost();
-        setLoading(false);
-        toast.success('Your post uplaoded successfully');
-        setTitle('');
-        document.getElementById('file').value = '';
-
-      }
-      // if only picture is given from user side
-      else {
-        setLoading(true);
         const data = new FormData();
         data.append('file', image);
         data.append('upload_preset', 'buzz-app');
@@ -191,7 +185,7 @@ export default function Feeds(user) {
         })
           .then((res) => res.json())
           .then((data) => {
-            fetch(`${API_URL}/posts/userPost`, {
+            fetch(`${ApiUser_url}`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -213,48 +207,45 @@ export default function Feeds(user) {
           .catch((err) => {
             console.log(err);
           });
-      }
-    }
-
-    // if both caption and picture  inputs are given in post
-    else {
-      setLoading(true);
-      const data = new FormData();
-      data.append('file', image);
-      data.append('upload_preset', 'buzz-app');
-      data.append('cloud_name', 'buzz-social-app');
-      fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
-        method: 'post',
-        body: data,
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          fetch(`${API_URL}/posts/userPost`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              pic_url: data.url,
-              caption: title,
-              user_id: userData._id,
-            }),
-          }).then((r) => {
-            setRefresh(refresh + 1)
-            setPosts([]);
-            loadPost();
-          });
-          setLoading(false);
-          toast.success('Your post uplaoded successfully');
-
-          setTitle('');
-          document.getElementById('file').value = '';
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  };
+        }
+        else{
+          setLoading(true);
+          const data = new FormData();
+          data.append('file', image);
+          data.append('upload_preset', 'buzz-app');
+          data.append('cloud_name', 'buzz-social-app');
+          fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
+            method: 'post',
+            body: data,
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              fetch(`${ApiUser_url}`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  pic_url: data.url,
+                  caption: title,
+                  user_id: userData._id,
+                }),
+              }).then((r) => {
+                setRefresh(refresh + 1)
+                setPosts([]);
+                loadPost();
+              });
+              setLoading(false);
+              toast.success('Your post uplaoded successfully');
+    
+              setTitle('');
+              document.getElementById('file').value = '';
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+  }
 
 
   return (

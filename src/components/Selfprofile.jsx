@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { API_URL } from "../config";
+import { ApiUpdateUserDetails_url,ApiUserDp_url } from "../config";
 import UserlistWidget from "./UserlistWidget";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -24,11 +24,9 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/users/${user._id}`, { withCredentials: true })
-      .then((res) => {
-        // console.log(res.data[0].posted_by.picture_url);
-        setUserData(res.data.picture_url);
-        // console.log(res.data.picture_url);
+      .get(`${ApiUserDp_url}${user._id}`, { withCredentials: true })
+      .then((res) => {        
+        setUserData(res.data.picture_url);       
       })
       .catch((err) => console.log(err.message));
   }, [Refresh]);
@@ -66,7 +64,7 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
         zip,
       } = inputs;
       console.log(inputs);
-      const res = await fetch(`${API_URL}/users/updateUser/${user._id}`, {
+      const res = await fetch(`${ApiUpdateUserDetails_url}${user._id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -130,9 +128,7 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
       zip: "",
     });
   };
-  const inputpic = (e) => {
-    // setImage(e.target.files[0]);
-    // console.log(image);
+  const inputpic = (e) => {    
     setToogle(true);
     const data = new FormData();
     data.append("file", e.target.files[0]);
@@ -144,14 +140,13 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        fetch(`${API_URL}/posts/changeprofile`, {
+        fetch(`${ApiUpdateUserDetails_url}${user._id}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            pic_url: data.url,
-            user_id: user._id,
+            pic_url: data.url,           
           }),
         }).then((r) =>{
           refresh();
@@ -188,7 +183,6 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
                   </div>
 
                   <div className="position-absolute bottom-0 end-0">
-                    {/* <i className="fa-solid fa-2x fa-camera me-1"></i> */}
                     <input
                       type="file"
                       className="camera"
@@ -201,7 +195,6 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
               </div>
               <div className="d-flex ">
                 <div>
-                  {/* add functionality for new user */}
                   <h1 className="mt-2">
                   {"firstname" in user?user.firstname + ' ' + user.lastname:"Edit Profile"}
                   </h1>

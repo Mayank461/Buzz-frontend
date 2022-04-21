@@ -1,14 +1,13 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { API_URL } from '../config';
+import { ApiUserInfo_url,ApiSentReq_url,ApiDelreq_url } from '../config';
 import UserlistWidget from './UserlistWidget';
 
 export default function Userprofile({ suggestFriend, myData, refresh }) {
   const [user, setUser] = useState({});
   const { id } = useParams();
-  const [friendStatus, setFriendStatus] = useState('ADD FRIEND');
-
+ 
   let isFriend = myData.friends.myFriends
     .map(({ _id }) => _id === id)
     .includes(true);
@@ -19,7 +18,7 @@ export default function Userprofile({ suggestFriend, myData, refresh }) {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/users/` + id, { withCredentials: true })
+      .get(`${ApiUserInfo_url}` + id, { withCredentials: true })
       .then((res) => {
         setUser(res.data);
       })
@@ -28,24 +27,22 @@ export default function Userprofile({ suggestFriend, myData, refresh }) {
 
   function SendReq() {
     axios
-      .get(`${API_URL}/users/sendRequest/` + id, {
+      .get(`${ApiSentReq_url}` + id, {
         withCredentials: true,
       })
       .then((res) => {
         refresh();
-        // alert(res.data.message);
       })
       .catch((err) => console.log(err.message));
   }
 
   function DeleteFriend() {
     axios
-      .get(`${API_URL}/users/deleteRequest/` + id, {
+      .get(`${ApiDelreq_url}` + id, {
         withCredentials: true,
       })
       .then((res) => {
         refresh();
-        // alert(res.data.message);
       })
       .catch((err) => console.log(err.message));
   }
@@ -80,7 +77,7 @@ export default function Userprofile({ suggestFriend, myData, refresh }) {
                 <div className="btn btn-dark me-3">Request Pending</div>
               ) : (
                 <div onClick={SendReq} className="btn btn-primary me-3">
-                  {friendStatus}
+                 ADD FRIEND
                 </div>
               )}
               <a rel="noopener noreferrer" href={user.website} target="_blank" className='btn btn-outline-dark' >Visit Website</a>

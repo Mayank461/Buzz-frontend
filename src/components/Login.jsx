@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { API_URL } from '../config';
-import UserlistWidget from "./UserlistWidget";
+import { ApiGoogleAuth_url,ApiLocalAuth_url } from '../config';
 import { ToastContainer, toast } from "react-toastify";
 
 export default function Login({ fetchUser }) {
   async function handleGAuth(e) {
     e.preventDefault();
-    window.open(`${API_URL}/auth/google`, '_self');
+    window.open(`${ApiGoogleAuth_url}`, '_self');
   }
   const [inputs, setInputs] = useState({
     userEmail: '',
@@ -29,7 +28,7 @@ export default function Login({ fetchUser }) {
 
     axios
       .post(
-        `${API_URL}/auth/login`,
+        `${ApiLocalAuth_url}`,
         {
           username: userEmail,
           password: userPassword,
