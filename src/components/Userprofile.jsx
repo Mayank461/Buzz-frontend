@@ -33,7 +33,6 @@ export default function Userprofile({ suggestFriend, myData, refresh }) {
       })
       .then((res) => {
         refresh();
-        // alert(res.data.message);
       })
       .catch((err) => console.log(err.message));
   }
@@ -45,7 +44,6 @@ export default function Userprofile({ suggestFriend, myData, refresh }) {
       })
       .then((res) => {
         refresh();
-        // alert(res.data.message);
       })
       .catch((err) => console.log(err.message));
   }

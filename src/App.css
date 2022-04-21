@@ -94,7 +94,7 @@
   font-size: 30px;
   color: green;
   display: inline-block;
-  -webkit-user-select: none;
+  user-select: none;
 }
 
 .friend-req {
@@ -121,7 +121,7 @@
   font-size: 30px;
   color:black;
   display: inline-block;
-  -webkit-user-select: none;
+  user-select: none;
   margin-left: 15px;  
 }
 .camera:hover{
@@ -134,6 +134,16 @@
 .reportedPic{
   height: 200px;
   width: 100%;
+}
+.text-comment{
+  max-height: 70px;
+  overflow: hidden;
+}
+.seemore{
+  cursor: pointer;
+  display: flex;
+  align-self: flex-end;
+  text-align: end;
 }
 
 @media screen and (max-width:700px) {

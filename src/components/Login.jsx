@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { API_URL } from '../config';
-import UserlistWidget from "./UserlistWidget";
 import { ToastContainer, toast } from "react-toastify";
 
 export default function Login({ fetchUser }) {

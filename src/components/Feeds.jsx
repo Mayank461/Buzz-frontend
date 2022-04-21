@@ -154,33 +154,27 @@ export default function Feeds(user) {
     if (commentBox === '' && file === '') {
       toast.warn('Please give atleast one input');
     }
-    // checking atleast one input is given or not
-    else if (commentBox === '' || file === '') {
+    else if (commentBox !== '') {
+      fetch(`${API_URL}/posts/userPost`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          caption: title,
+          user_id: userData._id,
+        }),
+      }).then((r) => { setRefresh(refresh + 1) });
+
+      setPosts([]);
+      loadPost();
+      setLoading(false);
+      toast.success('Your post uplaoded successfully');
+      setTitle('');
+      document.getElementById('file').value = '';
+    }
+    else if(file !== ''){
       setLoading(true);
-      //  if only caption is given from user
-      if (commentBox !== '') {
-        fetch(`${API_URL}/posts/userPost`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            caption: title,
-            user_id: userData._id,
-          }),
-        }).then((r) => { setRefresh(refresh + 1) });
-
-        setPosts([]);
-        loadPost();
-        setLoading(false);
-        toast.success('Your post uplaoded successfully');
-        setTitle('');
-        document.getElementById('file').value = '';
-
-      }
-      // if only picture is given from user side
-      else {
-        setLoading(true);
         const data = new FormData();
         data.append('file', image);
         data.append('upload_preset', 'buzz-app');
@@ -213,48 +207,45 @@ export default function Feeds(user) {
           .catch((err) => {
             console.log(err);
           });
-      }
-    }
-
-    // if both caption and picture  inputs are given in post
-    else {
-      setLoading(true);
-      const data = new FormData();
-      data.append('file', image);
-      data.append('upload_preset', 'buzz-app');
-      data.append('cloud_name', 'buzz-social-app');
-      fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
-        method: 'post',
-        body: data,
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          fetch(`${API_URL}/posts/userPost`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              pic_url: data.url,
-              caption: title,
-              user_id: userData._id,
-            }),
-          }).then((r) => {
-            setRefresh(refresh + 1)
-            setPosts([]);
-            loadPost();
-          });
-          setLoading(false);
-          toast.success('Your post uplaoded successfully');
-
-          setTitle('');
-          document.getElementById('file').value = '';
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  };
+        }
+        else{
+          setLoading(true);
+          const data = new FormData();
+          data.append('file', image);
+          data.append('upload_preset', 'buzz-app');
+          data.append('cloud_name', 'buzz-social-app');
+          fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
+            method: 'post',
+            body: data,
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              fetch(`${API_URL}/posts/userPost`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  pic_url: data.url,
+                  caption: title,
+                  user_id: userData._id,
+                }),
+              }).then((r) => {
+                setRefresh(refresh + 1)
+                setPosts([]);
+                loadPost();
+              });
+              setLoading(false);
+              toast.success('Your post uplaoded successfully');
+    
+              setTitle('');
+              document.getElementById('file').value = '';
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+  }
 
 
   return (
