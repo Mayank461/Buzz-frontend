@@ -6,8 +6,6 @@ export default function Admin(user) {
     const [post, allPost] = useState([])
     const [refresh, setRefresh] = useState(0)
 
-
-    // const { id } = useParams();
     useEffect(() => {
 
         axios
@@ -21,8 +19,7 @@ export default function Admin(user) {
 
     }, [refresh])
     const delPost = (e, id, post_uid) => {
-        // console.log(id)
-        // console.log(post_uid)
+      
         fetch(`${API_URL}/posts/delReport`, {
             method: "POST",
             headers: {
@@ -64,7 +61,7 @@ export default function Admin(user) {
                                       
                                         {"post_caption" in element ? <><p className="card-text text-success  fw-bold">{element.post_caption}</p></> : <><p className="card-text  fw-bold">no caption</p></>}
                                         <p className='text-secondary'>Posted By - {element.posted_by.firstname + " " + element.posted_by.lastname}</p>
-                                        <p className='text-secondary'>Reported By - {element.reported_by.firstname + " " + element.reported_by.lastname}</p>
+                                        <p className='text-danger'>Reported By - {element.reported_by.firstname + " " + element.reported_by.lastname}</p>
                                         
                                          
                                         <button className="btn btn-dark" onClick={(e) => delPost(e, element._id, element.post_uid)}>Delete this post</button>

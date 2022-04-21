@@ -131,13 +131,10 @@ export default function Feeds(user) {
     }
   }
   const reportPost = (data) => {
-    // console.log(data);
-    // console.log(user.user._id);
     axios
       .post(
         `${API_URL}/posts/report`,
         {
-          // post_id: id,
           data:data,
         },
         { withCredentials: true }
@@ -443,7 +440,7 @@ export default function Feeds(user) {
                   </div>
                 )}
               </div>
-              {/*============================================================================ Suggestuons ================================================================================== */}
+              {/*============================================================================ Suggestions ================================================================================== */}
               <UserlistWidget
                 title={'Friends Sugesstions'}
                 friendList={user.suggestFriend}
