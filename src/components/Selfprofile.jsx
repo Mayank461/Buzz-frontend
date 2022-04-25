@@ -1,10 +1,11 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { API_URL } from "../config";
+import { APIUPDATEUSERDETAILS_URL,APIUSERDP_URL } from "../config";
 import UserlistWidget from "./UserlistWidget";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Spinner from "./Spinner";
+import { postData } from "../services/userservice";
 
 export default function Selfprofile({ user, suggestFriend ,refresh }) {
   const [toogle, setToogle] = useState(false);
@@ -24,11 +25,9 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/users/${user._id}`, { withCredentials: true })
-      .then((res) => {
-        // console.log(res.data[0].posted_by.picture_url);
-        setUserData(res.data.picture_url);
-        // console.log(res.data.picture_url);
+      .get(`${APIUSERDP_URL}${user._id}`, { withCredentials: true })
+      .then((res) => {        
+        setUserData(res.data.picture_url);       
       })
       .catch((err) => console.log(err.message));
   }, [Refresh]);
@@ -37,69 +36,71 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
   };
 
-  const postData = async (e) => {
-    e.preventDefault();
-    if (
-      inputs.firstname == undefined ||
-      inputs.lastname === undefined ||
-      inputs.gender === undefined ||
-      inputs.birthday === undefined
-    ) {
-      toast.warn("Please fill the details");
-    } else if (
-      inputs.firstname == "" ||
-      inputs.lastname === "" ||
-      inputs.gender === "" ||
-      inputs.birthday === ""
-    ) {
-      toast.warn("Please fill the details");
-    } else {
-      const {
-        firstname,
-        lastname,
-        designation,
-        website,
-        gender,
-        birthday,
-        city,
-        state,
-        zip,
-      } = inputs;
-      console.log(inputs);
-      const res = await fetch(`${API_URL}/users/updateUser/${user._id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          firstname,
-          lastname,
-          designation,
-          website,
-          gender,
-          birthday,
-          city,
-          state,
-          zip,
-        }),
-      })
-        .then((res) => {
-          toast.success("data updated successfully");
-          setRfresh(Refresh + 1);
-          refresh()
-        })
-        .catch((err) => {
-          toast.error("Something wents wrong!!!");
-        });
+  const updateData = () => postData(inputs,user,refresh,setRfresh,Refresh)
 
-      const result = await res.json();
-      if (result.status === 422 || !result) {
-        console.log("success");
-      } else {
-        console.log("failed");
-      }
-    }
-  };
+  // const postData = async (e) => {
+  //   e.preventDefault();
+  //   if (
+  //     inputs.firstname == undefined ||
+  //     inputs.lastname === undefined ||
+  //     inputs.gender === undefined ||
+  //     inputs.birthday === undefined
+  //   ) {
+  //     toast.warn("Please fill the details");
+  //   } else if (
+  //     inputs.firstname == "" ||
+  //     inputs.lastname === "" ||
+  //     inputs.gender === "" ||
+  //     inputs.birthday === ""
+  //   ) {
+  //     toast.warn("Please fill the details");
+  //   } else {
+  //     const {
+  //       firstname,
+  //       lastname,
+  //       designation,
+  //       website,
+  //       gender,
+  //       birthday,
+  //       city,
+  //       state,
+  //       zip,
+  //     } = inputs;
+  //     console.log(inputs);
+  //     const res = await fetch(`${APIUPDATEUSERDETAILS_URL}${user._id}`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         firstname,
+  //         lastname,
+  //         designation,
+  //         website,
+  //         gender,
+  //         birthday,
+  //         city,
+  //         state,
+  //         zip,
+  //       }),
+  //     })
+  //       .then((res) => {
+  //         toast.success("data updated successfully");
+  //         setRfresh(Refresh + 1);
+  //         refresh()
+  //       })
+  //       .catch((err) => {
+  //         toast.error("Something wents wrong!!!");
+  //       });
+
+  //     const result = await res.json();
+  //     if (result.status === 422 || !result) {
+  //       console.log("success");
+  //     } else {
+  //       console.log("failed");
+  //     }
+  //   }
+  // };
 
   const maleToggle = () => {
     document.getElementById("female").checked = false;
@@ -130,9 +131,7 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
       zip: "",
     });
   };
-  const inputpic = (e) => {
-    // setImage(e.target.files[0]);
-    // console.log(image);
+  const inputpic = (e) => {    
     setToogle(true);
     const data = new FormData();
     data.append("file", e.target.files[0]);
@@ -144,14 +143,13 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        fetch(`${API_URL}/posts/changeprofile`, {
+        fetch(`${APIUPDATEUSERDETAILS_URL}${user._id}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            pic_url: data.url,
-            user_id: user._id,
+            pic_url: data.url,           
           }),
         }).then((r) =>{
           refresh();
@@ -188,7 +186,6 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
                   </div>
 
                   <div className="position-absolute bottom-0 end-0">
-                    {/* <i className="fa-solid fa-2x fa-camera me-1"></i> */}
                     <input
                       type="file"
                       className="camera"
@@ -201,7 +198,6 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
               </div>
               <div className="d-flex ">
                 <div>
-                  {/* add functionality for new user */}
                   <h1 className="mt-2">
                   {"firstname" in user?user.firstname + ' ' + user.lastname:"Edit Profile"}
                   </h1>
@@ -460,7 +456,7 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
                     <button
                       type="submit"
                       className="btn btn-success me-3"
-                      onClick={postData}
+                      onClick={updateData}
                     >
                       Save
                     </button>

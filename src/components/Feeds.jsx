@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { API_URL } from "../config";
+import {APIUSER_URL,APILIMIT_URL,APILOADPAGE_URL} from "../config"
 import Post from "./Post";
 import UserlistWidget from "./UserlistWidget";
 import { ToastContainer, toast } from "react-toastify";
@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Spinner from "./Spinner";
 import { Link } from "react-router-dom";
 import DefaultCard from "./DefaultCard";
+import { commentBox, Inlike, reportPost, unlike } from "../services/postservices";
 
 export default function Feeds(user) {
 
@@ -36,7 +37,7 @@ export default function Feeds(user) {
     window.addEventListener('scroll', handleScroll);
 
     axios
-      .get(`${API_URL}/posts/getPost?page=0&limit=10000000000000000`, {
+      .get(`${APILIMIT_URL}`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -66,7 +67,7 @@ export default function Feeds(user) {
 
   function loadPost(page = pagination.page, limit = pagination.limit) {
     axios
-      .get(`${API_URL}/posts/getPost?page=${page}&limit=${limit}`, {
+      .get(`${APILOADPAGE_URL}${page}&limit=${limit}`, {
         withCredentials: true,
       })
       .then((res) => setPosts((prev) => [...prev, ...res.data]))
@@ -78,74 +79,16 @@ export default function Feeds(user) {
     setFriendList(user.user.friends.myFriends);
   };
 
-  const Inlike = (id) => {
-    axios
-      .post(
-        `${API_URL}/posts/like`,
-        {
-          post_id: id,
-        },
-        { withCredentials: true }
-      )
-      .then((res) => {
-        setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)));
-      })
-      .catch((err) => console.log(err.message));
-  };
-  const unlike = (id) => {
-    axios
-      .post(
-        `${API_URL}/posts/unlike`,
-        {
-          post_id: id,
-        },
-        { withCredentials: true }
-      )
-      .then((res) =>
-        setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)))
-      )
-      .catch((err) => console.log(err.message));
-  };
-  const commentBox = (id, message, commentInput,setcommentmessage) => {
-    if (message === undefined || message === '') {
-      toast.warn("Comment box is empty... write something")
-    }
-    else {
-      axios
-        .post(
-          `${API_URL}/posts/comment`,
-          {
-            post_id: id,
-            comment: message,
-          },
-          { withCredentials: true }
-        )
-        .then((res) => {
-          commentInput.current.value = ""
-          setcommentmessage("");
 
-          setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)))
-        }
-        )
-        .catch((err) => console.log(err.message));
-    }
-  }
-  const reportPost = (data) => {
-    axios
-      .post(
-        `${API_URL}/posts/report`,
-        {
-          data:data,
-        },
-        { withCredentials: true }
-      )
-      .then((res) => {
-
-        setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)));
-        toast.success('Reported Successfully');
-      })
-      .catch((err) => console.log(err.message));
-  };
+  const like = (id) => Inlike(id,setPosts,posts);
+  const dislike = (id) => unlike(id,setPosts,posts);
+  const commentbox = (id,message,commentInput,setcommentmessage) => commentBox(id, message, commentInput,setcommentmessage,setPosts,posts);
+  const report = (id) => reportPost(id,setPosts,posts);
+  // const post = (id,posts,setPosts,commentBox,file,loading,setLoading,title,setTitle,userData,setRefresh,) => {
+  //   const commentBox = document.getElementById('comment-box').value;
+  //   const file = document.getElementById('file').value;
+  //   postDetails(id,posts,setPosts,commentBox,file,loading,setLoading);     
+  // }
   const postDetails = () => {
     const commentBox = document.getElementById('comment-box').value;
     const file = document.getElementById('file').value;
@@ -154,33 +97,27 @@ export default function Feeds(user) {
     if (commentBox === '' && file === '') {
       toast.warn('Please give atleast one input');
     }
-    // checking atleast one input is given or not
-    else if (commentBox === '' || file === '') {
+    else if (commentBox !== '') {
+      fetch(`${APIUSER_URL}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          caption: title,
+          user_id: userData._id,
+        }),
+      }).then((r) => { setRefresh(refresh + 1) });
+
+      setPosts([]);
+      loadPost();
+      setLoading(false);
+      toast.success('Your post uplaoded successfully');
+      setTitle('');
+      document.getElementById('file').value = '';
+    }
+    else if(file !== ''){
       setLoading(true);
-      //  if only caption is given from user
-      if (commentBox !== '') {
-        fetch(`${API_URL}/posts/userPost`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            caption: title,
-            user_id: userData._id,
-          }),
-        }).then((r) => { setRefresh(refresh + 1) });
-
-        setPosts([]);
-        loadPost();
-        setLoading(false);
-        toast.success('Your post uplaoded successfully');
-        setTitle('');
-        document.getElementById('file').value = '';
-
-      }
-      // if only picture is given from user side
-      else {
-        setLoading(true);
         const data = new FormData();
         data.append('file', image);
         data.append('upload_preset', 'buzz-app');
@@ -191,7 +128,7 @@ export default function Feeds(user) {
         })
           .then((res) => res.json())
           .then((data) => {
-            fetch(`${API_URL}/posts/userPost`, {
+            fetch(`${APIUSER_URL}`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -213,48 +150,45 @@ export default function Feeds(user) {
           .catch((err) => {
             console.log(err);
           });
-      }
-    }
-
-    // if both caption and picture  inputs are given in post
-    else {
-      setLoading(true);
-      const data = new FormData();
-      data.append('file', image);
-      data.append('upload_preset', 'buzz-app');
-      data.append('cloud_name', 'buzz-social-app');
-      fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
-        method: 'post',
-        body: data,
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          fetch(`${API_URL}/posts/userPost`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              pic_url: data.url,
-              caption: title,
-              user_id: userData._id,
-            }),
-          }).then((r) => {
-            setRefresh(refresh + 1)
-            setPosts([]);
-            loadPost();
-          });
-          setLoading(false);
-          toast.success('Your post uplaoded successfully');
-
-          setTitle('');
-          document.getElementById('file').value = '';
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  };
+        }
+        else{
+          setLoading(true);
+          const data = new FormData();
+          data.append('file', image);
+          data.append('upload_preset', 'buzz-app');
+          data.append('cloud_name', 'buzz-social-app');
+          fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
+            method: 'post',
+            body: data,
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              fetch(`${APIUSER_URL}`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  pic_url: data.url,
+                  caption: title,
+                  user_id: userData._id,
+                }),
+              }).then((r) => {
+                setRefresh(refresh + 1)
+                setPosts([]);
+                loadPost();
+              });
+              setLoading(false);
+              toast.success('Your post uplaoded successfully');
+    
+              setTitle('');
+              document.getElementById('file').value = '';
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+  }
 
 
   return (
@@ -368,11 +302,11 @@ export default function Feeds(user) {
                   <Post
                     index={index}
                     data={element}
-                    inclike={Inlike}
-                    deslike={unlike}
-                    commentBox={commentBox}
+                    inclike={like}
+                    deslike={dislike}
+                    commentBox={commentbox}
                     userdata={userData}
-                    reportPost={reportPost}
+                    reportPost={report}
                     uid ={userData._id}
                   />
                 );

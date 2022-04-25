@@ -43,9 +43,7 @@ function App() {
             .then((res) => setSFriend([...res.data]))
             .catch((err) => console.log(err.message));
       })
-      .catch((err) => console.log(err));
-
-    console.log(SFriend);
+      .catch((err) => console.log(err));    
   }
 
   return (

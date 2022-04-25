@@ -1,14 +1,14 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { API_URL } from '../config';
+import { APIUSERINFO_URL,APISENTREQ_URL,APIDELREQ_URL } from '../config';
+import { DeleteFriend, SendReq } from '../services/userservice';
 import UserlistWidget from './UserlistWidget';
 
 export default function Userprofile({ suggestFriend, myData, refresh }) {
   const [user, setUser] = useState({});
   const { id } = useParams();
-  const [friendStatus, setFriendStatus] = useState('ADD FRIEND');
-
+ 
   let isFriend = myData.friends.myFriends
     .map(({ _id }) => _id === id)
     .includes(true);
@@ -19,36 +19,16 @@ export default function Userprofile({ suggestFriend, myData, refresh }) {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/users/` + id, { withCredentials: true })
+      .get(`${APIUSERINFO_URL}` + id, { withCredentials: true })
       .then((res) => {
         setUser(res.data);
       })
       .catch((err) => console.log(err.message));
   }, [id]);
 
-  function SendReq() {
-    axios
-      .get(`${API_URL}/users/sendRequest/` + id, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        refresh();
-        // alert(res.data.message);
-      })
-      .catch((err) => console.log(err.message));
-  }
-
-  function DeleteFriend() {
-    axios
-      .get(`${API_URL}/users/deleteRequest/` + id, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        refresh();
-        // alert(res.data.message);
-      })
-      .catch((err) => console.log(err.message));
-  }
+  const SentReq = () => SendReq(id,refresh);  
+  
+  const DelReq = () => DeleteFriend(id,refresh); 
 
   return (
     <div className="container mt-3">
@@ -73,14 +53,14 @@ export default function Userprofile({ suggestFriend, myData, refresh }) {
             <div className="d-flex">
 
               {isFriend ? (
-                <div onClick={DeleteFriend} className="btn btn-danger me-3">
+                <div onClick={DelReq} className="btn btn-danger me-3">
                   REMOVE FRIEND
                 </div>
               ) : isPending ? (
                 <div className="btn btn-dark me-3">Request Pending</div>
               ) : (
-                <div onClick={SendReq} className="btn btn-primary me-3">
-                  {friendStatus}
+                <div onClick={SentReq} className="btn btn-primary me-3">
+                 ADD FRIEND
                 </div>
               )}
               <a rel="noopener noreferrer" href={user.website} target="_blank" className='btn btn-outline-dark' >Visit Website</a>

@@ -1,10 +1,10 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom';
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { API_URL } from "../config";
 export default function Admin(user) {
-    const [post, allPost] = useState([])
-    const [refresh, setRefresh] = useState(0)
+  const [post, allPost] = useState([]);
+  const [refresh, setRefresh] = useState(0);
 
     useEffect(() => {
 
@@ -76,5 +76,7 @@ export default function Admin(user) {
             </div>
 
         </div>
-    )
+      </div>
+    </div>
+  );
 }

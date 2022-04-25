@@ -1,12 +1,10 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { API_URL } from '../config';
+import { APILOGOUT_URL } from '../config';
 
 export default function Navbar({ user }) {
 
   function handleLogout() {
-    window.open(`${API_URL}/auth/logout`, '_self');
+    window.open(`${APILOGOUT_URL}`, '_self');
   }
   return (
     <>
