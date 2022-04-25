@@ -6,7 +6,7 @@ import UserlistWidget from './UserlistWidget';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Spinner from './Spinner';
-import { Link } from 'react-router-dom';
+import FullPageSpinner from './FullPageSpinner';
 import DefaultCard from './DefaultCard';
 import {
   commentBox,
@@ -23,6 +23,7 @@ export default function Feeds(user) {
   const [refresh, setRefresh] = useState(0);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(false);
   const [count, setCount] = useState(0);
   const [pagination, setPagination] = useState({
     page: 0,
@@ -35,6 +36,7 @@ export default function Feeds(user) {
   }, [pagination.page]);
 
   useEffect(() => {
+    setPageLoading(true);
     loaduser();
 
     window.addEventListener('scroll', handleScroll);
@@ -45,16 +47,17 @@ export default function Feeds(user) {
       })
       .then((res) => {
         // counting the total number of post of login user
-        let a = 0;
-        const c = res.data.map((element) => {
-          if (element.posted_by._id === user.user._id) {
-            a++;
-          }
-        });
-        setCount(a);
+        const c = res.data.filter(
+          (el) => el.posted_by._id === user.user._id
+        ).length;
+        setCount(c);
         setPagination((pre) => ({ ...pre, total: res.data.length }));
+        setPageLoading(false);
       })
-      .catch((err) => console.log(err.message));
+      .catch((err) => {
+        console.log(err.message);
+        setPageLoading(false);
+      });
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, [refresh]);
@@ -69,12 +72,19 @@ export default function Feeds(user) {
   }
 
   function loadPost(page = pagination.page, limit = pagination.limit) {
+    page === 0 && setPageLoading(true);
     axios
       .get(`${APIGETPOST_URL}?page=${page}&limit=${limit}`, {
         withCredentials: true,
       })
-      .then((res) => setPosts((prev) => [...prev, ...res.data]))
-      .catch((err) => console.log(err.message));
+      .then((res) => {
+        setPosts((prev) => [...prev, ...res.data]);
+        setPageLoading(false);
+      })
+      .catch((err) => {
+        console.log(err.message);
+        setPageLoading(false);
+      });
   }
 
   const loaduser = () => {
@@ -194,6 +204,8 @@ export default function Feeds(user) {
 
   return (
     <>
+      {pageLoading && <FullPageSpinner />}
+
       <div style={{ backgroundColor: '#F0F2F5' }}>
         <div className="container">
           <div className="row">
@@ -289,10 +301,10 @@ export default function Feeds(user) {
                     className="btn btn-success rounded-pill"
                     onClick={() => postDetails()}
                   >
-                    Uplaod
+                    Upload
                   </button>
                 </div>
-                {loading ? <Spinner /> : ''}
+                {loading && <Spinner />}
               </div>
 
               {posts.map((element, index) => {
@@ -310,7 +322,7 @@ export default function Feeds(user) {
                 );
               })}
 
-              {posts.length > 0 ? '' : <DefaultCard></DefaultCard>}
+              {posts.length > 0 && <DefaultCard />}
 
               <div className="d-flex mb-4">
                 {pagination.total !== posts.length && (
@@ -327,55 +339,15 @@ export default function Feeds(user) {
             </div>
             {/* =============================================================================== column 3rd ================================================================================================== */}
             <div className="col-md-3 sticky side-height mt-3 ">
-              {/*========================================================================= Contacts ============================================================================== */}
-              <div className=" border p-2 scroll bg-white shadow-lg p-3 mb-4 bg-body rounded border-0">
-                <div className="d-flex justify-content-between">
-                  <div>Contacts</div>
-                  <div></div>
-                </div>
-
-                {friendList.length === 0 ? (
-                  <div className="text-center">You have no friends</div>
-                ) : (
-                  <div className="d-flex">
-                    <div>
-                      {friendList.map((element, index) => {
-                        return (
-                          <Link
-                            className="d-flex text-decoration-none mt-2 "
-                            key={index}
-                            to={'/profile/' + element._id}
-                          >
-                            <div>
-                              {element.picture_url ? (
-                                <img
-                                  src={element.picture_url}
-                                  className="card-img-top small-round-pic  round-img"
-                                  alt="..."
-                                />
-                              ) : (
-                                <i
-                                  className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img text-success d-flex justify-content-center align-items-center"
-                                  style={{ backgroundColor: '#F0F2F5' }}
-                                ></i>
-                              )}
-                            </div>
-                            <div className="ms-2 d-flex text-dark align-items-center">
-                              {'firstname' in element
-                                ? element.firstname + ' ' + element.lastname
-                                : 'Unknown User'}
-                            </div>
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-              </div>
-              {/*============================================================================ Suggestuons ================================================================================== */}
+              <UserlistWidget
+                title={'My Contacts'}
+                friendList={friendList}
+                ifEmpty="You have no friends"
+              />
               <UserlistWidget
                 title={'Friends Sugesstions'}
                 friendList={user.suggestFriend}
+                ifEmpty="No Suggestions found"
               />
             </div>
             {/* closing 3rd column  */}
