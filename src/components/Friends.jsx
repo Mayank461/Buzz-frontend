@@ -1,33 +1,12 @@
-import axios from 'axios';
 import React from 'react';
-import { ApiDeleteReq_url,ApiConfirmReq_url } from '../config';
 import UserlistWidget from './UserlistWidget';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { handleConfirmRequest, handleDeleteRequest } from '../services/userservice';
 
 function Friends({ user, refresh }) {
-  function handleConfirmRequest(id) {
-    axios
-      .get(`${ApiConfirmReq_url}${id}`, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        refresh();
-      toast.success("Friend added")
-      })
-      .catch((err) => console.log(err.message));
-  }
-  function handleDeleteRequest(id) {
-    axios
-      .get(`${ApiDeleteReq_url}${id}`, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        refresh();
-        toast.success("Friend request cancelled")
-      })
-      .catch((err) => console.log(err.message));
-  }
+  const confirmReq = (id) => handleConfirmRequest(id,refresh);
+  const delReq = (id) => handleDeleteRequest(id,refresh);
 
   return (
     <>
@@ -63,13 +42,13 @@ function Friends({ user, refresh }) {
                       <div className="d-flex align-items-center controls">
                         <div
                           class="btn btn-primary mx-1"
-                          onClick={() => handleConfirmRequest(friend._id)}
+                          onClick={() => confirmReq(friend._id)}
                         >
                           Confirm
                         </div>
                         <div
                           class="btn btn-outline-danger mx-1"
-                          onClick={() => handleDeleteRequest(friend._id)}
+                          onClick={() => delReq(friend._id)}
                         >
                           Delete
                         </div>
@@ -110,7 +89,7 @@ function Friends({ user, refresh }) {
                       <div className="d-flex align-items-center controls">
                         <div
                           class="btn btn-outline-danger mx-1"
-                          onClick={() => handleDeleteRequest(friend._id)}
+                          onClick={() => delReq(friend._id)}
                         >
                           Delete
                         </div>

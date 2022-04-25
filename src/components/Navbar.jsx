@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
-import { ApiLogout_url } from '../config';
+import { APILOGOUT_URL } from '../config';
 
 export default function Navbar({ user }) {
 
   function handleLogout() {
-    window.open(`${ApiLogout_url}`, '_self');
+    window.open(`${APILOGOUT_URL}`, '_self');
   }
   return (
     <>

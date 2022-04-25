@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import {ApiLike_url,ApiUnlike_url,ApiComment_url,ApiReport_url,ApiUser_url,ApiLimit_url,ApiLoadPage_url} from "../config"
+import {APIUSER_URL,APILIMIT_URL,APILOADPAGE_URL} from "../config"
 import Post from "./Post";
 import UserlistWidget from "./UserlistWidget";
 import { ToastContainer, toast } from "react-toastify";
@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Spinner from "./Spinner";
 import { Link } from "react-router-dom";
 import DefaultCard from "./DefaultCard";
+import { commentBox, Inlike, reportPost, unlike } from "../services/postservices";
 
 export default function Feeds(user) {
 
@@ -36,7 +37,7 @@ export default function Feeds(user) {
     window.addEventListener('scroll', handleScroll);
 
     axios
-      .get(`${ApiLimit_url}`, {
+      .get(`${APILIMIT_URL}`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -66,7 +67,7 @@ export default function Feeds(user) {
 
   function loadPost(page = pagination.page, limit = pagination.limit) {
     axios
-      .get(`${ApiLoadPage_url}${page}&limit=${limit}`, {
+      .get(`${APILOADPAGE_URL}${page}&limit=${limit}`, {
         withCredentials: true,
       })
       .then((res) => setPosts((prev) => [...prev, ...res.data]))
@@ -78,74 +79,16 @@ export default function Feeds(user) {
     setFriendList(user.user.friends.myFriends);
   };
 
-  const Inlike = (id) => {
-    axios
-      .post(
-        `${ApiLike_url}`,
-        {
-          post_id: id,
-        },
-        { withCredentials: true }
-      )
-      .then((res) => {
-        setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)));
-      })
-      .catch((err) => console.log(err.message));
-  };
-  const unlike = (id) => {
-    axios
-      .post(
-        `${ApiUnlike_url}`,
-        {
-          post_id: id,
-        },
-        { withCredentials: true }
-      )
-      .then((res) =>
-        setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)))
-      )
-      .catch((err) => console.log(err.message));
-  };
-  const commentBox = (id, message, commentInput,setcommentmessage) => {
-    if (message === undefined || message === '') {
-      toast.warn("Comment box is empty... write something")
-    }
-    else {
-      axios
-        .post(
-          `${ApiComment_url}`,
-          {
-            post_id: id,
-            comment: message,
-          },
-          { withCredentials: true }
-        )
-        .then((res) => {
-          commentInput.current.value = ""
-          setcommentmessage("");
 
-          setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)))
-        }
-        )
-        .catch((err) => console.log(err.message));
-    }
-  }
-  const reportPost = (id) => {
-      axios
-      .post(
-        `${ApiReport_url}`,
-        {
-          post_id: id,
-        },
-        { withCredentials: true }
-      )
-      .then((res) => {
-        setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)));
-        toast.success('Reported Successfully');
-      })
-      .catch((err) => console.log(err.message));
-  };
-  
+  const like = (id) => Inlike(id,setPosts,posts);
+  const dislike = (id) => unlike(id,setPosts,posts);
+  const commentbox = (id,message,commentInput,setcommentmessage) => commentBox(id, message, commentInput,setcommentmessage,setPosts,posts);
+  const report = (id) => reportPost(id,setPosts,posts);
+  // const post = (id,posts,setPosts,commentBox,file,loading,setLoading,title,setTitle,userData,setRefresh,) => {
+  //   const commentBox = document.getElementById('comment-box').value;
+  //   const file = document.getElementById('file').value;
+  //   postDetails(id,posts,setPosts,commentBox,file,loading,setLoading);     
+  // }
   const postDetails = () => {
     const commentBox = document.getElementById('comment-box').value;
     const file = document.getElementById('file').value;
@@ -155,7 +98,7 @@ export default function Feeds(user) {
       toast.warn('Please give atleast one input');
     }
     else if (commentBox !== '') {
-      fetch(`${ApiUser_url}`, {
+      fetch(`${APIUSER_URL}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -185,7 +128,7 @@ export default function Feeds(user) {
         })
           .then((res) => res.json())
           .then((data) => {
-            fetch(`${ApiUser_url}`, {
+            fetch(`${APIUSER_URL}`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -220,7 +163,7 @@ export default function Feeds(user) {
           })
             .then((res) => res.json())
             .then((data) => {
-              fetch(`${ApiUser_url}`, {
+              fetch(`${APIUSER_URL}`, {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
@@ -359,11 +302,11 @@ export default function Feeds(user) {
                   <Post
                     index={index}
                     data={element}
-                    inclike={Inlike}
-                    deslike={unlike}
-                    commentBox={commentBox}
+                    inclike={like}
+                    deslike={dislike}
+                    commentBox={commentbox}
                     userdata={userData}
-                    reportPost={reportPost}
+                    reportPost={report}
                     uid ={userData._id}
                   />
                 );
