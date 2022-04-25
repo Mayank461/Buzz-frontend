@@ -1,19 +1,23 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import {APIUSER_URL,APILIMIT_URL,APILOADPAGE_URL} from "../config"
-import Post from "./Post";
-import UserlistWidget from "./UserlistWidget";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Spinner from "./Spinner";
-import { Link } from "react-router-dom";
-import DefaultCard from "./DefaultCard";
-import { commentBox, Inlike, reportPost, unlike } from "../services/postservices";
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { APIUSER_URL, APIGETPOST_URL } from '../config';
+import Post from './Post';
+import UserlistWidget from './UserlistWidget';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Spinner from './Spinner';
+import { Link } from 'react-router-dom';
+import DefaultCard from './DefaultCard';
+import {
+  commentBox,
+  Inlike,
+  reportPost,
+  unlike,
+} from '../services/postservices';
 
 export default function Feeds(user) {
-
-  const [title, setTitle] = useState("");
-  const [image, setImage] = useState("");
+  const [title, setTitle] = useState('');
+  const [image, setImage] = useState('');
   const [userData, setUserData] = useState({});
   const [friendList, setFriendList] = useState([]);
   const [refresh, setRefresh] = useState(0);
@@ -28,7 +32,6 @@ export default function Feeds(user) {
 
   useEffect(() => {
     loadPost(pagination.page);
-
   }, [pagination.page]);
 
   useEffect(() => {
@@ -37,7 +40,7 @@ export default function Feeds(user) {
     window.addEventListener('scroll', handleScroll);
 
     axios
-      .get(`${APILIMIT_URL}`, {
+      .get(`${APIGETPOST_URL}?page=0&limit=10000000000000000`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -67,7 +70,7 @@ export default function Feeds(user) {
 
   function loadPost(page = pagination.page, limit = pagination.limit) {
     axios
-      .get(`${APILOADPAGE_URL}${page}&limit=${limit}`, {
+      .get(`${APIGETPOST_URL}?page=${page}&limit=${limit}`, {
         withCredentials: true,
       })
       .then((res) => setPosts((prev) => [...prev, ...res.data]))
@@ -79,15 +82,15 @@ export default function Feeds(user) {
     setFriendList(user.user.friends.myFriends);
   };
 
-
-  const like = (id) => Inlike(id,setPosts,posts);
-  const dislike = (id) => unlike(id,setPosts,posts);
-  const commentbox = (id,message,commentInput,setcommentmessage) => commentBox(id, message, commentInput,setcommentmessage,setPosts,posts);
-  const report = (id) => reportPost(id,setPosts,posts);
+  const like = (id) => Inlike(id, setPosts, posts);
+  const dislike = (id) => unlike(id, setPosts, posts);
+  const commentbox = (id, message, commentInput, setcommentmessage) =>
+    commentBox(id, message, commentInput, setcommentmessage, setPosts, posts);
+  const report = (id) => reportPost(id, setPosts, posts);
   // const post = (id,posts,setPosts,commentBox,file,loading,setLoading,title,setTitle,userData,setRefresh,) => {
   //   const commentBox = document.getElementById('comment-box').value;
   //   const file = document.getElementById('file').value;
-  //   postDetails(id,posts,setPosts,commentBox,file,loading,setLoading);     
+  //   postDetails(id,posts,setPosts,commentBox,file,loading,setLoading);
   // }
   const postDetails = () => {
     const commentBox = document.getElementById('comment-box').value;
@@ -96,8 +99,7 @@ export default function Feeds(user) {
     // checking validation in post field
     if (commentBox === '' && file === '') {
       toast.warn('Please give atleast one input');
-    }
-    else if (commentBox !== '') {
+    } else if (commentBox !== '') {
       fetch(`${APIUSER_URL}`, {
         method: 'POST',
         headers: {
@@ -107,7 +109,9 @@ export default function Feeds(user) {
           caption: title,
           user_id: userData._id,
         }),
-      }).then((r) => { setRefresh(refresh + 1) });
+      }).then((r) => {
+        setRefresh(refresh + 1);
+      });
 
       setPosts([]);
       loadPost();
@@ -115,88 +119,84 @@ export default function Feeds(user) {
       toast.success('Your post uplaoded successfully');
       setTitle('');
       document.getElementById('file').value = '';
-    }
-    else if(file !== ''){
+    } else if (file !== '') {
       setLoading(true);
-        const data = new FormData();
-        data.append('file', image);
-        data.append('upload_preset', 'buzz-app');
-        data.append('cloud_name', 'buzz-social-app');
-        fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
-          method: 'post',
-          body: data,
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            fetch(`${APIUSER_URL}`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                pic_url: data.url,
-                user_id: userData._id,
-              }),
-            }).then((r) => {
-              setRefresh(refresh + 1)
-              setPosts([]);
-              loadPost();
-            });
-            setLoading(false);
-            toast.success('Post uploaded successfully');
-            setTitle('');
-            document.getElementById('file').value = '';
-          })
-          .catch((err) => {
-            console.log(err);
+      const data = new FormData();
+      data.append('file', image);
+      data.append('upload_preset', 'buzz-app');
+      data.append('cloud_name', 'buzz-social-app');
+      fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
+        method: 'post',
+        body: data,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          fetch(`${APIUSER_URL}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              pic_url: data.url,
+              user_id: userData._id,
+            }),
+          }).then((r) => {
+            setRefresh(refresh + 1);
+            setPosts([]);
+            loadPost();
           });
-        }
-        else{
-          setLoading(true);
-          const data = new FormData();
-          data.append('file', image);
-          data.append('upload_preset', 'buzz-app');
-          data.append('cloud_name', 'buzz-social-app');
-          fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
-            method: 'post',
-            body: data,
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              fetch(`${APIUSER_URL}`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  pic_url: data.url,
-                  caption: title,
-                  user_id: userData._id,
-                }),
-              }).then((r) => {
-                setRefresh(refresh + 1)
-                setPosts([]);
-                loadPost();
-              });
-              setLoading(false);
-              toast.success('Your post uplaoded successfully');
-    
-              setTitle('');
-              document.getElementById('file').value = '';
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        }
-  }
+          setLoading(false);
+          toast.success('Post uploaded successfully');
+          setTitle('');
+          document.getElementById('file').value = '';
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      setLoading(true);
+      const data = new FormData();
+      data.append('file', image);
+      data.append('upload_preset', 'buzz-app');
+      data.append('cloud_name', 'buzz-social-app');
+      fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
+        method: 'post',
+        body: data,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          fetch(`${APIUSER_URL}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              pic_url: data.url,
+              caption: title,
+              user_id: userData._id,
+            }),
+          }).then((r) => {
+            setRefresh(refresh + 1);
+            setPosts([]);
+            loadPost();
+          });
+          setLoading(false);
+          toast.success('Your post uplaoded successfully');
 
+          setTitle('');
+          document.getElementById('file').value = '';
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
 
   return (
     <>
       <div style={{ backgroundColor: '#F0F2F5' }}>
         <div className="container">
           <div className="row">
-
             <div className="col-md-3 sticky side-height mt-3 ">
               {/*========================================================================= column 1st ============================================================================== */}
               <div className="card p-5 shadow-lg p-3 mb-2 bg-body rounded border-0">
@@ -213,8 +213,9 @@ export default function Feeds(user) {
                 </div>
                 <div className="card-body">
                   <h5 className="card-title text-center">
-                    {"firstname" in userData ? userData.firstname + ' ' + userData.lastname : "Edit Profile"}
-
+                    {'firstname' in userData
+                      ? userData.firstname + ' ' + userData.lastname
+                      : 'Edit Profile'}
                   </h5>
                   <p className="card-text text-center">Newly Recruit at TTN </p>
                   <div className="d-flex justify-content-between mt-4">
@@ -234,7 +235,6 @@ export default function Feeds(user) {
               </div>
               <div className="">
                 <div className="card">
-                
                   <img
                     src="https://media-s3-us-east-1.ceros.com/abbott/images/2020/06/18/5003c26bb33afd98eb9dc65ba64e18d0/asset-1.png?imageOpt=1"
                     className="card-img-top position-relative "
@@ -246,8 +246,6 @@ export default function Feeds(user) {
                       src="https://static1.tothenew.com/blog/wp-content/themes/ttn/images/social-logo.png"
                     ></img>
                   </div>
-                 
-                
                 </div>
               </div>
             </div>
@@ -307,13 +305,12 @@ export default function Feeds(user) {
                     commentBox={commentbox}
                     userdata={userData}
                     reportPost={report}
-                    uid ={userData._id}
+                    uid={userData._id}
                   />
                 );
               })}
 
-              {posts.length > 0 ? "" : <DefaultCard></DefaultCard>}
-
+              {posts.length > 0 ? '' : <DefaultCard></DefaultCard>}
 
               <div className="d-flex mb-4">
                 {pagination.total !== posts.length && (
@@ -334,8 +331,7 @@ export default function Feeds(user) {
               <div className=" border p-2 scroll bg-white shadow-lg p-3 mb-4 bg-body rounded border-0">
                 <div className="d-flex justify-content-between">
                   <div>Contacts</div>
-                  <div>
-                  </div>
+                  <div></div>
                 </div>
 
                 {friendList.length === 0 ? (
@@ -365,7 +361,9 @@ export default function Feeds(user) {
                               )}
                             </div>
                             <div className="ms-2 d-flex text-dark align-items-center">
-                              {"firstname" in element ? element.firstname + ' ' + element.lastname : "Unknown User"}
+                              {'firstname' in element
+                                ? element.firstname + ' ' + element.lastname
+                                : 'Unknown User'}
                             </div>
                           </Link>
                         );
@@ -388,5 +386,4 @@ export default function Feeds(user) {
       <ToastContainer theme="colored" />
     </>
   );
-
 }
