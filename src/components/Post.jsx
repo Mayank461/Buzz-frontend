@@ -17,9 +17,7 @@ export default function Post({
 
   const commentInput = useRef(null);
 
-  useEffect(() => {
-    console.log(data.posted_by._id);
-  });
+
 
   let toggle = true;
 
@@ -74,7 +72,7 @@ export default function Post({
                   className="dropdown-item"
                   data-bs-target="#exampleModal"
                   onClick={() => {
-                    reportPost(_id);
+                    reportPost(data);
                   }}
                 >
                   Report

@@ -12,7 +12,7 @@ export default function Admin(user) {
             .get(`${API_URL}/posts/allPost`)
             .then((res) => {
                 allPost(res.data);
-                console.log(post);
+                console.log(res.data);
               
             })
             .catch((err) => console.log(err.message));
@@ -76,7 +76,7 @@ export default function Admin(user) {
             </div>
 
         </div>
-      </div>
-    </div>
+      
+
   );
 }

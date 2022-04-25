@@ -68,18 +68,20 @@ export const commentBox = (
   }
 };
 
-export const reportPost = (id, setPosts, posts) => {
+export const reportPost = (data, setPosts, posts) => {
   axios
     .post(
       `${APIREPORT_URL}`,
       {
-        post_id: id,
+      data:data
       },
       { withCredentials: true }
     )
     .then((res) => {
-      setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)));
+
       toast.success("Reported Successfully");
+      setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)));
+     
     })
     .catch((err) => console.log(err.message));
 };

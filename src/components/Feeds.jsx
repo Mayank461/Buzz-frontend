@@ -83,12 +83,8 @@ export default function Feeds(user) {
   const like = (id) => Inlike(id,setPosts,posts);
   const dislike = (id) => unlike(id,setPosts,posts);
   const commentbox = (id,message,commentInput,setcommentmessage) => commentBox(id, message, commentInput,setcommentmessage,setPosts,posts);
-  const report = (id) => reportPost(id,setPosts,posts);
-  // const post = (id,posts,setPosts,commentBox,file,loading,setLoading,title,setTitle,userData,setRefresh,) => {
-  //   const commentBox = document.getElementById('comment-box').value;
-  //   const file = document.getElementById('file').value;
-  //   postDetails(id,posts,setPosts,commentBox,file,loading,setLoading);     
-  // }
+  const report = (data) => reportPost(data,setPosts,posts);
+
   const postDetails = () => {
     const commentBox = document.getElementById('comment-box').value;
     const file = document.getElementById('file').value;
@@ -97,24 +93,44 @@ export default function Feeds(user) {
     if (commentBox === '' && file === '') {
       toast.warn('Please give atleast one input');
     }
-    else if (commentBox !== '') {
-      fetch(`${APIUSER_URL}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          caption: title,
-          user_id: userData._id,
-        }),
-      }).then((r) => { setRefresh(refresh + 1) });
-
-      setPosts([]);
-      loadPost();
-      setLoading(false);
-      toast.success('Your post uplaoded successfully');
-      setTitle('');
-      document.getElementById('file').value = '';
+    else if (commentBox !== '' && file !=='') {
+    
+     setLoading(true);
+          const data = new FormData();
+          data.append('file', image);
+          data.append('upload_preset', 'buzz-app');
+          data.append('cloud_name', 'buzz-social-app');
+          fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
+            method: 'post',
+            body: data,
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              fetch(`${APIUSER_URL}`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  pic_url: data.url,
+                  caption: title,
+                  user_id: userData._id,
+                }),
+              }).then((r) => {
+                setRefresh(refresh + 1)
+                setPosts([]);
+                loadPost();
+              });
+              setLoading(false);
+              toast.success('Your post uplaoded successfully');
+    
+              setTitle('');
+              document.getElementById('file').value = '';
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+  
     }
     else if(file !== ''){
       setLoading(true);
@@ -152,41 +168,27 @@ export default function Feeds(user) {
           });
         }
         else{
-          setLoading(true);
-          const data = new FormData();
-          data.append('file', image);
-          data.append('upload_preset', 'buzz-app');
-          data.append('cloud_name', 'buzz-social-app');
-          fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
-            method: 'post',
-            body: data,
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              fetch(`${APIUSER_URL}`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  pic_url: data.url,
-                  caption: title,
-                  user_id: userData._id,
-                }),
-              }).then((r) => {
-                setRefresh(refresh + 1)
-                setPosts([]);
-                loadPost();
-              });
-              setLoading(false);
-              toast.success('Your post uplaoded successfully');
+         fetch(`${APIUSER_URL}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          caption: title,
+          user_id: userData._id,
+        }),
+      }).then((r) => { 
+        setRefresh(refresh + 1) ;
+        setPosts([]);
+        loadPost();
+      
+      });
+
     
-              setTitle('');
-              document.getElementById('file').value = '';
-            })
-            .catch((err) => {
-              console.log(err);
-            });
+      setLoading(false);
+      toast.success('Your post uplaoded successfully');
+      setTitle('');
+      document.getElementById('file').value = '';
         }
   }
 

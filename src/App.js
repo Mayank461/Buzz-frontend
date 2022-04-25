@@ -10,7 +10,6 @@ import Userprofile from './components/Userprofile';
 import Selfprofile from './components/Selfprofile';
 import Friends from './components/Friends';
 import Admin from './components/Admin';
-import AdminLogin from './components/AdminLogin';
 
 function App() {
   const [user, setUser] = useState(false);
@@ -82,25 +81,12 @@ function App() {
         <>
           <Routes>
             <Route path="*" element={<Login fetchUser={fetchUser} />} />
-            {/* <Route exact path="/admin" element={<Admin user={user}/>} /> */}
-            <Route exact path="/adminLog" element={<AdminLogin/>} />
+    
             <Route exact path="/admin" element={<Admin/>} />
 
           </Routes>
         </>
       )}
-
-
-      {/* {admin?(<>
-      <Routes>
-      <Route exact path="/adminLog" element={<AdminLogin/>} />
-      </Routes>
-      </>):(<>
-        <Routes>
-        <Route exact path="/admin" element={<Admin/>} />
-        </Routes>
-      </>)} */}
-
  
     </BrowserRouter>
   );
