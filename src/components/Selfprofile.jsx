@@ -1,15 +1,15 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { APIUPDATEUSERDETAILS_URL,APIUSERDP_URL } from "../config";
-import UserlistWidget from "./UserlistWidget";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Spinner from "./Spinner";
-import { postData } from "../services/userservice";
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { APIUPDATEUSERDETAILS_URL, APIUSERDP_URL } from '../config';
+import UserlistWidget from './UserlistWidget';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Spinner from './Spinner';
+import { postData } from '../services/userservice';
 
-export default function Selfprofile({ user, suggestFriend ,refresh }) {
+export default function Selfprofile({ user, suggestFriend, refresh }) {
   const [toogle, setToogle] = useState(false);
-  const [userdata, setUserData] = useState("");
+  const [userdata, setUserData] = useState(user.picture_url);
   const [Refresh, setRfresh] = useState(0);
   const [inputs, setInputs] = useState({
     firstname: user.firstname,
@@ -23,20 +23,11 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
     zip: user.zip,
   });
 
-  useEffect(() => {
-    axios
-      .get(`${APIUSERDP_URL}${user._id}`, { withCredentials: true })
-      .then((res) => {        
-        setUserData(res.data.picture_url);       
-      })
-      .catch((err) => console.log(err.message));
-  }, [Refresh]);
-
   const OnInputChange = (e) => {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
   };
 
-  const updateData = () => postData(inputs,user,refresh,setRfresh,Refresh)
+  const updateData = () => postData(inputs, user, refresh, setRfresh, Refresh);
 
   // const postData = async (e) => {
   //   e.preventDefault();
@@ -103,69 +94,71 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
   // };
 
   const maleToggle = () => {
-    document.getElementById("female").checked = false;
-    document.getElementById("male").checked = true;
-    document.getElementById("labelMale").className += " bg-success";
-    document.getElementById("labelFemale").classList.remove("bg-success");
-    const setMale = "Male";
+    document.getElementById('female').checked = false;
+    document.getElementById('male').checked = true;
+    document.getElementById('labelMale').className += ' bg-success';
+    document.getElementById('labelFemale').classList.remove('bg-success');
+    const setMale = 'Male';
     setInputs({ ...inputs, gender: setMale });
   };
   const femaleToggle = () => {
-    document.getElementById("male").checked = false;
-    document.getElementById("female").checked = true;
-    document.getElementById("labelFemale").className += " bg-success";
-    document.getElementById("labelMale").classList.remove("bg-success");
-    const setFemale = "Female";
+    document.getElementById('male').checked = false;
+    document.getElementById('female').checked = true;
+    document.getElementById('labelFemale').className += ' bg-success';
+    document.getElementById('labelMale').classList.remove('bg-success');
+    const setFemale = 'Female';
     setInputs({ ...inputs, gender: setFemale });
   };
   const reset = () => {
     setInputs({
-      firstname: "",
-      lastname: "",
-      designation: "",
-      website: "",
-      gender: "",
-      birthday: "",
-      city: "",
-      state: "",
-      zip: "",
+      firstname: '',
+      lastname: '',
+      designation: '',
+      website: '',
+      gender: '',
+      birthday: '',
+      city: '',
+      state: '',
+      zip: '',
     });
   };
-  const inputpic = (e) => {    
+  const inputpic = (e) => {
     setToogle(true);
     const data = new FormData();
-    data.append("file", e.target.files[0]);
-    data.append("upload_preset", "buzz-app-pic");
-    data.append("cloud_name", "buzz-social-app");
-    fetch("https://api.cloudinary.com/v1_1/buzz-social-app/image/upload", {
-      method: "post",
+    data.append('file', e.target.files[0]);
+    data.append('upload_preset', 'buzz-app-pic');
+    data.append('cloud_name', 'buzz-social-app');
+    fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
+      method: 'post',
       body: data,
     })
       .then((res) => res.json())
       .then((data) => {
         fetch(`${APIUPDATEUSERDETAILS_URL}${user._id}`, {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            pic_url: data.url,           
+            pic_url: data.url,
           }),
-        }).then((r) =>{
+        }).then((r) => {
           refresh();
-          setRfresh(Refresh + 1)});
+          setRfresh(Refresh + 1);
+        });
 
-        toast.success("Picture change successfully");
-       
+        toast.success('Picture change successfully');
+
         setToogle(false);
       })
       .catch((err) => {
         console.log(err);
       });
   };
+
   return (
     <>
-      <div style={{ backgroundColor: "#F0F2F5" }}>
+      <div style={{ backgroundColor: '#F0F2F5' }}>
         <div className="container">
           <div className="row">
             <div className="col-md-9 bg-white mt-3 p-2 shadow-lg  bg-body rounded">
@@ -178,7 +171,7 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
                 </div>
                 <div className="position-relative profilepic mid">
                   <div className="">
-                    {"picture_url" in user ? (
+                    {'picture_url' in user ? (
                       <img src={userdata} className="profilepic" />
                     ) : (
                       <i className="fa-solid fa-user fa-5x profilepic d-flex justify-content-center align-items-center bg-warning"></i>
@@ -199,11 +192,13 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
               <div className="d-flex ">
                 <div>
                   <h1 className="mt-2">
-                  {"firstname" in user?user.firstname + ' ' + user.lastname:"Edit Profile"}
+                    {'firstname' in user
+                      ? user.firstname + ' ' + user.lastname
+                      : 'Edit Profile'}
                   </h1>
                 </div>
                 <div className="d-flex align-items-center">
-                  {toogle ? <Spinner></Spinner> : ""}
+                  {toogle && <Spinner />}
                 </div>
               </div>
 
@@ -377,9 +372,7 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
                           <option value="Andaman and Nicobar (UT)">
                             Andaman and Nicobar (UT)
                           </option>
-                          <option value="Andhra Pradesh">
-                            Andhra Pradesh
-                          </option>
+                          <option value="Andhra Pradesh">Andhra Pradesh</option>
                           <option value="Arunachal Pradesh">
                             Arunachal Pradesh
                           </option>
@@ -411,9 +404,7 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
                           <option value="Lakshadweep (UT)">
                             Lakshadweep (UT)
                           </option>
-                          <option value="Madhya Pradesh">
-                            Madhya Pradesh
-                          </option>
+                          <option value="Madhya Pradesh">Madhya Pradesh</option>
                           <option value="Maharashtra">Maharashtra</option>
                           <option value="Manipur">Manipur</option>
                           <option value="Meghalaya">Meghalaya</option>
@@ -429,9 +420,7 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
                           <option value="Tamil Nadu">Tamil Nadu</option>
                           <option value="Telangana">Telangana</option>
                           <option value="Tripura">Tripura</option>
-                          <option value="Uttar Pradesh">
-                            Uttar Pradesh
-                          </option>
+                          <option value="Uttar Pradesh">Uttar Pradesh</option>
                           <option value="Uttarakhand">Uttarakhand</option>
                           <option value="West Bengal">West Bengal</option>
                         </select>
