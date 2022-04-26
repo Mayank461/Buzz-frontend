@@ -1,7 +1,7 @@
 import './App.css';
 import Login from './components/Login';
 import Feeds from './components/Feeds';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Navbar from './components/Navbar';
 import Userprofile from './components/Userprofile';

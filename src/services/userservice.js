@@ -76,14 +76,14 @@ export const postData = async (
 ) => {
   e.preventDefault();
   if (
-    inputs.firstname == undefined ||
+    inputs.firstname === undefined ||
     inputs.lastname === undefined ||
     inputs.gender === undefined ||
     inputs.birthday === undefined
   ) {
     toast.warn('Please fill the details');
   } else if (
-    inputs.firstname == '' ||
+    inputs.firstname === '' ||
     inputs.lastname === '' ||
     inputs.gender === '' ||
     inputs.birthday === ''

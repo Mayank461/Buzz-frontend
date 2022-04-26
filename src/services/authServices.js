@@ -15,7 +15,7 @@ export const handleGAuth = async (e) => {
 export const postLoginData = async (e, fetchUser, inputs) => {
   e.preventDefault();
   const { userEmail, userPassword } = inputs;
-  if (userEmail == '' || userPassword == '')
+  if (userEmail === '' || userPassword === '')
     return toast.warning('Please fill the login details');
 
   if (userEmail.split('@')[1] !== 'tothenew.com')

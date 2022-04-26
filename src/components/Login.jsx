@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import { handleGAuth, postLoginData } from '../services/authServices';
 
 export default function Login({ fetchUser }) {
