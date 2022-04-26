@@ -1,23 +1,23 @@
 import React, { useState } from 'react';
-import { ToastContainer, toast } from "react-toastify";
-import { handleGAuth, postLoginData } from '../services/userservice';
+import { ToastContainer, toast } from 'react-toastify';
+import { handleGAuth, postLoginData } from '../services/authServices';
 
 export default function Login({ fetchUser }) {
-
-  const GoogleAuth = (e) => handleGAuth(e); 
+  const GoogleAuth = (e) => handleGAuth(e);
   const [inputs, setInputs] = useState({
     userEmail: '',
     userPassword: '',
   });
+
   const OnInputChange = (e) => {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
   };
-  const LocalAuth = (e) => postLoginData(e,fetchUser,inputs);  
+
+  const LocalAuth = (e) => postLoginData(e, fetchUser, inputs);
 
   return (
     <>
-      <div className=''>
-
+      <div className="">
         <div className="container ">
           <div className="d-flex justify-content-center align-items-center vh-100">
             <div className=" d-flex justify-content-center align-items-center row shadow-lg p-3 mb-5 bg-body rounded p-5 w-100 h-75 ">

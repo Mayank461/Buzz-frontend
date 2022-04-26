@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Comments } from './Comment';
 
 export default function Post({
   index,
@@ -13,7 +14,6 @@ export default function Post({
   let { post_url, _id, like, dislike, comment, post_caption } = data;
   let { firstname, lastname, picture_url } = data.posted_by;
   const [commentmessage, setcommentmessage] = useState();
-  const [loadmore, setloadmore] = useState(true);
 
   const commentInput = useRef(null);
 
@@ -187,37 +187,8 @@ export default function Post({
               </div>
             </div>
           </div>
-          {comment.map((element) => {
-            return (
-              <>
-                <div className="d-flex container bg-light mt-1 align-items-center">
-                  <div className="">
-                    {element.picture_url ? (
-                      <div className="">
-                        <img
-                          src={element.picture_url}
-                          className=" mt-2 small-round-pic me-2  round-img "
-                          alt="..."
-                        />
-                      </div>
-                    ) : (
-                      <i className="mt-2 me-2 fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
-                    )}
-                  </div>
-                  <div className={loadmore && 'text-comment'}>
-                    {element.message}
-                  </div>
-                </div>
-                <div
-                  className="seemore"
-                  onClick={() => {
-                    setloadmore((p) => !p);
-                  }}
-                >
-                  See More...
-                </div>
-              </>
-            );
+          {comment.map((data) => {
+            return <Comments data={data} />;
           })}
         </div>
       </div>

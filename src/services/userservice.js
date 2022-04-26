@@ -3,17 +3,10 @@ import { toast } from 'react-toastify';
 import {
   APICONFIRMREQ_URL,
   APIDELETEREQ_URL,
-  APIGOOGLEAUTH_URL,
-  APILOCALAUTH_URL,
   APISENTREQ_URL,
   APIUPDATEUSERDETAILS_URL,
   API_GETSUGGESTFRIENDS,
 } from '../config';
-
-export const handleGAuth = async (e) => {
-  e.preventDefault();
-  window.open(`${APIGOOGLEAUTH_URL}`, '_self');
-};
 
 export const getSuggestFriends = async () => {
   try {
@@ -25,30 +18,6 @@ export const getSuggestFriends = async () => {
     console.log(error.message);
     return [];
   }
-};
-
-export const postLoginData = async (e, fetchUser, inputs) => {
-  e.preventDefault();
-  const { userEmail, userPassword } = inputs;
-  if (userEmail == '' || userPassword == '')
-    return toast.warning('Please fill the login details');
-
-  if (userEmail.split('@')[1] !== 'tothenew.com')
-    return toast.error('Only ToTheNew email can be used');
-
-  axios
-    .post(
-      `${APILOCALAUTH_URL}`,
-      {
-        username: userEmail,
-        password: userPassword,
-      },
-      { withCredentials: true }
-    )
-    .then(() => {
-      fetchUser();
-    })
-    .catch((err) => toast.error('Invalid Credentials'));
 };
 
 export const SendReq = (id, refresh) => {

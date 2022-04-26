@@ -28,8 +28,10 @@ function App() {
     setLoading(true);
     let { success, user } = await checkAuth();
     success && setUser(user);
-    let friends = await getSuggestFriends();
-    setSFriend([...friends]);
+    if (user) {
+      let friends = await getSuggestFriends();
+      setSFriend([...friends]);
+    }
     setLoading(false);
   }
 
