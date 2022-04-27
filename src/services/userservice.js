@@ -66,73 +66,17 @@ export const handleDeleteRequest = (id, refresh) => {
     .catch((err) => console.log(err.message));
 };
 
-export const postData = async (
-  e,
-  inputs,
-  user,
-  refresh,
-  setRfresh,
-  Refresh
-) => {
-  e.preventDefault();
-  if (
-    inputs.firstname === undefined ||
-    inputs.lastname === undefined ||
-    inputs.gender === undefined ||
-    inputs.birthday === undefined
-  ) {
-    toast.warn('Please fill the details');
-  } else if (
-    inputs.firstname === '' ||
-    inputs.lastname === '' ||
-    inputs.gender === '' ||
-    inputs.birthday === ''
-  ) {
-    toast.warn('Please fill the details');
-  } else {
-    const {
-      firstname,
-      lastname,
-      designation,
-      website,
-      gender,
-      birthday,
-      city,
-      state,
-      zip,
-    } = inputs;
-    console.log(inputs);
-    const res = await fetch(`${APIUPDATEUSERDETAILS_URL}${user._id}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        firstname,
-        lastname,
-        designation,
-        website,
-        gender,
-        birthday,
-        city,
-        state,
-        zip,
-      }),
-    })
-      .then((res) => {
-        toast.success('data updated successfully');
-        setRfresh(Refresh + 1);
-        refresh();
-      })
-      .catch((err) => {
-        toast.error('Something wents wrong!!!');
-      });
+export const postData = async (uid, inputs) => {
+  try {
+    if (inputs.firstname === '' || inputs.lastname === '')
+      throw new Error('First name and Last name are required');
 
-    const result = await res.json();
-    if (result.status === 422 || !result) {
-      console.log('success');
-    } else {
-      console.log('failed');
-    }
+    await axios.post(`${APIUPDATEUSERDETAILS_URL}/${uid}`, inputs, {
+      withCredentials: true,
+    });
+
+    return { message: 'Profile Updated' };
+  } catch (error) {
+    return { error: true, message: error.message };
   }
 };

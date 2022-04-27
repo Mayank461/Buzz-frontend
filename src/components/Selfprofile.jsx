@@ -1,16 +1,16 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { APIUPDATEUSERDETAILS_URL, APIUSERDP_URL } from '../config';
+import React, { useState } from 'react';
+import { APIUPDATEUSERDETAILS_URL } from '../config';
 import UserlistWidget from './UserlistWidget';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Spinner from './Spinner';
 import { postData } from '../services/userservice';
+import FullPageSpinner from './FullPageSpinner';
 
 export default function Selfprofile({ user, suggestFriend, refresh }) {
   const [toogle, setToogle] = useState(false);
   const [userdata, setUserData] = useState(user.picture_url);
-  const [Refresh, setRfresh] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [inputs, setInputs] = useState({
     firstname: user.firstname,
     lastname: user.lastname,
@@ -27,101 +27,30 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
   };
 
-  const updateData = () => postData(inputs, user, refresh, setRfresh, Refresh);
-
-  // const postData = async (e) => {
-  //   e.preventDefault();
-  //   if (
-  //     inputs.firstname == undefined ||
-  //     inputs.lastname === undefined ||
-  //     inputs.gender === undefined ||
-  //     inputs.birthday === undefined
-  //   ) {
-  //     toast.warn("Please fill the details");
-  //   } else if (
-  //     inputs.firstname == "" ||
-  //     inputs.lastname === "" ||
-  //     inputs.gender === "" ||
-  //     inputs.birthday === ""
-  //   ) {
-  //     toast.warn("Please fill the details");
-  //   } else {
-  //     const {
-  //       firstname,
-  //       lastname,
-  //       designation,
-  //       website,
-  //       gender,
-  //       birthday,
-  //       city,
-  //       state,
-  //       zip,
-  //     } = inputs;
-  //     console.log(inputs);
-  //     const res = await fetch(`${APIUPDATEUSERDETAILS_URL}${user._id}`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         firstname,
-  //         lastname,
-  //         designation,
-  //         website,
-  //         gender,
-  //         birthday,
-  //         city,
-  //         state,
-  //         zip,
-  //       }),
-  //     })
-  //       .then((res) => {
-  //         toast.success("data updated successfully");
-  //         setRfresh(Refresh + 1);
-  //         refresh()
-  //       })
-  //       .catch((err) => {
-  //         toast.error("Something wents wrong!!!");
-  //       });
-
-  //     const result = await res.json();
-  //     if (result.status === 422 || !result) {
-  //       console.log("success");
-  //     } else {
-  //       console.log("failed");
-  //     }
-  //   }
-  // };
-
-  const maleToggle = () => {
-    document.getElementById('female').checked = false;
-    document.getElementById('male').checked = true;
-    document.getElementById('labelMale').className += ' bg-success';
-    document.getElementById('labelFemale').classList.remove('bg-success');
-    const setMale = 'Male';
-    setInputs({ ...inputs, gender: setMale });
+  const updateData = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    let { error, message } = await postData(user._id, inputs);
+    setLoading(false);
+    if (error) return toast.warning(message);
+    refresh();
+    toast.success(message);
   };
-  const femaleToggle = () => {
-    document.getElementById('male').checked = false;
-    document.getElementById('female').checked = true;
-    document.getElementById('labelFemale').className += ' bg-success';
-    document.getElementById('labelMale').classList.remove('bg-success');
-    const setFemale = 'Female';
-    setInputs({ ...inputs, gender: setFemale });
-  };
+
   const reset = () => {
     setInputs({
-      firstname: '',
-      lastname: '',
-      designation: '',
-      website: '',
-      gender: '',
-      birthday: '',
-      city: '',
-      state: '',
-      zip: '',
+      firstname: user.firstname,
+      lastname: user.lastname,
+      designation: user.designation,
+      website: user.website,
+      gender: user.gender,
+      birthday: user.birthday,
+      city: user.city,
+      state: user.state,
+      zip: user.zip,
     });
   };
+
   const inputpic = (e) => {
     setToogle(true);
     const data = new FormData();
@@ -142,10 +71,7 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
           body: JSON.stringify({
             pic_url: data.url,
           }),
-        }).then((r) => {
-          refresh();
-          setRfresh(Refresh + 1);
-        });
+        }).then((r) => refresh());
 
         toast.success('Picture change successfully');
 
@@ -155,6 +81,10 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
         console.log(err);
       });
   };
+
+  if (loading) {
+    return <FullPageSpinner />;
+  }
 
   return (
     <>
@@ -294,15 +224,16 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
                           type="radio"
                           className="btn-check"
                           name="gender"
-                          id="male"
-                          onChange={(e) => OnInputChange(e)}
+                          id="Male"
                           value="Male"
+                          onChange={(e) => OnInputChange(e)}
                         />
                         <label
-                          className="btn border-success w-50 "
-                          id="labelMale"
+                          className={`btn border-success  w-50 ${
+                            inputs.gender === 'Male' && 'bg-success text-white'
+                          }`}
+                          for="Male"
                           value="Male"
-                          onClick={maleToggle}
                         >
                           Male
                         </label>
@@ -311,15 +242,16 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
                           type="radio"
                           className="btn-check"
                           name="gender"
-                          id="female"
-                          onChange={(e) => OnInputChange(e)}
+                          id="Female"
                           value="Female"
+                          onChange={(e) => OnInputChange(e)}
                         />
                         <label
-                          className="btn border-success w-50"
-                          id="labelFemale"
-                          value="Female"
-                          onClick={femaleToggle}
+                          className={`btn border-success  w-50 ${
+                            inputs.gender === 'Female' &&
+                            'bg-success text-white'
+                          }`}
+                          for="Female"
                         >
                           Female
                         </label>
