@@ -1,8 +1,15 @@
 import axios from 'axios';
 import { APIGETPOST_URL } from '../config';
 
-export const loadPost = (page, limit, setPosts, setPageLoading) => {
+export const loadPost = (
+  page,
+  limit,
+  setPosts,
+  setPageLoading,
+  setLoadDisable
+) => {
   page === 0 && setPageLoading(true);
+  setLoadDisable(true);
   axios
     .get(`${APIGETPOST_URL}?page=${page}&limit=${limit}`, {
       withCredentials: true,
@@ -10,10 +17,12 @@ export const loadPost = (page, limit, setPosts, setPageLoading) => {
     .then((res) => {
       setPosts((prev) => [...prev, ...res.data]);
       setPageLoading(false);
+      setLoadDisable(false);
     })
     .catch((err) => {
       console.log(err.message);
       setPageLoading(false);
+      setLoadDisable(false);
     });
 };
 

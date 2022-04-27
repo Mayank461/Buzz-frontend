@@ -23,6 +23,7 @@ export default function Feeds(user) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);
+  const [loadDisable, setLoadDisable] = useState(false);
   const [count, setCount] = useState(0);
   const [pagination, setPagination] = useState({
     page: 0,
@@ -31,7 +32,13 @@ export default function Feeds(user) {
   });
 
   useEffect(() => {
-    loadPost(pagination.page, pagination.limit, setPosts, setPageLoading);
+    loadPost(
+      pagination.page,
+      pagination.limit,
+      setPosts,
+      setPageLoading,
+      setLoadDisable
+    );
   }, [pagination.page]);
 
   useEffect(() => {
@@ -215,7 +222,7 @@ export default function Feeds(user) {
                       setPagination((pre) => ({ ...pre, page: pre.page + 1 }))
                     }
                   >
-                    Load More
+                    {loadDisable ? 'loading...' : 'Load More'}
                   </div>
                 )}
               </div>
