@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import {
   APICONFIRMREQ_URL,
   APIDELETEREQ_URL,
+  APIIMAGEUPLOAD,
   APISENTREQ_URL,
   APIUPDATEUSERDETAILS_URL,
   API_GETSUGGESTFRIENDS,
@@ -76,6 +77,27 @@ export const postData = async (uid, inputs) => {
     });
 
     return { message: 'Profile Updated' };
+  } catch (error) {
+    return { error: true, message: error.message };
+  }
+};
+
+export const profilePicChange = async (user_id, file) => {
+  try {
+    if (!user_id) throw new Error('cant find user id');
+
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', 'buzz-app-pic');
+    fd.append('cloud_name', 'buzz-social-app');
+    const result = await axios.post(APIIMAGEUPLOAD, fd);
+
+    await axios.post(
+      `${APIUPDATEUSERDETAILS_URL}/${user_id}`,
+      { pic_url: result.data.secure_url },
+      { withCredentials: true }
+    );
+    return { message: 'Picture change successfully' };
   } catch (error) {
     return { error: true, message: error.message };
   }

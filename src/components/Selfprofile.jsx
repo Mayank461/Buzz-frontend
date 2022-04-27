@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
-import { APIUPDATEUSERDETAILS_URL } from '../config';
 import UserlistWidget from './UserlistWidget';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Spinner from './Spinner';
-import { postData } from '../services/userservice';
+import { postData, profilePicChange } from '../services/userservice';
 import FullPageSpinner from './FullPageSpinner';
 
 export default function Selfprofile({ user, suggestFriend, refresh }) {
-  const [toogle, setToogle] = useState(false);
-  const [userdata, setUserData] = useState(user.picture_url);
   const [loading, setLoading] = useState(false);
   const [inputs, setInputs] = useState({
+    picture_url: user.picture_url,
     firstname: user.firstname,
     lastname: user.lastname,
     designation: user.designation,
@@ -51,35 +49,17 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
     });
   };
 
-  const inputpic = (e) => {
-    setToogle(true);
-    const data = new FormData();
-    data.append('file', e.target.files[0]);
-    data.append('upload_preset', 'buzz-app-pic');
-    data.append('cloud_name', 'buzz-social-app');
-    fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
-      method: 'post',
-      body: data,
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        fetch(`${APIUPDATEUSERDETAILS_URL}${user._id}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            pic_url: data.url,
-          }),
-        }).then((r) => refresh());
+  const inputpic = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return toast.warn('No picture selected');
 
-        toast.success('Picture change successfully');
+    setLoading(true);
+    let { error, message } = await profilePicChange(user._id, file);
 
-        setToogle(false);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    setLoading(false);
+    if (error) return toast.error(message);
+    refresh();
+    toast.success(message);
   };
 
   if (loading) {
@@ -95,6 +75,7 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
               <div className="">
                 <div className="">
                   <img
+                    alt="cover"
                     src="https://images.unsplash.com/photo-1495277493816-4c359911b7f1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1165&q=80"
                     className="coverpic"
                   />
@@ -102,7 +83,11 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
                 <div className="position-relative profilepic mid">
                   <div className="">
                     {'picture_url' in user ? (
-                      <img src={userdata} className="profilepic" />
+                      <img
+                        alt="profile pic"
+                        src={inputs.picture_url}
+                        className="profilepic"
+                      />
                     ) : (
                       <i className="fa-solid fa-user fa-5x profilepic d-flex justify-content-center align-items-center bg-warning"></i>
                     )}
@@ -112,9 +97,7 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
                     <input
                       type="file"
                       className="camera"
-                      onChange={(e) => {
-                        inputpic(e);
-                      }}
+                      onChange={(e) => inputpic(e)}
                     />
                   </div>
                 </div>
@@ -128,7 +111,7 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
                   </h1>
                 </div>
                 <div className="d-flex align-items-center">
-                  {toogle && <Spinner />}
+                  {loading && <Spinner />}
                 </div>
               </div>
 
