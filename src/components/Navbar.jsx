@@ -1,11 +1,7 @@
 import { Link } from 'react-router-dom';
-import { APILOGOUT_URL } from '../config';
+import { handleLogout } from '../services/authServices';
 
 export default function Navbar({ user }) {
-
-  function handleLogout() {
-    window.open(`${APILOGOUT_URL}`, '_self');
-  }
   return (
     <>
       <nav className="navbar  navbar-light bg-light p-0">
@@ -34,7 +30,9 @@ export default function Navbar({ user }) {
                   )}
                 </div>
                 <div className="d-flex align-items-center ms-2">
-                  {"firstname" in user ? user.firstname + ' ' + user.lastname : "Edit Profile"}
+                  {'firstname' in user
+                    ? user.firstname + ' ' + user.lastname
+                    : 'Edit Profile'}
                 </div>
               </div>
             </Link>

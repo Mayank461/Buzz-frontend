@@ -1,6 +1,11 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { APIGOOGLEAUTH_URL, APILOCALAUTH_URL, API_CHECKAUTH } from '../config';
+import {
+  APIGOOGLEAUTH_URL,
+  APILOCALAUTH_URL,
+  APILOGOUT_URL,
+  API_CHECKAUTH,
+} from '../config';
 
 export const checkAuth = async () => {
   let res = await axios.get(`${API_CHECKAUTH}`, { withCredentials: true });
@@ -35,3 +40,7 @@ export const postLoginData = async (e, fetchUser, inputs) => {
     })
     .catch((err) => toast.error('Invalid Credentials'));
 };
+
+export function handleLogout() {
+  window.open(`${APILOGOUT_URL}`, '_self');
+}
