@@ -23,7 +23,7 @@
   width: 50px;
 }
 .scroll {
-  height: 50%;
+  height: 45%;
   overflow-y: auto;
 }
 .scroll-mid {
@@ -39,9 +39,9 @@
 }
 .profilepic {
   width: 150px;
-  height: 150px; 
+  height: 150px;
 }
-.size{
+.size {
   width: 150px;
   height: 150px;
   position: absolute;
@@ -51,7 +51,7 @@
 .profile-sidebar {
   height: 800px;
 }
-.mid{
+.mid {
   margin-top: -80px;
   margin-left: 50px;
 }
@@ -65,19 +65,19 @@
 .post {
   display: none;
   visibility: none;
-
 }
 .circle {
   clip-path: circle(50% at 50% 50%);
 }
 
-.pointer {cursor: pointer;}
-.position-abs{
-  position:absolute;
-  top:20%;
-
+.pointer {
+  cursor: pointer;
 }
-.myFile{
+.position-abs {
+  position: absolute;
+  top: 20%;
+}
+.myFile {
   outline: none;
   color: transparent;
   box-sizing: border-box;
@@ -85,10 +85,10 @@
   width: 50px;
   transition: 0.5s;
 }
-.myFile::-webkit-file-upload-button{
+.myFile::-webkit-file-upload-button {
   visibility: hidden;
 }
-.myFile::before{
+.myFile::before {
   content: '\f1c5';
   font-family: fontAwesome;
   font-size: 30px;
@@ -104,49 +104,54 @@
   box-shadow: 0px 0px 20px #f0f0f0;
 }
 
-.camera{
+.camera {
   outline: none;
   color: transparent;
   box-sizing: border-box;
   cursor: pointer;
   width: 50px;
-  transition: 0.5s;  
+  transition: 0.5s;
 }
-.camera::-webkit-file-upload-button{
+.camera::-webkit-file-upload-button {
   visibility: hidden;
 }
-.camera::before{
+.camera::before {
   content: '\f030';
   font-family: fontAwesome;
   font-size: 30px;
-  color:black;
+  color: black;
   display: inline-block;
   user-select: none;
-  margin-left: 15px;  
+  margin-left: 15px;
 }
-.camera:hover{
-  background-color: #F0F2F5;
+.camera:hover {
+  background-color: #f0f2f5;
 }
-.sticky{
+.sticky {
   position: sticky;
   top: 0;
 }
-.reportedPic{
-  height: 300px;
+.reportedPic {
+  height: 200px;
   width: 100%;
 }
-.text-comment{
+.text-comment {
   max-height: 70px;
   overflow: hidden;
 }
-.seemore{
+
+.seemore {
   cursor: pointer;
-  color: blue; 
+  color: #69696d;
   text-align: end;
+  margin: 5px 10px;
+  font-size: 0.8rem;
+  margin-bottom: 10px;
+  font-weight: 500;
 }
 
-@media screen and (max-width:700px) {
-  .sticky{
+@media screen and (max-width: 700px) {
+  .sticky {
     display: none;
     position: static;
     top: 0;

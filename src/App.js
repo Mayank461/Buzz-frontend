@@ -1,55 +1,49 @@
 import './App.css';
 import Login from './components/Login';
 import Feeds from './components/Feeds';
-import axios from 'axios';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
-import { API_URL } from './config';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import Navbar from './components/Navbar';
 import Userprofile from './components/Userprofile';
 import Selfprofile from './components/Selfprofile';
 import Friends from './components/Friends';
 import Admin from './components/Admin';
+import { checkAuth } from './services/authServices';
+import { getSuggestFriends } from './services/userservice';
+import FullPageSpinner from './components/FullPageSpinner';
 
 function App() {
   const [user, setUser] = useState(false);
   const [SFriend, setSFriend] = useState([]);
   const [refresh, setRefresh] = useState(true);
-  const [admin,setAdmin] = useState(false);
-
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchUser();
-    
   }, [refresh]);
 
   const toggleRefresh = () => setRefresh((p) => !p);
 
-  function fetchUser() {
-    axios
-      .get(`${API_URL}/auth/login/success`, {
-        withCredentials: true,
-      })
-      .then((res) => res.data)
-      .then(({ user, success }) => {
-      
-        success && setUser(user);
-        user &&
-          axios
-            .get(`${API_URL}/users/friends/suggestions`, {
-              withCredentials: true,
-            })
-            .then((res) => setSFriend([...res.data]))
-            .catch((err) => console.log(err.message));
-      })
-      .catch((err) => console.log(err));    
+  async function fetchUser() {
+    setLoading(true);
+    let { success, user } = await checkAuth();
+    success && setUser(user);
+    if (user) {
+      let friends = await getSuggestFriends();
+      setSFriend([...friends]);
+    }
+    setLoading(false);
+  }
+
+  if (loading) {
+    return <FullPageSpinner />;
   }
 
   return (
     <BrowserRouter>
       {user ? (
         <>
-          <Navbar user={user}  />
+          <Navbar user={user} />
           <Routes>
             <Route
               path="/"
@@ -57,7 +51,13 @@ function App() {
             />
             <Route
               path="/profile"
-              element={<Selfprofile user={user} refresh={toggleRefresh} suggestFriend={SFriend} />}
+              element={
+                <Selfprofile
+                  user={user}
+                  refresh={toggleRefresh}
+                  suggestFriend={SFriend}
+                />
+              }
             />
             <Route
               exact
@@ -81,13 +81,10 @@ function App() {
         <>
           <Routes>
             <Route path="*" element={<Login fetchUser={fetchUser} />} />
-    
-            <Route exact path="/admin" element={<Admin/>} />
-
+            <Route exact path="/admin" element={<Admin user={user} />} />
           </Routes>
         </>
       )}
- 
     </BrowserRouter>
   );
 }

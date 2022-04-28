@@ -1,12 +1,13 @@
-import axios from "axios";
-import { toast } from "react-toastify";
+import axios from 'axios';
+import { toast } from 'react-toastify';
 import {
   APICOMMENT_URL,
+  APIIMAGEUPLOAD,
   APILIKE_URL,
+  APINEWPOST,
   APIREPORT_URL,
   APIUNLIKE_URL,
-  APIUSER_URL,
-} from "../config";
+} from '../config';
 
 export const Inlike = (id, setPosts, posts) => {
   axios
@@ -46,8 +47,8 @@ export const commentBox = (
   setPosts,
   posts
 ) => {
-  if (message === undefined || message === "") {
-    toast.warn("Comment box is empty... write something");
+  if (message === undefined || message === '') {
+    toast.warn('Comment box is empty... write something');
   } else {
     axios
       .post(
@@ -59,8 +60,8 @@ export const commentBox = (
         { withCredentials: true }
       )
       .then((res) => {
-        commentInput.current.value = "";
-        setcommentmessage("");
+        commentInput.current.value = '';
+        setcommentmessage('');
 
         setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)));
       })
@@ -78,111 +79,34 @@ export const reportPost = (data, setPosts, posts) => {
       { withCredentials: true }
     )
     .then((res) => {
-
-      toast.success("Reported Successfully");
       setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)));
-     
+      toast.success('Reported Successfully');
     })
     .catch((err) => console.log(err.message));
 };
 
-// export const postDetails = (id,posts,setPosts,commentBox,file,loading,setLoading) => {
-//     // const commentBox = document.getElementById('comment-box').value;
-//     // const file = document.getElementById('file').value;
+export const publishPost = async (user_id, data) => {
+  try {
+    if (!user_id) throw new Error('cant find user id');
+    if (!data.files && data.title === '')
+      throw new Error('Image or Message required to post');
 
-//     // checking validation in post field
-//     if (commentBox === '' && file === '') {
-//       toast.warn('Please give atleast one input');
-//     }
-//     else if (commentBox !== '') {
-//       fetch(`${APIUSER_URL}`, {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({
-//           caption: title,
-//           user_id: userData._id,
-//         }),
-//       }).then((r) => { setRefresh(refresh + 1) });
+    let result;
+    if (data.files) {
+      const fd = new FormData();
+      fd.append('file', data.files);
+      fd.append('upload_preset', 'buzz-app');
+      fd.append('cloud_name', 'buzz-social-app');
+      result = await axios.post(APIIMAGEUPLOAD, fd);
+      result = result.data.secure_url;
+    }
+    const newPost = { pic_url: result, caption: data.title, user_id };
+    !result && delete newPost['pic_url'];
+    data.title === '' && delete newPost['caption'];
 
-//       setPosts([]);
-//       loadPost();
-//       setLoading(false);
-//       toast.success('Your post uplaoded successfully');
-//       setTitle('');
-//       document.getElementById('file').value = '';
-//     }
-//     else if(file !== ''){
-//       setLoading(true);
-//         const data = new FormData();
-//         data.append('file', image);
-//         data.append('upload_preset', 'buzz-app');
-//         data.append('cloud_name', 'buzz-social-app');
-//         fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
-//           method: 'post',
-//           body: data,
-//         })
-//           .then((res) => res.json())
-//           .then((data) => {
-//             fetch(`${APIUSER_URL}`, {
-//               method: 'POST',
-//               headers: {
-//                 'Content-Type': 'application/json',
-//               },
-//               body: JSON.stringify({
-//                 pic_url: data.url,
-//                 user_id: userData._id,
-//               }),
-//             }).then((r) => {
-//               setRefresh(refresh + 1)
-//               setPosts([]);
-//               loadPost();
-//             });
-//             setLoading(false);
-//             toast.success('Post uploaded successfully');
-//             setTitle('');
-//             document.getElementById('file').value = '';
-//           })
-//           .catch((err) => {
-//             console.log(err);
-//           });
-//         }
-//         else{
-//           setLoading(true);
-//           const data = new FormData();
-//           data.append('file', image);
-//           data.append('upload_preset', 'buzz-app');
-//           data.append('cloud_name', 'buzz-social-app');
-//           fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
-//             method: 'post',
-//             body: data,
-//           })
-//             .then((res) => res.json())
-//             .then((data) => {
-//               fetch(`${APIUSER_URL}`, {
-//                 method: 'POST',
-//                 headers: {
-//                   'Content-Type': 'application/json',
-//                 },
-//                 body: JSON.stringify({
-//                   pic_url: data.url,
-//                   caption: title,
-//                   user_id: userData._id,
-//                 }),
-//               }).then((r) => {
-//                 setRefresh(refresh + 1)
-//                 setPosts([]);
-//                 loadPost();
-//               });
-//               setLoading(false);
-//               toast.success('Your post uplaoded successfully');
-
-//               setTitle('');
-//               document.getElementById('file').value = '';
-//             })
-//             .catch((err) => {
-//               console.log(err);
-//             });
-//         }
-//   }
+    await axios.post(APINEWPOST, newPost, { withCredentials: true });
+    return { success: 'done' };
+  } catch (error) {
+    return { error: error.message };
+  }
+};

@@ -1,24 +1,27 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import {APIUSER_URL,APILIMIT_URL,APILOADPAGE_URL} from "../config"
-import Post from "./Post";
-import UserlistWidget from "./UserlistWidget";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Spinner from "./Spinner";
-import { Link } from "react-router-dom";
-import DefaultCard from "./DefaultCard";
-import { commentBox, Inlike, reportPost, unlike } from "../services/postservices";
+import React, { useEffect, useState } from 'react';
+import { APIUSER_URL } from '../config';
+import Post from './Post';
+import UserlistWidget from './UserlistWidget';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Spinner from './Spinner';
+import FullPageSpinner from './FullPageSpinner';
+import DefaultCard from './DefaultCard';
+import {
+  commentBox,
+  Inlike,
+  reportPost,
+  unlike,
+  publishPost,
+} from '../services/postservices';
+import { loadPost, totalPosts } from '../services/feedServices';
 
 export default function Feeds(user) {
-
-  const [title, setTitle] = useState("");
-  const [image, setImage] = useState("");
+  const [newPost, setNewPost] = useState({ title: '', files: '' });
   const [userData, setUserData] = useState({});
-  const [friendList, setFriendList] = useState([]);
-  const [refresh, setRefresh] = useState(0);
   const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(false);
+  const [loadDisable, setLoadDisable] = useState(false);
   const [count, setCount] = useState(0);
   const [pagination, setPagination] = useState({
     page: 0,
@@ -27,180 +30,71 @@ export default function Feeds(user) {
   });
 
   useEffect(() => {
-    loadPost(pagination.page);
-
+    loadPost(
+      pagination.page,
+      pagination.limit,
+      setPosts,
+      setPageLoading,
+      setLoadDisable
+    );
   }, [pagination.page]);
 
   useEffect(() => {
-    loaduser();
-
     window.addEventListener('scroll', handleScroll);
-
-    axios
-      .get(`${APILIMIT_URL}`, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        // counting the total number of post of login user
-        let a = 0;
-        const c = res.data.map((element) => {
-          if (element.posted_by._id === user.user._id) {
-            a++;
-          }
-        });
-        setCount(a);
-        setPagination((pre) => ({ ...pre, total: res.data.length }));
-      })
-      .catch((err) => console.log(err.message));
-
+    whenLoad();
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [refresh]);
+  }, []);
+
+  async function whenLoad() {
+    setPageLoading(true);
+    setUserData(user.user);
+    const { myPostsCount, totalPostCount } = await totalPosts(user.user._id);
+    setCount(myPostsCount);
+    setPagination((pre) => ({ ...pre, total: totalPostCount }));
+  }
 
   function handleScroll() {
     if (
       Math.round(window.innerHeight + window.scrollY) >=
-      Math.round(document.body.scrollHeight)
+      Math.round(document.body.scrollHeight - 5)
     ) {
-      setPagination((pre) => ({ ...pre, page: pre.page + 1 }));
+      !loadDisable && setPagination((pre) => ({ ...pre, page: pre.page + 1 }));
     }
   }
 
-  function loadPost(page = pagination.page, limit = pagination.limit) {
-    axios
-      .get(`${APILOADPAGE_URL}${page}&limit=${limit}`, {
-        withCredentials: true,
-      })
-      .then((res) => setPosts((prev) => [...prev, ...res.data]))
-      .catch((err) => console.log(err.message));
-  }
+  const like = (id) => Inlike(id, setPosts, posts);
+  const dislike = (id) => unlike(id, setPosts, posts);
+  const commentbox = (id, message, commentInput, setcommentmessage) =>
+    commentBox(id, message, commentInput, setcommentmessage, setPosts, posts);
+  const report = (id) => reportPost(id, setPosts, posts);
 
-  const loaduser = () => {
-    setUserData(user.user);
-    setFriendList(user.user.friends.myFriends);
+  const publish = async () => {
+    setPageLoading(true);
+    const result = await publishPost(userData._id, newPost);
+
+    if (result.error) {
+      setPageLoading(false);
+      toast.error(result.error);
+      return;
+    }
+
+    setNewPost({ title: '', files: undefined });
+    setPosts([]);
+    const total = await totalPosts(user.user._id);
+    setPagination((pre) => ({ ...pre, total: total.totalPostCount }));
+    loadPost(0, pagination.limit, setPosts, setPageLoading, setLoadDisable);
+    toast.success('Your post uplaoded successfully');
   };
-
-
-  const like = (id) => Inlike(id,setPosts,posts);
-  const dislike = (id) => unlike(id,setPosts,posts);
-  const commentbox = (id,message,commentInput,setcommentmessage) => commentBox(id, message, commentInput,setcommentmessage,setPosts,posts);
-  const report = (data) => reportPost(data,setPosts,posts);
-
-  const postDetails = () => {
-    const commentBox = document.getElementById('comment-box').value;
-    const file = document.getElementById('file').value;
-
-    // checking validation in post field
-    if (commentBox === '' && file === '') {
-      toast.warn('Please give atleast one input');
-    }
-    else if (commentBox !== '' && file !=='') {
-    
-     setLoading(true);
-          const data = new FormData();
-          data.append('file', image);
-          data.append('upload_preset', 'buzz-app');
-          data.append('cloud_name', 'buzz-social-app');
-          fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
-            method: 'post',
-            body: data,
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              fetch(`${APIUSER_URL}`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  pic_url: data.url,
-                  caption: title,
-                  user_id: userData._id,
-                }),
-              }).then((r) => {
-                setRefresh(refresh + 1)
-                setPosts([]);
-                loadPost();
-              });
-              setLoading(false);
-              toast.success('Your post uplaoded successfully');
-    
-              setTitle('');
-              document.getElementById('file').value = '';
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-  
-    }
-    else if(file !== ''){
-      setLoading(true);
-        const data = new FormData();
-        data.append('file', image);
-        data.append('upload_preset', 'buzz-app');
-        data.append('cloud_name', 'buzz-social-app');
-        fetch('https://api.cloudinary.com/v1_1/buzz-social-app/image/upload', {
-          method: 'post',
-          body: data,
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            fetch(`${APIUSER_URL}`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                pic_url: data.url,
-                user_id: userData._id,
-              }),
-            }).then((r) => {
-              setRefresh(refresh + 1)
-              setPosts([]);
-              loadPost();
-            });
-            setLoading(false);
-            toast.success('Post uploaded successfully');
-            setTitle('');
-            document.getElementById('file').value = '';
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-        }
-        else{
-         fetch(`${APIUSER_URL}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          caption: title,
-          user_id: userData._id,
-        }),
-      }).then((r) => { 
-        setRefresh(refresh + 1) ;
-        setPosts([]);
-        loadPost();
-      
-      });
-
-    
-      setLoading(false);
-      toast.success('Your post uplaoded successfully');
-      setTitle('');
-      document.getElementById('file').value = '';
-        }
-  }
-
 
   return (
     <>
+      {pageLoading && <FullPageSpinner />}
+
       <div style={{ backgroundColor: '#F0F2F5' }}>
         <div className="container">
           <div className="row">
-
+            {/*======================================================================== column 1st ============================================================================== */}
             <div className="col-md-3 sticky side-height mt-3 ">
-              {/*========================================================================= column 1st ============================================================================== */}
               <div className="card p-5 shadow-lg p-3 mb-2 bg-body rounded border-0">
                 <div className="d-flex justify-content-center">
                   {'picture_url' in userData ? (
@@ -215,8 +109,9 @@ export default function Feeds(user) {
                 </div>
                 <div className="card-body">
                   <h5 className="card-title text-center">
-                    {"firstname" in userData ? userData.firstname + ' ' + userData.lastname : "Edit Profile"}
-
+                    {'firstname' in userData
+                      ? userData.firstname + ' ' + userData.lastname
+                      : 'Edit Profile'}
                   </h5>
                   <p className="card-text text-center">Newly Recruit at TTN </p>
                   <div className="d-flex justify-content-between mt-4">
@@ -236,7 +131,6 @@ export default function Feeds(user) {
               </div>
               <div className="">
                 <div className="card">
-                
                   <img
                     src="https://media-s3-us-east-1.ceros.com/abbott/images/2020/06/18/5003c26bb33afd98eb9dc65ba64e18d0/asset-1.png?imageOpt=1"
                     className="card-img-top position-relative "
@@ -248,12 +142,10 @@ export default function Feeds(user) {
                       src="https://static1.tothenew.com/blog/wp-content/themes/ttn/images/social-logo.png"
                     ></img>
                   </div>
-                 
-                
                 </div>
               </div>
             </div>
-            {/* =======================================================================column 2nd ======================================================================== */}
+            {/* ======================================================================= column 2nd ======================================================================== */}
             <div className="col-md-6   mt-3  position-relative">
               <div className="shadow p-3 mb-4 bg-body rounded">
                 <div className="d-flex align-items-center">
@@ -274,8 +166,13 @@ export default function Feeds(user) {
                       id="comment-box"
                       className="caption p-2 rounded-pill form-control"
                       placeholder={`What's on your mind ${userData.firstname} ${userData.lastname} ?`}
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
+                      value={newPost.title}
+                      onChange={(e) =>
+                        setNewPost((prev) => ({
+                          ...prev,
+                          title: e.target.value,
+                        }))
+                      }
                     />
                   </div>
                   <div className="text-center d-flex align-items-center">
@@ -283,7 +180,12 @@ export default function Feeds(user) {
                       type="file"
                       className="myFile"
                       id="file"
-                      onChange={(e) => setImage(e.target.files[0])}
+                      onChange={(e) =>
+                        setNewPost((prev) => ({
+                          ...prev,
+                          files: e.target.files[0],
+                        }))
+                      }
                     />
                   </div>
                 </div>
@@ -291,12 +193,11 @@ export default function Feeds(user) {
                 <div className="text-center d-grid gap-2 w-100 mt-5 text-center mt-2">
                   <button
                     className="btn btn-success rounded-pill"
-                    onClick={() => postDetails()}
+                    onClick={publish}
                   >
-                    Uplaod
+                    Upload
                   </button>
                 </div>
-                {loading ? <Spinner /> : ''}
               </div>
 
               {posts.map((element, index) => {
@@ -309,86 +210,44 @@ export default function Feeds(user) {
                     commentBox={commentbox}
                     userdata={userData}
                     reportPost={report}
-                    uid ={userData._id}
+                    uid={userData._id}
                   />
                 );
               })}
 
-              {posts.length > 0 ? "" : <DefaultCard></DefaultCard>}
-
+              {posts.length === 0 && <DefaultCard />}
 
               <div className="d-flex mb-4">
                 {pagination.total !== posts.length && (
                   <div
                     className="btn btn-outline-dark mx-auto"
                     onClick={() =>
+                      !loadDisable &&
                       setPagination((pre) => ({ ...pre, page: pre.page + 1 }))
                     }
                   >
-                    Load More
+                    {loadDisable ? 'loading...' : 'Load More'}
                   </div>
                 )}
               </div>
             </div>
-            {/* =============================================================================== column 3rd ================================================================================================== */}
+            {/* ======================================================================= column 3rd ================================================================================================== */}
             <div className="col-md-3 sticky side-height mt-3 ">
-              {/*========================================================================= Contacts ============================================================================== */}
-              <div className=" border p-2 scroll bg-white shadow-lg p-3 mb-4 bg-body rounded border-0">
-                <div className="d-flex justify-content-between">
-                  <div>Contacts</div>
-                  <div>
-                  </div>
-                </div>
-
-                {friendList.length === 0 ? (
-                  <div className="text-center">You have no friends</div>
-                ) : (
-                  <div className="d-flex">
-                    <div>
-                      {friendList.map((element, index) => {
-                        return (
-                          <Link
-                            className="d-flex text-decoration-none mt-2 "
-                            key={index}
-                            to={'/profile/' + element._id}
-                          >
-                            <div>
-                              {element.picture_url ? (
-                                <img
-                                  src={element.picture_url}
-                                  className="card-img-top small-round-pic  round-img"
-                                  alt="..."
-                                />
-                              ) : (
-                                <i
-                                  className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img text-success d-flex justify-content-center align-items-center"
-                                  style={{ backgroundColor: '#F0F2F5' }}
-                                ></i>
-                              )}
-                            </div>
-                            <div className="ms-2 d-flex text-dark align-items-center">
-                              {"firstname" in element ? element.firstname + ' ' + element.lastname : "Unknown User"}
-                            </div>
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-              </div>
-              {/*============================================================================ Suggestions ================================================================================== */}
+              <UserlistWidget
+                title={'My Contacts'}
+                friendList={user.user.friends.myFriends}
+                ifEmpty="You have no friends"
+              />
               <UserlistWidget
                 title={'Friends Sugesstions'}
                 friendList={user.suggestFriend}
+                ifEmpty="No Suggestions found"
               />
             </div>
-            {/* closing 3rd column  */}
-          </div>{' '}
-          {/* Closing row  */}
+          </div>
         </div>
       </div>
       <ToastContainer theme="colored" />
     </>
   );
-
 }
