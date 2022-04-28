@@ -80,8 +80,9 @@ export default function Feeds(user) {
 
     setNewPost({ title: '', files: undefined });
     setPosts([]);
-    const total = await totalPosts(user.user._id);
-    setPagination((pre) => ({ ...pre, total: total.totalPostCount }));
+    const { myPostsCount, totalPostCount } = await totalPosts(user.user._id);
+    setCount(myPostsCount);
+    setPagination((pre) => ({ ...pre, total: totalPostCount }));
     loadPost(0, pagination.limit, setPosts, setPageLoading, setLoadDisable);
     toast.success('Your post uplaoded successfully');
   };

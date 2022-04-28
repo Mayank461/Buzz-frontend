@@ -71,7 +71,7 @@ export default function Post({
                   className="dropdown-item"
                   data-bs-target="#exampleModal"
                   onClick={() => {
-                    reportPost(_id);
+                    reportPost(data);
                   }}
                 >
                   Report

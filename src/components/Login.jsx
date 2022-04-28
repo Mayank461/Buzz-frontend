@@ -72,7 +72,7 @@ export default function Login({ fetchUser }) {
                       placeholder="Password"
                     />
 
-                    <div className="text-center d-grid gap-1 mt-3">
+                    <div className="text-center d-grid gap-1 mt-5">
                       <button
                         type="submit"
                         onClick={LocalAuth}

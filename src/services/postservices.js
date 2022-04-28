@@ -69,12 +69,12 @@ export const commentBox = (
   }
 };
 
-export const reportPost = (id, setPosts, posts) => {
+export const reportPost = (data, setPosts, posts) => {
   axios
     .post(
       `${APIREPORT_URL}`,
       {
-        post_id: id,
+        data: data,
       },
       { withCredentials: true }
     )
