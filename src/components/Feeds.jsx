@@ -55,7 +55,7 @@ export default function Feeds(user) {
       Math.round(window.innerHeight + window.scrollY) >=
       Math.round(document.body.scrollHeight - 5)
     ) {
-      setPagination((pre) => ({ ...pre, page: pre.page + 1 }));
+      !loadDisable && setPagination((pre) => ({ ...pre, page: pre.page + 1 }));
     }
   }
 
