@@ -52,7 +52,7 @@ export default function Feeds(user) {
   function handleScroll() {
     if (
       Math.round(window.innerHeight + window.scrollY) >=
-      Math.round(document.body.scrollHeight)
+      Math.round(document.body.scrollHeight - 5)
     ) {
       setPagination((pre) => ({ ...pre, page: pre.page + 1 }));
     }
@@ -219,6 +219,7 @@ export default function Feeds(user) {
                   <div
                     className="btn btn-outline-dark mx-auto"
                     onClick={() =>
+                      !loadDisable &&
                       setPagination((pre) => ({ ...pre, page: pre.page + 1 }))
                     }
                   >
