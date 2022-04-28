@@ -65,11 +65,11 @@ export default function Feeds(user) {
   const report = (id) => reportPost(id, setPosts, posts);
 
   const publish = async () => {
-    setLoading(true);
+    setPageLoading(true);
     const result = await publishPost(userData._id, newPost);
-    setLoading(false);
 
     if (result.error) {
+      setPageLoading(false);
       toast.error(result.error);
       return;
     }
