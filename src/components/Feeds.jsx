@@ -19,9 +19,7 @@ import { loadPost, totalPosts } from '../services/feedServices';
 export default function Feeds(user) {
   const [newPost, setNewPost] = useState({ title: '', files: '' });
   const [userData, setUserData] = useState({});
-  const [refresh, setRefresh] = useState(0);
   const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);
   const [loadDisable, setLoadDisable] = useState(false);
   const [count, setCount] = useState(0);
@@ -41,13 +39,16 @@ export default function Feeds(user) {
     );
   }, [pagination.page]);
 
-  useEffect(() => {
+  useEffect(async () => {
     setPageLoading(true);
     setUserData(user.user);
     window.addEventListener('scroll', handleScroll);
-    totalPosts(user.user._id, setCount, setPagination, setPageLoading);
+    const { myPostsCount, totalPostCount } = await totalPosts(user.user._id);
+    setCount(myPostsCount);
+    setPagination((pre) => ({ ...pre, total: totalPostCount }));
+
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [refresh]);
+  }, []);
 
   function handleScroll() {
     if (
@@ -76,9 +77,9 @@ export default function Feeds(user) {
 
     setNewPost({ title: '', files: undefined });
     setPosts([]);
-    setRefresh((r) => r + 1);
-    loadPost(0, pagination.limit, setPosts, setPageLoading);
-
+    const total = await totalPosts(user.user._id);
+    setPagination((pre) => ({ ...pre, total: total.totalPostCount }));
+    loadPost(0, pagination.limit, setPosts, setPageLoading, setLoadDisable);
     toast.success('Your post uplaoded successfully');
   };
 
@@ -194,7 +195,6 @@ export default function Feeds(user) {
                     Upload
                   </button>
                 </div>
-                {loading && <Spinner />}
               </div>
 
               {posts.map((element, index) => {
@@ -214,6 +214,7 @@ export default function Feeds(user) {
 
               {posts.length === 0 && <DefaultCard />}
 
+              {console.log(pagination.total, posts.length)}
               <div className="d-flex mb-4">
                 {pagination.total !== posts.length && (
                   <div

@@ -26,25 +26,23 @@ export const loadPost = (
     });
 };
 
-export const totalPosts = (
-  loginID,
-  myPostsCount,
-  setPagination,
-  setPageLoading
-) => {
-  axios
-    .get(`${APIGETPOST_URL}?page=0&limit=10000000000000000`, {
-      withCredentials: true,
-    })
-    .then((res) => {
-      // counting the total number of post of login user
-      const c = res.data.filter((el) => el.posted_by._id === loginID).length;
-      myPostsCount(c);
-      setPagination((pre) => ({ ...pre, total: res.data.length }));
-      setPageLoading(false);
-    })
-    .catch((err) => {
-      console.log(err.message);
-      setPageLoading(false);
-    });
+export const totalPosts = async (loginID) => {
+  try {
+    const res = await axios.get(
+      `${APIGETPOST_URL}?page=0&limit=10000000000000000`,
+      {
+        withCredentials: true,
+      }
+    );
+
+    const data = res.data;
+    const totalPostCount = res.data.length;
+    const myPostsCount = data.filter(
+      (el) => el.posted_by._id === loginID
+    ).length;
+
+    return { totalPostCount, myPostsCount };
+  } catch (error) {
+    return { error: true, message: error.message };
+  }
 };
