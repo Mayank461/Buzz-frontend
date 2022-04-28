@@ -7,6 +7,7 @@ import { postData, profilePicChange } from '../services/userservice';
 import FullPageSpinner from './FullPageSpinner';
 
 export default function Selfprofile({ user, suggestFriend, refresh }) {
+  console.log('load');
   const [loading, setLoading] = useState(false);
   const [inputs, setInputs] = useState({
     picture_url: user.picture_url,

@@ -39,16 +39,19 @@ export default function Feeds(user) {
     );
   }, [pagination.page]);
 
-  useEffect(async () => {
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    whenLoad();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  async function whenLoad() {
     setPageLoading(true);
     setUserData(user.user);
-    window.addEventListener('scroll', handleScroll);
     const { myPostsCount, totalPostCount } = await totalPosts(user.user._id);
     setCount(myPostsCount);
     setPagination((pre) => ({ ...pre, total: totalPostCount }));
-
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }
 
   function handleScroll() {
     if (
@@ -214,7 +217,6 @@ export default function Feeds(user) {
 
               {posts.length === 0 && <DefaultCard />}
 
-              {console.log(pagination.total, posts.length)}
               <div className="d-flex mb-4">
                 {pagination.total !== posts.length && (
                   <div
