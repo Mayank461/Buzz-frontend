@@ -152,6 +152,9 @@
 .login-panel{
   height: 75%;
 }
+.viewport-height{
+  height: 100vh;
+}
 
 @media screen and (max-width: 700px) {
   .sticky {
@@ -159,7 +162,8 @@
     position: static;
     top: 0;
   }
-  .login-panel{
+  .viewport-height{
     height: 100%;
   }
+
 }
