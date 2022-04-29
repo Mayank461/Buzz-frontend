@@ -8,10 +8,11 @@ export default function Navbar({ user }) {
         <div className="container-fluid">
           <div>
             <Link to={'/'}>
-              <img
+              {/* <img
                 className="logo"
                 src="https://mma.prnewswire.com/media/728150/TO_THE_NEW_Logo.jpg?p=facebook"
-              />
+              /> */}
+              <div id='logo-img'></div>
             </Link>
           </div>
 
@@ -29,7 +30,7 @@ export default function Navbar({ user }) {
                     <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
                   )}
                 </div>
-                <div className="d-flex align-items-center ms-2">
+                <div className=" align-items-center ms-2 resp-hide">
                   {'firstname' in user
                     ? user.firstname + ' ' + user.lastname
                     : 'Edit Profile'}
