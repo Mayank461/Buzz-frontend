@@ -10,6 +10,7 @@ export default function Navbar({ user }) {
             <Link to={'/'}>
               <img
                 className="logo"
+                alt="logo"
                 src="https://mma.prnewswire.com/media/728150/TO_THE_NEW_Logo.jpg?p=facebook"
               />
             </Link>
@@ -29,7 +30,10 @@ export default function Navbar({ user }) {
                     <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
                   )}
                 </div>
-                <div className="d-flex align-items-center ms-2">
+                <div
+                  className="d-flex align-items-center ms-2"
+                  title="displayname"
+                >
                   {'firstname' in user
                     ? user.firstname + ' ' + user.lastname
                     : 'Edit Profile'}
@@ -49,11 +53,15 @@ export default function Navbar({ user }) {
               >
                 <i className="fa-solid fa-user"></i>
               </Link>
-              <div className="round-img bg-danger p-1 text-white incoming position-absolute bottom-50 end-0">
+              <div
+                className="round-img bg-danger p-1 text-white incoming position-absolute bottom-50 end-0"
+                title="friend_req_count"
+              >
                 {user.friends.myFriendRequests.length}
               </div>
             </div>
             <div
+              title="logout-btn"
               onClick={handleLogout}
               className="d-flex align-items-center ms-2 me-3 round-img border rounded-circle icon-bg text-dark p-2 pointer"
             >
