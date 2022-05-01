@@ -108,7 +108,7 @@ export default function Feeds(user) {
                   )}
                 </div>
                 <div className="card-body">
-                  <h5 className="card-title text-center">
+                  <h5 className="card-title text-center" data-testid="userProName">
                     {'firstname' in userData
                       ? userData.firstname + ' ' + userData.lastname
                       : 'Edit Profile'}
@@ -247,6 +247,7 @@ export default function Feeds(user) {
           </div>
         </div>
       </div>
+
       <ToastContainer theme="colored" />
     </>
   );

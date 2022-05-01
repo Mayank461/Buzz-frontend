@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Comments } from './Comment';
+import  Comment from './Comment';
 
 export default function Post({
   index,
@@ -55,7 +55,7 @@ export default function Post({
               ></i>
             )}
 
-            <div className="ms-2 fw-bold">{firstname + ' ' + lastname}</div>
+            <div className="ms-2 fw-bold" data-testid="whoPosted">{firstname + ' ' + lastname}</div>
           </div>
 
           {/* ========================================================Report System============================================================================== */}
@@ -147,7 +147,7 @@ export default function Post({
             <i className="fa-regular fa-message me-2"></i>Comment
           </div>
         </div>
-        <div id={index} style={{ display: 'none' }}>
+        <div  id={index}  style={{ display: 'none' }}>
           <div className=" mt-3 ">
             <div className="d-flex">
               {userdata.picture_url ? (
@@ -188,7 +188,7 @@ export default function Post({
             </div>
           </div>
           {comment.map((data) => {
-            return <Comments data={data} />;
+            return <Comment data={data} />;
           })}
         </div>
       </div>

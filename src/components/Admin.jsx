@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { API_URL } from "../config";
-export default function Admin(user) {
+export default function Admin() {
   const [post, allPost] = useState([]);
   const [refresh, setRefresh] = useState(0);
 
@@ -12,7 +12,6 @@ export default function Admin(user) {
             .get(`${API_URL}/posts/allPost`)
             .then((res) => {
                 allPost(res.data);
-                console.log(res.data);
               
             })
             .catch((err) => console.log(err.message));
@@ -46,7 +45,8 @@ export default function Admin(user) {
 
 
                 <div className=" mb-3">
-                        {post.map((element,index)=>{
+                    {post.length===0 ? <h4 className="text-center" data-testid="reportedPosts">No any posts</h4>:
+                        post.map((element,index)=>{
                             return(
                                 <div className="row shadow-lg bg-body g-0 mb-3">
                                 <div className="col-md-5">
@@ -70,7 +70,8 @@ export default function Admin(user) {
                                 </div>
                             </div>
                             )
-                        })}
+                        })
+                        }
                       
                     </div>
             </div>

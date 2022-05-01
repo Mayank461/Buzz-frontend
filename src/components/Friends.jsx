@@ -32,7 +32,7 @@ function Friends({ user, refresh }) {
                         alt="..."
                       />
                       <div className="px-3">
-                        <h5 className="my-1">
+                        <h5 className="my-1" data-testid="friendRequestUser">
                           {friend.firstname + ' ' + friend.lastname}
                         </h5>
                         <p className="card-text">Delhi, India</p>
