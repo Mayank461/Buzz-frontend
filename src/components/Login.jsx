@@ -41,6 +41,7 @@ export default function Login({ fetchUser }) {
                   </div>
                   <div className="text-center mt-5">
                     <button
+                    title="gAuthBtn"
                       onClick={GoogleAuth}
                       className="btn btn-lg google-button-clr rounded-pill  bg-transparent font-family font-size fw-bolder "
                     >
@@ -62,6 +63,7 @@ export default function Login({ fetchUser }) {
                       onChange={(e) => OnInputChange(e)}
                       id="exampleFormControlInput1"
                       placeholder="TTN Email"
+                      title="email-id"
                     />
                     <input
                       type="password"
@@ -70,11 +72,13 @@ export default function Login({ fetchUser }) {
                       onChange={(e) => OnInputChange(e)}
                       id="exampleFormControlInput1"
                       placeholder="Password"
+                      title="password"
                     />
 
                     <div className="text-center d-grid gap-1 mt-5">
                       <button
-                        type="submit"
+                      title="login-btn"
+                      type="submit"
                         onClick={LocalAuth}
                         className="btn btn-lg px-5  mt-3 rounded-pill signup-btn-clr font-family fw-bolder font-size"
                       >

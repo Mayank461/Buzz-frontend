@@ -13,6 +13,7 @@ function Friends({ user, refresh }) {
 
       <div className="container p-4 mt-5">
         <div className="row">
+          {/* ===========================================================Friend Requests==================================================================  */}
           <div className="col-md-8 shadow-lg p-3 mb-5 bg-body rounded">
             <h3 className="mt-2 ">Friend Requests</h3>
             {user && user.friends.myFriendRequests.length === 0 && (
@@ -56,27 +57,29 @@ function Friends({ user, refresh }) {
                 </div>
               ))}
           </div>
-          <div className="col">
+
+          {/* ===========================================================Friend Lists==================================================================  */}
+
+          <div className="col-lg-4 bg-warning">
             <UserlistWidget
               title="My Friend"
               friendList={user.friends.myFriends}
             />
+      
           </div>
 
         </div>
-      </div>
-
-
-      <div className='container p-4'>
         <div className='row'>
-          <div className='col shadow-lg p-3 mb-5 bg-body rounded'>
+          {/* ===========================================================Pending Requests==================================================================  */}
+
+          <div className='col-md-8 shadow-lg p-3 mb-5 bg-body rounded'>
             <h3 className="mt-2 mb-4">Pending Requests</h3>
             {user && user.friends.mySentRequests.length === 0 && (
               <p>No pending friend requests </p>
             )}
             {user &&
               user.friends.mySentRequests.map((friend) => (
-                <div className="col-12 col-md-6 ">
+                <div className="col ">
                   <div className="d-flex friend-req justify-content-between">
                     <div className="d-flex align-items-center">
                       <img
@@ -106,8 +109,14 @@ function Friends({ user, refresh }) {
                 </div>
               ))}
           </div>
+          
 
         </div>
+      </div>
+
+
+      <div className='container p-4'>
+      
       </div>
 
 
