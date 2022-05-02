@@ -1,7 +1,11 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import Login from '../components/Login';
+import renderer from 'react-test-renderer';
 
 it('Login render check', () => {
+  const tree = renderer.create(<Login />).toJSON();
+  expect(tree).toMatchSnapshot();
+
   render(<Login />);
   const email_input = screen.queryByTitle('email-id');
   const pass_input = screen.queryByTitle('password');

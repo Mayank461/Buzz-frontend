@@ -1,8 +1,26 @@
 import { render, screen } from '@testing-library/react';
 import Navbar from '../components/Navbar';
 import { MemoryRouter as Router } from 'react-router-dom';
+import renderer from 'react-test-renderer';
 
 describe('Navbar test', () => {
+  it('Navbar render check', () => {
+    const user = {
+      picture_url: 'https://user.com/img.png',
+      firstname: 'John',
+      lastname: 'Doe',
+      friends: { myFriendRequests: [0, 0, 0] },
+    };
+    const tree = renderer
+      .create(
+        <Router>
+          <Navbar user={user} />
+        </Router>
+      )
+      .toJSON();
+    expect(tree).toMatchSnapshot();
+  });
+
   it('Navbar render with user data', () => {
     const user = {
       picture_url: 'https://user.com/img.png',
