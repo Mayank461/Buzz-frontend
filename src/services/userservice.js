@@ -67,7 +67,7 @@ export const handleDeleteRequest = (id, refresh) => {
     .catch((err) => console.log(err.message));
 };
 
-export const postData = async (uid, inputs) => {
+export const postData = async (uid, inputs,refresh) => {
   try {
     if (inputs.firstname === '' || inputs.lastname === '')
       throw new Error('First name and Last name are required');
@@ -75,14 +75,14 @@ export const postData = async (uid, inputs) => {
     await axios.post(`${APIUPDATEUSERDETAILS_URL}/${uid}`, inputs, {
       withCredentials: true,
     });
-
-    return { message: 'Profile Updated' };
+    refresh();
+    toast.success("Profile Updated");
   } catch (error) {
     return { error: true, message: error.message };
   }
 };
 
-export const profilePicChange = async (user_id, file) => {
+export const profilePicChange = async (user_id, file,refresh) => {
   try {
     if (!user_id) throw new Error('cant find user id');
 
@@ -97,7 +97,9 @@ export const profilePicChange = async (user_id, file) => {
       { pic_url: result.data.secure_url },
       { withCredentials: true }
     );
-    return { message: 'Picture change successfully' };
+    refresh();
+    toast.success("Picture Changed Successfully")
+    // return { message: 'Picture change successfully' };
   } catch (error) {
     return { error: true, message: error.message };
   }

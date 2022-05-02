@@ -29,11 +29,8 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
   const updateData = async (e) => {
     e.preventDefault();
     setLoading(true);
-    let { error, message } = await postData(user._id, inputs);
-    setLoading(false);
-    if (error) return toast.warning(message);
-    refresh();
-    toast.success(message);
+    let { error, message } = await postData(user._id, inputs,refresh);
+
   };
 
   const reset = () => {
@@ -55,12 +52,8 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
     if (!file) return toast.warn('No picture selected');
 
     setLoading(true);
-    let { error, message } = await profilePicChange(user._id, file);
-
-    setLoading(false);
-    if (error) return toast.error(message);
-    refresh();
-    toast.success(message);
+    let { error, message } = await profilePicChange(user._id, file,refresh);
+   
   };
 
   if (loading) {
