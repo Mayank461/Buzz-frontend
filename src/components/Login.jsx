@@ -1,50 +1,23 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { ApiGoogleAuth_url,ApiLocalAuth_url } from '../config';
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from 'react-toastify';
+import { handleGAuth, postLoginData } from '../services/authServices';
 
 export default function Login({ fetchUser }) {
-  async function handleGAuth(e) {
-    e.preventDefault();
-    window.open(`${ApiGoogleAuth_url}`, '_self');
-  }
+  const GoogleAuth = (e) => handleGAuth(e);
   const [inputs, setInputs] = useState({
     userEmail: '',
     userPassword: '',
   });
+
   const OnInputChange = (e) => {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
   };
 
-  const postLoginData = async (e) => {
-    e.preventDefault();
-    const { userEmail, userPassword } = inputs;
-
-    if (userEmail == '' || userPassword == '')
-      return toast.warning('Please fill the login details');
-
-    if (userEmail.split('@')[1] !== 'tothenew.com')
-      return toast.error('Only ToTheNew email can be used');
-
-    axios
-      .post(
-        `${ApiLocalAuth_url}`,
-        {
-          username: userEmail,
-          password: userPassword,
-        },
-        { withCredentials: true }
-      )
-      .then(() => {
-        fetchUser();
-      })
-      .catch((err) => toast.error("Invalid Credentials"));
-  };
+  const LocalAuth = (e) => postLoginData(e, fetchUser, inputs);
 
   return (
     <>
-      <div className=''>
-
+      <div className="">
         <div className="container ">
           <div className="d-flex justify-content-center align-items-center vh-100">
             <div className=" d-flex justify-content-center align-items-center row shadow-lg p-3 mb-5 bg-body rounded p-5 w-100 h-75 ">
@@ -68,7 +41,8 @@ export default function Login({ fetchUser }) {
                   </div>
                   <div className="text-center mt-5">
                     <button
-                      onClick={handleGAuth}
+                      title="gAuthBtn"
+                      onClick={GoogleAuth}
                       className="btn btn-lg google-button-clr rounded-pill  bg-transparent font-family font-size fw-bolder "
                     >
                       Sign In with Google
@@ -89,6 +63,7 @@ export default function Login({ fetchUser }) {
                       onChange={(e) => OnInputChange(e)}
                       id="exampleFormControlInput1"
                       placeholder="TTN Email"
+                      title="email-id"
                     />
                     <input
                       type="password"
@@ -97,12 +72,14 @@ export default function Login({ fetchUser }) {
                       onChange={(e) => OnInputChange(e)}
                       id="exampleFormControlInput1"
                       placeholder="Password"
+                      title="password"
                     />
 
-                    <div className="text-center d-grid gap-1 mt-3">
+                    <div className="text-center d-grid gap-1 mt-5">
                       <button
+                        title="login-btn"
                         type="submit"
-                        onClick={postLoginData}
+                        onClick={LocalAuth}
                         className="btn btn-lg px-5  mt-3 rounded-pill signup-btn-clr font-family fw-bolder font-size"
                       >
                         Sign In

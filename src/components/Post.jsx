@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from 'react';
+import { Comments } from './Comment';
 
 export default function Post({
   index,
@@ -13,13 +14,8 @@ export default function Post({
   let { post_url, _id, like, dislike, comment, post_caption } = data;
   let { firstname, lastname, picture_url } = data.posted_by;
   const [commentmessage, setcommentmessage] = useState();
-  const [loadmore, setloadmore] = useState(true);
 
   const commentInput = useRef(null);
-
-  useEffect(() => {
-    console.log(data.posted_by._id);
-  });
 
   let toggle = true;
 
@@ -30,10 +26,10 @@ export default function Post({
     const box = document.getElementById(index);
 
     if (toggle) {
-      box.style.display = "block";
+      box.style.display = 'block';
       toggle = false;
     } else {
-      box.style.display = "none";
+      box.style.display = 'none';
       toggle = true;
     }
   };
@@ -42,7 +38,8 @@ export default function Post({
     <>
       <div
         key={index}
-        className="card p-3 mb-3 shadow p-3  bg-body rounded border-0">
+        className="card p-3 mb-3 shadow p-3  bg-body rounded border-0"
+      >
         <div className="d-flex justify-content-between align-items-center mb-2">
           <div className="d-flex align-items-center">
             {picture_url ? (
@@ -54,11 +51,11 @@ export default function Post({
             ) : (
               <i
                 className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img text-success d-flex justify-content-center align-items-center"
-                style={{ backgroundColor: "#F0F2F5" }}
+                style={{ backgroundColor: '#F0F2F5' }}
               ></i>
             )}
 
-            <div className="ms-2 fw-bold">{firstname + " " + lastname}</div>
+            <div className="ms-2 fw-bold">{firstname + ' ' + lastname}</div>
           </div>
 
           {/* ========================================================Report System============================================================================== */}
@@ -74,7 +71,7 @@ export default function Post({
                   className="dropdown-item"
                   data-bs-target="#exampleModal"
                   onClick={() => {
-                    reportPost(_id);
+                    reportPost(data);
                   }}
                 >
                   Report
@@ -85,10 +82,10 @@ export default function Post({
           {/* ========================================================Report System============================================================================== */}
         </div>
         <div className="ms-2 mb-2">{post_caption}</div>
-        {"post_url" in data ? (
+        {'post_url' in data ? (
           <img src={post_url} className="card-img-top rounded-3" alt="..." />
         ) : (
-          ""
+          ''
         )}
 
         <div className="d-flex justify-content-between mt-2">
@@ -131,7 +128,7 @@ export default function Post({
           >
             {data.dislike.includes(uid) ? (
               <>
-                {" "}
+                {' '}
                 <i className="fa-regular text-danger fa-thumbs-down me-2"></i>
                 Disliked
               </>
@@ -150,7 +147,7 @@ export default function Post({
             <i className="fa-regular fa-message me-2"></i>Comment
           </div>
         </div>
-        <div id={index} style={{ display: "none" }}>
+        <div id={index} style={{ display: 'none' }}>
           <div className=" mt-3 ">
             <div className="d-flex">
               {userdata.picture_url ? (
@@ -185,42 +182,13 @@ export default function Post({
                 }}
                 className="d-flex align-items-center pointer justify-content-center  rounded-circle border border-success p-2  "
               >
-                {" "}
+                {' '}
                 <i className="fa-solid fa-2x fa-paper-plane text-success circle p-2"></i>
               </div>
             </div>
           </div>
-          {comment.map((element) => {
-            return (
-              <>
-                <div className="d-flex container bg-light mt-1 align-items-center">
-                  <div className="">
-                    {element.picture_url ? (
-                      <div className="">
-                        <img
-                          src={element.picture_url}
-                          className=" mt-2 small-round-pic me-2  round-img "
-                          alt="..."
-                        />
-                      </div>
-                    ) : (
-                      <i className="mt-2 me-2 fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
-                    )}
-                  </div>
-                  <div className={loadmore && "text-comment"}>
-                    {element.message}
-                  </div>
-                </div>
-                <div
-                  className="seemore"
-                  onClick={() => {
-                    setloadmore((p) => !p);
-                  }}
-                >
-                  See More...
-                </div>
-              </>
-            );
+          {comment.map((data) => {
+            return <Comments data={data} />;
           })}
         </div>
       </div>

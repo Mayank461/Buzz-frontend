@@ -1,7 +1,8 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { ApiUserInfo_url,ApiSentReq_url,ApiDelreq_url } from '../config';
+import { APIUSERINFO_URL,APISENTREQ_URL,APIDELREQ_URL } from '../config';
+import { DeleteFriend, SendReq } from '../services/userservice';
 import UserlistWidget from './UserlistWidget';
 
 export default function Userprofile({ suggestFriend, myData, refresh }) {
@@ -18,34 +19,16 @@ export default function Userprofile({ suggestFriend, myData, refresh }) {
 
   useEffect(() => {
     axios
-      .get(`${ApiUserInfo_url}` + id, { withCredentials: true })
+      .get(`${APIUSERINFO_URL}` + id, { withCredentials: true })
       .then((res) => {
         setUser(res.data);
       })
       .catch((err) => console.log(err.message));
   }, [id]);
 
-  function SendReq() {
-    axios
-      .get(`${ApiSentReq_url}` + id, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        refresh();
-      })
-      .catch((err) => console.log(err.message));
-  }
-
-  function DeleteFriend() {
-    axios
-      .get(`${ApiDelreq_url}` + id, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        refresh();
-      })
-      .catch((err) => console.log(err.message));
-  }
+  const SentReq = () => SendReq(id,refresh);  
+  
+  const DelReq = () => DeleteFriend(id,refresh); 
 
   return (
     <div className="container mt-3">
@@ -70,13 +53,13 @@ export default function Userprofile({ suggestFriend, myData, refresh }) {
             <div className="d-flex">
 
               {isFriend ? (
-                <div onClick={DeleteFriend} className="btn btn-danger me-3">
+                <div onClick={DelReq} className="btn btn-danger me-3">
                   REMOVE FRIEND
                 </div>
               ) : isPending ? (
                 <div className="btn btn-dark me-3">Request Pending</div>
               ) : (
-                <div onClick={SendReq} className="btn btn-primary me-3">
+                <div onClick={SentReq} className="btn btn-primary me-3">
                  ADD FRIEND
                 </div>
               )}

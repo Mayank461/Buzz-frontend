@@ -1,12 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function UserlistWidget({ title, friendList }) {
+function UserlistWidget({ title, friendList, ifEmpty }) {
   return (
-    <div className=" border p-2  scroll bg-white shadow-lg p-3 bg-body rounded border-0 ">
+    <div className=" border p-2 mb-3 scroll bg-white shadow-lg p-3 bg-body rounded border-0 ">
       <div className="d-flex justify-content-between">
-        <h6>{title}</h6>       
+        <h6>{title}</h6>
       </div>
+      {friendList.length === 0 && <div className="text-center">{ifEmpty}</div>}
+
       {friendList.map((friend) => (
         <Link
           to={'/profile/' + friend._id}
@@ -20,8 +22,9 @@ function UserlistWidget({ title, friendList }) {
             />
           </div>
           <div className="d-flex align-items-center text-dark">
-            {"firstname" in friend ? friend.firstname + ' ' + friend.lastname : "Unknown User"}
-
+            {'firstname' in friend
+              ? friend.firstname + ' ' + friend.lastname
+              : 'Unknown User'}
           </div>
         </Link>
       ))}

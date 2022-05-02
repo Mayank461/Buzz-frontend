@@ -1,16 +1,16 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { ApiUpdateUserDetails_url,ApiUserDp_url } from "../config";
-import UserlistWidget from "./UserlistWidget";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Spinner from "./Spinner";
+import React, { useState } from 'react';
+import UserlistWidget from './UserlistWidget';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Spinner from './Spinner';
+import { postData, profilePicChange } from '../services/userservice';
+import FullPageSpinner from './FullPageSpinner';
 
-export default function Selfprofile({ user, suggestFriend ,refresh }) {
-  const [toogle, setToogle] = useState(false);
-  const [userdata, setUserData] = useState("");
-  const [Refresh, setRfresh] = useState(0);
+export default function Selfprofile({ user, suggestFriend, refresh }) {
+  console.log('load');
+  const [loading, setLoading] = useState(false);
   const [inputs, setInputs] = useState({
+    picture_url: user.picture_url,
     firstname: user.firstname,
     lastname: user.lastname,
     designation: user.designation,
@@ -22,161 +22,73 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
     zip: user.zip,
   });
 
-  useEffect(() => {
-    axios
-      .get(`${ApiUserDp_url}${user._id}`, { withCredentials: true })
-      .then((res) => {        
-        setUserData(res.data.picture_url);       
-      })
-      .catch((err) => console.log(err.message));
-  }, [Refresh]);
-
   const OnInputChange = (e) => {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
   };
 
-  const postData = async (e) => {
+  const updateData = async (e) => {
     e.preventDefault();
-    if (
-      inputs.firstname == undefined ||
-      inputs.lastname === undefined ||
-      inputs.gender === undefined ||
-      inputs.birthday === undefined
-    ) {
-      toast.warn("Please fill the details");
-    } else if (
-      inputs.firstname == "" ||
-      inputs.lastname === "" ||
-      inputs.gender === "" ||
-      inputs.birthday === ""
-    ) {
-      toast.warn("Please fill the details");
-    } else {
-      const {
-        firstname,
-        lastname,
-        designation,
-        website,
-        gender,
-        birthday,
-        city,
-        state,
-        zip,
-      } = inputs;
-      console.log(inputs);
-      const res = await fetch(`${ApiUpdateUserDetails_url}${user._id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          firstname,
-          lastname,
-          designation,
-          website,
-          gender,
-          birthday,
-          city,
-          state,
-          zip,
-        }),
-      })
-        .then((res) => {
-          toast.success("data updated successfully");
-          setRfresh(Refresh + 1);
-          refresh()
-        })
-        .catch((err) => {
-          toast.error("Something wents wrong!!!");
-        });
-
-      const result = await res.json();
-      if (result.status === 422 || !result) {
-        console.log("success");
-      } else {
-        console.log("failed");
-      }
-    }
+    setLoading(true);
+    let { error, message } = await postData(user._id, inputs);
+    setLoading(false);
+    if (error) return toast.warning(message);
+    refresh();
+    toast.success(message);
   };
 
-  const maleToggle = () => {
-    document.getElementById("female").checked = false;
-    document.getElementById("male").checked = true;
-    document.getElementById("labelMale").className += " bg-success";
-    document.getElementById("labelFemale").classList.remove("bg-success");
-    const setMale = "Male";
-    setInputs({ ...inputs, gender: setMale });
-  };
-  const femaleToggle = () => {
-    document.getElementById("male").checked = false;
-    document.getElementById("female").checked = true;
-    document.getElementById("labelFemale").className += " bg-success";
-    document.getElementById("labelMale").classList.remove("bg-success");
-    const setFemale = "Female";
-    setInputs({ ...inputs, gender: setFemale });
-  };
   const reset = () => {
     setInputs({
-      firstname: "",
-      lastname: "",
-      designation: "",
-      website: "",
-      gender: "",
-      birthday: "",
-      city: "",
-      state: "",
-      zip: "",
+      firstname: user.firstname,
+      lastname: user.lastname,
+      designation: user.designation,
+      website: user.website,
+      gender: user.gender,
+      birthday: user.birthday,
+      city: user.city,
+      state: user.state,
+      zip: user.zip,
     });
   };
-  const inputpic = (e) => {    
-    setToogle(true);
-    const data = new FormData();
-    data.append("file", e.target.files[0]);
-    data.append("upload_preset", "buzz-app-pic");
-    data.append("cloud_name", "buzz-social-app");
-    fetch("https://api.cloudinary.com/v1_1/buzz-social-app/image/upload", {
-      method: "post",
-      body: data,
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        fetch(`${ApiUpdateUserDetails_url}${user._id}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            pic_url: data.url,           
-          }),
-        }).then((r) =>{
-          refresh();
-          setRfresh(Refresh + 1)});
 
-        toast.success("Picture change successfully");
-       
-        setToogle(false);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  const inputpic = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return toast.warn('No picture selected');
+
+    setLoading(true);
+    let { error, message } = await profilePicChange(user._id, file);
+
+    setLoading(false);
+    if (error) return toast.error(message);
+    refresh();
+    toast.success(message);
   };
+
+  if (loading) {
+    return <FullPageSpinner />;
+  }
+
   return (
     <>
-      <div style={{ backgroundColor: "#F0F2F5" }}>
+      <div style={{ backgroundColor: '#F0F2F5' }}>
         <div className="container">
           <div className="row">
             <div className="col-md-9 bg-white mt-3 p-2 shadow-lg  bg-body rounded">
               <div className="">
                 <div className="">
                   <img
+                    alt="cover"
                     src="https://images.unsplash.com/photo-1495277493816-4c359911b7f1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1165&q=80"
                     className="coverpic"
                   />
                 </div>
                 <div className="position-relative profilepic mid">
                   <div className="">
-                    {"picture_url" in user ? (
-                      <img src={userdata} className="profilepic" />
+                    {'picture_url' in user ? (
+                      <img
+                        alt="profile pic"
+                        src={inputs.picture_url}
+                        className="profilepic"
+                      />
                     ) : (
                       <i className="fa-solid fa-user fa-5x profilepic d-flex justify-content-center align-items-center bg-warning"></i>
                     )}
@@ -186,9 +98,7 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
                     <input
                       type="file"
                       className="camera"
-                      onChange={(e) => {
-                        inputpic(e);
-                      }}
+                      onChange={(e) => inputpic(e)}
                     />
                   </div>
                 </div>
@@ -196,11 +106,13 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
               <div className="d-flex ">
                 <div>
                   <h1 className="mt-2">
-                  {"firstname" in user?user.firstname + ' ' + user.lastname:"Edit Profile"}
+                    {'firstname' in user
+                      ? user.firstname + ' ' + user.lastname
+                      : 'Edit Profile'}
                   </h1>
                 </div>
                 <div className="d-flex align-items-center">
-                  {toogle ? <Spinner></Spinner> : ""}
+                  {loading && <Spinner />}
                 </div>
               </div>
 
@@ -296,15 +208,16 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
                           type="radio"
                           className="btn-check"
                           name="gender"
-                          id="male"
-                          onChange={(e) => OnInputChange(e)}
+                          id="Male"
                           value="Male"
+                          onChange={(e) => OnInputChange(e)}
                         />
                         <label
-                          className="btn border-success w-50 "
-                          id="labelMale"
+                          className={`btn border-success  w-50 ${
+                            inputs.gender === 'Male' && 'bg-success text-white'
+                          }`}
+                          for="Male"
                           value="Male"
-                          onClick={maleToggle}
                         >
                           Male
                         </label>
@@ -313,15 +226,16 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
                           type="radio"
                           className="btn-check"
                           name="gender"
-                          id="female"
-                          onChange={(e) => OnInputChange(e)}
+                          id="Female"
                           value="Female"
+                          onChange={(e) => OnInputChange(e)}
                         />
                         <label
-                          className="btn border-success w-50"
-                          id="labelFemale"
-                          value="Female"
-                          onClick={femaleToggle}
+                          className={`btn border-success  w-50 ${
+                            inputs.gender === 'Female' &&
+                            'bg-success text-white'
+                          }`}
+                          for="Female"
                         >
                           Female
                         </label>
@@ -374,9 +288,7 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
                           <option value="Andaman and Nicobar (UT)">
                             Andaman and Nicobar (UT)
                           </option>
-                          <option value="Andhra Pradesh">
-                            Andhra Pradesh
-                          </option>
+                          <option value="Andhra Pradesh">Andhra Pradesh</option>
                           <option value="Arunachal Pradesh">
                             Arunachal Pradesh
                           </option>
@@ -408,9 +320,7 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
                           <option value="Lakshadweep (UT)">
                             Lakshadweep (UT)
                           </option>
-                          <option value="Madhya Pradesh">
-                            Madhya Pradesh
-                          </option>
+                          <option value="Madhya Pradesh">Madhya Pradesh</option>
                           <option value="Maharashtra">Maharashtra</option>
                           <option value="Manipur">Manipur</option>
                           <option value="Meghalaya">Meghalaya</option>
@@ -426,9 +336,7 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
                           <option value="Tamil Nadu">Tamil Nadu</option>
                           <option value="Telangana">Telangana</option>
                           <option value="Tripura">Tripura</option>
-                          <option value="Uttar Pradesh">
-                            Uttar Pradesh
-                          </option>
+                          <option value="Uttar Pradesh">Uttar Pradesh</option>
                           <option value="Uttarakhand">Uttarakhand</option>
                           <option value="West Bengal">West Bengal</option>
                         </select>
@@ -453,7 +361,7 @@ export default function Selfprofile({ user, suggestFriend ,refresh }) {
                     <button
                       type="submit"
                       className="btn btn-success me-3"
-                      onClick={postData}
+                      onClick={updateData}
                     >
                       Save
                     </button>
