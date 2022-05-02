@@ -40,8 +40,9 @@ export const totalPosts = async (loginID) => {
     const myPostsCount = data.filter(
       (el) => el.posted_by._id === loginID
     ).length;
-
+     
     return { totalPostCount, myPostsCount };
+  
   } catch (error) {
     return { error: true, message: error.message };
   }

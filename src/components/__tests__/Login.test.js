@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import Login from "../Login";
+import renderer from 'react-test-renderer';
 test('should render Login Panel', () => {
   render(<Login />)
   const email_input = screen.queryByTitle('email-id');
@@ -10,6 +11,10 @@ test('should render Login Panel', () => {
   expect(email_input).toBeTruthy();
   expect(pass_input).toBeTruthy();
   expect(loginBtn).toBeTruthy();
+
+  const component = renderer.create(<Login />)
+  let tree = component.toJSON()
+  expect(tree).toMatchSnapshot();
 })
 describe('Change login Fields Inputs', () => {
   it('onChange', () => {
@@ -20,5 +25,9 @@ describe('Change login Fields Inputs', () => {
     fireEvent.change(pass_input, { target: { value: 'abc123@com' } });
     expect(email_input.value).toBe('abc@tothenew.com');
     expect(pass_input.value).toBe('abc123@com');
+
+    const component = renderer.create(<Login />)
+    let tree = component.toJSON()
+    expect(tree).toMatchSnapshot();
   });
 });

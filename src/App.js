@@ -47,7 +47,7 @@ function App() {
           <Routes>
             <Route
               path="/"
-              element={<Feeds user={user} suggestFriend={SFriend} />}
+              element={<Feeds user={user} suggestFriend={SFriend} refresh={toggleRefresh} />}
             />
             <Route
               path="/profile"

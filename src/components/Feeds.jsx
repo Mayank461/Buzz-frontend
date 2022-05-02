@@ -16,7 +16,7 @@ import {
 } from '../services/postservices';
 import { loadPost, totalPosts } from '../services/feedServices';
 
-export default function Feeds(user) {
+export default function Feeds(user,refresh) {
   const [newPost, setNewPost] = useState({ title: '', files: '' });
   const [userData, setUserData] = useState({});
   const [posts, setPosts] = useState([]);
@@ -50,6 +50,7 @@ export default function Feeds(user) {
     setUserData(user.user);
     const { myPostsCount, totalPostCount } = await totalPosts(user.user._id);
     setCount(myPostsCount);
+ 
     setPagination((pre) => ({ ...pre, total: totalPostCount }));
   }
 
@@ -70,7 +71,7 @@ export default function Feeds(user) {
 
   const publish = async () => {
     setPageLoading(true);
-    const result = await publishPost(userData._id, newPost);
+    const result = await publishPost(user.user._id, newPost);
 
     if (result.error) {
       setPageLoading(false);
@@ -82,6 +83,7 @@ export default function Feeds(user) {
     setPosts([]);
     const total = await totalPosts(user.user._id);
     setPagination((pre) => ({ ...pre, total: total.totalPostCount }));
+    
     loadPost(0, pagination.limit, setPosts, setPageLoading, setLoadDisable);
     toast.success('Your post uplaoded successfully');
   };
@@ -97,9 +99,9 @@ export default function Feeds(user) {
             <div className="col-md-3 sticky side-height mt-3 ">
               <div className="card p-5 shadow-lg p-3 mb-2 bg-body rounded border-0">
                 <div className="d-flex justify-content-center">
-                  {'picture_url' in userData ? (
+                  {'picture_url' in user.user ? (
                     <img
-                      src={userData.picture_url}
+                      src={user.user.picture_url}
                       className="card-img-top small-round-pic  round-img"
                       alt="..."
                     />
@@ -109,8 +111,8 @@ export default function Feeds(user) {
                 </div>
                 <div className="card-body">
                   <h5 className="card-title text-center" data-testid="userProName">
-                    {'firstname' in userData
-                      ? userData.firstname + ' ' + userData.lastname
+                    {'firstname' in user.user
+                      ? user.user.firstname + ' ' + user.user.lastname
                       : 'Edit Profile'}
                   </h5>
                   <p className="card-text text-center">Newly Recruit at TTN </p>
@@ -150,9 +152,9 @@ export default function Feeds(user) {
               <div className="shadow p-3 mb-4 bg-body rounded">
                 <div className="d-flex align-items-center">
                   <div className="">
-                    {'picture_url' in userData ? (
+                    {'picture_url' in user.user ? (
                       <img
-                        src={userData.picture_url}
+                        src={user.user.picture_url}
                         className="card-img-top small-round-pic  round-img"
                         alt="..."
                       />
@@ -165,7 +167,7 @@ export default function Feeds(user) {
                       type="text"
                       id="comment-box"
                       className="caption p-2 rounded-pill form-control"
-                      placeholder={`What's on your mind ${userData.firstname} ${userData.lastname} ?`}
+                      placeholder={`What's on your mind ${user.user.firstname} ${user.user.lastname} ?`}
                       value={newPost.title}
                       onChange={(e) =>
                         setNewPost((prev) => ({
@@ -208,9 +210,9 @@ export default function Feeds(user) {
                     inclike={like}
                     deslike={dislike}
                     commentBox={commentbox}
-                    userdata={userData}
+                    userdata={user.user}
                     reportPost={report}
-                    uid={userData._id}
+                    uid={user.user._id}
                   />
                 );
               })}
