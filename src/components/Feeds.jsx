@@ -16,7 +16,8 @@ import {
 } from '../services/postservices';
 import { loadPost, totalPosts } from '../services/feedServices';
 
-export default function Feeds(user,refresh) {
+export default function Feeds(user) {
+  const [refresh, setRefresh] = useState(true);
   const [newPost, setNewPost] = useState({ title: '', files: '' });
   const [userData, setUserData] = useState({});
   const [posts, setPosts] = useState([]);
@@ -28,7 +29,7 @@ export default function Feeds(user,refresh) {
     limit: 4,
     total: 4,
   });
-
+  const toggleRefresh = () => setRefresh((p) => !p);
   useEffect(() => {
     loadPost(
       pagination.page,
@@ -40,16 +41,18 @@ export default function Feeds(user,refresh) {
   }, [pagination.page]);
 
   useEffect(() => {
+    
     window.addEventListener('scroll', handleScroll);
     whenLoad();
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [refresh]);
 
   async function whenLoad() {
     setPageLoading(true);
     setUserData(user.user);
     const { myPostsCount, totalPostCount } = await totalPosts(user.user._id);
     setCount(myPostsCount);
+    console.log(count);
  
     setPagination((pre) => ({ ...pre, total: totalPostCount }));
   }
@@ -83,6 +86,7 @@ export default function Feeds(user,refresh) {
     setPosts([]);
     const total = await totalPosts(user.user._id);
     setPagination((pre) => ({ ...pre, total: total.totalPostCount }));
+    toggleRefresh();
     
     loadPost(0, pagination.limit, setPosts, setPageLoading, setLoadDisable);
     toast.success('Your post uplaoded successfully');
