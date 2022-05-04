@@ -41,7 +41,7 @@ export default function Login({ fetchUser }) {
                   </div>
                   <div className="text-center mt-5">
                     <button
-                    title="gAuthBtn"
+                      title="gAuthBtn"
                       onClick={GoogleAuth}
                       className="btn btn-lg google-button-clr rounded-pill  bg-transparent font-family font-size fw-bolder "
                     >
@@ -77,8 +77,8 @@ export default function Login({ fetchUser }) {
 
                     <div className="text-center d-grid gap-1 mt-5">
                       <button
-                      title="login-btn"
-                      type="submit"
+                        title="login-btn"
+                        type="submit"
                         onClick={LocalAuth}
                         className="btn btn-lg px-5  mt-3 rounded-pill signup-btn-clr font-family fw-bolder font-size"
                       >

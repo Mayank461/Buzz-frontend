@@ -17,6 +17,7 @@ function App() {
   const [SFriend, setSFriend] = useState([]);
   const [refresh, setRefresh] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [admin, setAdmin] = useState(false);
 
   useEffect(() => {
     fetchUser();

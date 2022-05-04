@@ -74,7 +74,7 @@ export const reportPost = (data, setPosts, posts) => {
     .post(
       `${APIREPORT_URL}`,
       {
-      data:data
+        data: data,
       },
       { withCredentials: true }
     )
