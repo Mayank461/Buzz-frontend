@@ -154,12 +154,12 @@ export default function Feeds(user) {
             {/* ======================================================================= column 2nd ======================================================================== */}
             <div className="col-md-6   mt-3  position-relative">
               <div className="shadow p-3 mb-4 bg-body rounded">
-                <div className="d-flex align-items-center">
+                <div className="d-sm-flex align-items-center">
                   <div className="">
                     {'picture_url' in user.user ? (
                       <img
                         src={user.user.picture_url}
-                        className="card-img-top small-round-pic  round-img"
+                        className="d-none d-sm-block card-img-top small-round-pic  round-img"
                         alt="..."
                       />
                     ) : (

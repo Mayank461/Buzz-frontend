@@ -87,7 +87,7 @@ export default function Post({
 
         {'post_url' in data ? (
           post_url.endsWith('.mp4') ? (
-            <video controls width="100%" autoplay src={post_url}>
+            <video controls width="100%" src={post_url}>
               Your browser does not support the video.
             </video>
           ) : (
