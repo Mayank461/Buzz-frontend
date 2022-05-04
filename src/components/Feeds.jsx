@@ -230,6 +230,7 @@ export default function Feeds(user) {
                     userdata={user.user}
                     reportPost={report}
                     uid={user.user._id}
+                    key={element._id}
                   />
                 );
               })}
