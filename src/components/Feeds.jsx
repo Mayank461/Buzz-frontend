@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { APIUSER_URL } from '../config';
+import React, { useEffect, useRef, useState } from 'react';
 import Post from './Post';
 import UserlistWidget from './UserlistWidget';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Spinner from './Spinner';
 import FullPageSpinner from './FullPageSpinner';
 import DefaultCard from './DefaultCard';
 import {
@@ -29,7 +27,6 @@ export default function Feeds(user) {
     limit: 4,
     total: 4,
   });
-  const toggleRefresh = () => setRefresh((p) => !p);
   useEffect(() => {
     loadPost(
       pagination.page,
@@ -41,7 +38,6 @@ export default function Feeds(user) {
   }, [pagination.page]);
 
   useEffect(() => {
-    
     window.addEventListener('scroll', handleScroll);
     whenLoad();
     return () => window.removeEventListener('scroll', handleScroll);
@@ -53,7 +49,7 @@ export default function Feeds(user) {
     const { myPostsCount, totalPostCount } = await totalPosts(user.user._id);
     setCount(myPostsCount);
     console.log(count);
- 
+
     setPagination((pre) => ({ ...pre, total: totalPostCount }));
   }
 
@@ -90,6 +86,7 @@ export default function Feeds(user) {
     loadPost(0, pagination.limit, setPosts, setPageLoading, setLoadDisable);
     toast.success('Your post uplaoded successfully');
   };
+  const pickFile = useRef(null);
 
   return (
     <>
@@ -113,7 +110,10 @@ export default function Feeds(user) {
                   )}
                 </div>
                 <div className="card-body">
-                  <h5 className="card-title text-center" data-testid="userProName">
+                  <h5
+                    className="card-title text-center"
+                    data-testid="userProName"
+                  >
                     {'firstname' in user.user
                       ? user.user.firstname + ' ' + user.user.lastname
                       : 'Edit Profile'}
@@ -143,6 +143,7 @@ export default function Feeds(user) {
                   />
                   <div className="position-abs">
                     <img
+                      alt=""
                       className=" p-5  "
                       src="https://static1.tothenew.com/blog/wp-content/themes/ttn/images/social-logo.png"
                     ></img>
@@ -181,21 +182,34 @@ export default function Feeds(user) {
                     />
                   </div>
                   <div className="text-center d-flex align-items-center">
+                    <div
+                      className="btn d-flex pickFile"
+                      onClick={() => pickFile.current?.click()}
+                    >
+                      <i class="fa-solid fa-photo-film"></i> Photo/video
+                    </div>
                     <input
+                      ref={pickFile}
                       type="file"
-                      className="myFile"
+                      accept=".jpg, .png, .mp4"
+                      className="d-none"
                       id="file"
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        if (e.target.files[0].size > 10 * 1000000) {
+                          toast.error('file size should be less than 10MB');
+                          return;
+                        }
+
                         setNewPost((prev) => ({
                           ...prev,
                           files: e.target.files[0],
-                        }))
-                      }
+                        }));
+                      }}
                     />
                   </div>
                 </div>
 
-                <div className="text-center d-grid gap-2 w-100 mt-5 text-center mt-2">
+                <div className="text-center d-grid gap-2 w-100 mt-2 text-center mt-2">
                   <button
                     className="btn btn-success rounded-pill"
                     onClick={publish}

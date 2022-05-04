@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import  Comment from './Comment';
+import Comment from './Comment';
 
 export default function Post({
   index,
@@ -55,7 +55,9 @@ export default function Post({
               ></i>
             )}
 
-            <div className="ms-2 fw-bold" data-testid="whoPosted">{firstname + ' ' + lastname}</div>
+            <div className="ms-2 fw-bold" data-testid="whoPosted">
+              {firstname + ' ' + lastname}
+            </div>
           </div>
 
           {/* ========================================================Report System============================================================================== */}
@@ -82,8 +84,15 @@ export default function Post({
           {/* ========================================================Report System============================================================================== */}
         </div>
         <div className="ms-2 mb-2">{post_caption}</div>
+
         {'post_url' in data ? (
-          <img src={post_url} className="card-img-top rounded-3" alt="..." />
+          post_url.endsWith('.mp4') ? (
+            <video controls width="100%" autoplay src={post_url}>
+              Your browser does not support the video.
+            </video>
+          ) : (
+            <img src={post_url} className="card-img-top rounded-3" alt="..." />
+          )
         ) : (
           ''
         )}
@@ -147,7 +156,7 @@ export default function Post({
             <i className="fa-regular fa-message me-2"></i>Comment
           </div>
         </div>
-        <div  id={index}  style={{ display: 'none' }}>
+        <div id={index} style={{ display: 'none' }}>
           <div className=" mt-3 ">
             <div className="d-flex">
               {userdata.picture_url ? (
