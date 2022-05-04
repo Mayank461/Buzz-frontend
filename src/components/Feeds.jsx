@@ -186,7 +186,7 @@ export default function Feeds(user) {
                       className="btn d-flex pickFile"
                       onClick={() => pickFile.current?.click()}
                     >
-                      <i class="fa-solid fa-photo-film"></i> Photo/video
+                      <i className="fa-solid fa-photo-film"></i> Photo/video
                     </div>
                     <input
                       ref={pickFile}
@@ -196,6 +196,10 @@ export default function Feeds(user) {
                       id="file"
                       onChange={(e) => {
                         if (e.target.files[0].size > 10 * 1000000) {
+                          setNewPost((prev) => ({
+                            ...prev,
+                            files: undefined,
+                          }));
                           toast.error('file size should be less than 10MB');
                           return;
                         }
