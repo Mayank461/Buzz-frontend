@@ -115,9 +115,11 @@ Array [
               >
                 <input
                   className="caption p-2 rounded-pill form-control"
+                  disabled={false}
                   id="comment-box"
                   onChange={[Function]}
                   placeholder="What's on your mind noOne noOne ?"
+                  title="comment-box"
                   type="text"
                   value=""
                 />
@@ -130,7 +132,7 @@ Array [
                   onClick={[Function]}
                 >
                   <i
-                    class="fa-solid fa-photo-film"
+                    className="fa-solid fa-photo-film"
                   />
                    Photo/video
                 </div>
@@ -148,7 +150,9 @@ Array [
             >
               <button
                 className="btn btn-success rounded-pill"
+                disabled={false}
                 onClick={[Function]}
+                title="publish"
               >
                 Upload
               </button>

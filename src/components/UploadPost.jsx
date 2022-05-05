@@ -28,6 +28,7 @@ function UploadPost({ userpic, name, onPublish, uploading }) {
           <input
             type="text"
             id="comment-box"
+            title="comment-box"
             className="caption p-2 rounded-pill form-control"
             placeholder={`What's on your mind ${name} ?`}
             value={newPost.title}
@@ -131,6 +132,7 @@ function UploadPost({ userpic, name, onPublish, uploading }) {
           onClick={() => {
             onPublish(newPost);
           }}
+          title="publish"
           disabled={uploading}
         >
           {uploading ? 'Uploading...' : 'Upload'}
