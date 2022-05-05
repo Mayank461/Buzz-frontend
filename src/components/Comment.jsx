@@ -21,9 +21,7 @@ export default function Comment({ data,postId,index,senderPic,postComment ,userd
     }
 
   }
-  useEffect(()=>{
-    console.log(userDetails.posted_by._id);
-  },[])
+
   const oninputchange = (e) => {
     setcommentmessage({ ...commentmessage, [e.target.name]: e.target.value });
   };
@@ -56,8 +54,12 @@ export default function Comment({ data,postId,index,senderPic,postComment ,userd
 
       <div className='d-flex justify-content-between'>
         <div className='d-flex'>
-        <div className='seemore' onClick={()=>{commentLike(data,commentmessage,postId,data._id,senderPic,index,replyComment,userDetails.posted_by._id)}} style={{marginLeft:"65px", cursor:"pointer"}}>Like</div>
-        <div className='seemore' onClick={replyTo} >reply</div>
+        <div className='seemore' onClick={()=>{commentLike(data,commentmessage,postId,data._id,senderPic,index,replyComment,userDetails.posted_by._id)}} style={{marginLeft:"65px", cursor:"pointer"}}>
+         {data.likes.includes(userdata._id)?<><i className="fa-solid fa-heart text-danger me-2"></i>Unlike</>:<><i className="fa-solid fa-heart me-2"></i>Like</>}
+     
+          
+          </div>
+        <div className='seemore' onClick={replyTo} >Reply</div>
 
         </div>
         <div
@@ -67,7 +69,7 @@ export default function Comment({ data,postId,index,senderPic,postComment ,userd
             setReply(false);
             setToggle(true);
           }}
-        > { data.replyBy.length>0 ? "see more":""}
+        > { data.replyBy.length>0 ? "See More":""}
         </div>
       </div>
       

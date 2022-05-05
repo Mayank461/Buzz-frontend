@@ -84,8 +84,8 @@ export const postCommentLike =(data,commentmessage,postId,dataid,senderPic,index
         { withCredentials: true }
       )
       .then((res) => {
-        // replyComment.value=""
-        // setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)));
+        
+        setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)));
       })
       .catch((err) => console.log(err.message));
   
