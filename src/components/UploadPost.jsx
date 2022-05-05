@@ -61,7 +61,7 @@ function UploadPost({ userpic, name, onPublish, uploading }) {
                   ...prev,
                   files: undefined,
                 }));
-                toast.error('file size should be less than 10MB');
+                toast.error('File size should be less than 10MB');
                 return;
               }
 
