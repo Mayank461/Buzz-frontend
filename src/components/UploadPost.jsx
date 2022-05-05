@@ -1,10 +1,14 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-function UploadPost({ userpic, name, onPublish }) {
+function UploadPost({ userpic, name, onPublish, uploading }) {
   const pickFile = useRef(null);
   const [newPost, setNewPost] = useState({ title: '', files: undefined });
+
+  useEffect(() => {
+    !uploading && setNewPost({ title: '', files: undefined });
+  }, [uploading]);
 
   return (
     <div className="shadow p-3 mb-4 bg-body rounded">
@@ -33,6 +37,7 @@ function UploadPost({ userpic, name, onPublish }) {
                 title: e.target.value,
               }))
             }
+            disabled={uploading}
           />
         </div>
 
@@ -68,9 +73,41 @@ function UploadPost({ userpic, name, onPublish }) {
         </div>
       </div>
 
-      <div className="my-3 d-flex align-items-center">
-        {newPost.files &&
-          (newPost.files.type === 'video/mp4' ? (
+      {newPost.files && (
+        <div className="my-3 d-flex align-items-center position-relative">
+          {!uploading && (
+            <div
+              className="btn btn-danger"
+              style={{
+                position: 'absolute',
+                right: -10,
+                top: -10,
+                borderRadius: '500px',
+                zIndex: 100,
+              }}
+              disabled
+              onClick={() =>
+                setNewPost((prev) => ({ ...prev, files: undefined }))
+              }
+            >
+              <i className="fa fa-times" aria-hidden="true"></i>
+            </div>
+          )}
+
+          {uploading && (
+            <div
+              className="position-absolute w-100 h-100 d-flex justify-content-center z-index-1"
+              style={{ background: 'rgb(0 0 0 / 80%)' }}
+            >
+              <div class="lds-facebook align-self-center">
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            </div>
+          )}
+
+          {newPost.files.type === 'video/mp4' ? (
             <video
               controls
               width="100%"
@@ -84,18 +121,19 @@ function UploadPost({ userpic, name, onPublish }) {
               className="card-img-top rounded-3"
               alt="..."
             />
-          ))}
-      </div>
+          )}
+        </div>
+      )}
 
       <div className="text-center d-grid gap-2 w-100 mt-2 text-center mt-2">
         <button
           className="btn btn-success rounded-pill"
           onClick={() => {
             onPublish(newPost);
-            setNewPost({ title: '', files: undefined });
           }}
+          disabled={uploading}
         >
-          Upload
+          {uploading ? 'Uploading...' : 'Upload'}
         </button>
       </div>
     </div>

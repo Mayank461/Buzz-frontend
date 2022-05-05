@@ -21,6 +21,7 @@ export default function Feeds(user) {
   const [pageLoading, setPageLoading] = useState(false);
   const [loadDisable, setLoadDisable] = useState(false);
   const [count, setCount] = useState(0);
+  const [uploadingPost, setUploadingPost] = useState(false);
   const [pagination, setPagination] = useState({
     page: 0,
     limit: 4,
@@ -67,21 +68,22 @@ export default function Feeds(user) {
   const report = (id) => reportPost(id, setPosts, posts);
 
   const publish = async (postData) => {
-    setPageLoading(true);
+    setUploadingPost(true);
     const result = await publishPost(userData._id, postData);
 
     if (result.error) {
-      setPageLoading(false);
+      setUploadingPost(false);
       toast.error(result.error);
       return;
     }
 
-    setPosts([]);
+    setUploadingPost(false);
+    toast.success('Your post uploaded successfully');
     const { myPostsCount, totalPostCount } = await totalPosts(user.user._id);
     setCount(myPostsCount);
     setPagination((pre) => ({ ...pre, total: totalPostCount }));
+    setPosts([]);
     loadPost(0, pagination.limit, setPosts, setPageLoading, setLoadDisable);
-    toast.success('Your post uplaoded successfully');
   };
 
   return (
@@ -153,6 +155,7 @@ export default function Feeds(user) {
                 userpic={user.user.picture_url}
                 name={user.user.firstname + ' ' + user.user.lastname}
                 onPublish={publish}
+                uploading={uploadingPost}
               />
 
               {posts.map((element, index) => {
