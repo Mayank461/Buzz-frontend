@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { APIUSER_URL } from '../config';
 import Post from './Post';
+
+
 import UserlistWidget from './UserlistWidget';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -13,6 +15,8 @@ import {
   reportPost,
   unlike,
   publishPost,
+  postCommentReply,
+  postCommentLike
 } from '../services/postservices';
 import { loadPost, totalPosts } from '../services/feedServices';
 
@@ -21,16 +25,20 @@ export default function Feeds(user) {
   const [newPost, setNewPost] = useState({ title: '', files: '' });
   const [userData, setUserData] = useState({});
   const [posts, setPosts] = useState([]);
-  const [pageLoading, setPageLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
   const [loadDisable, setLoadDisable] = useState(false);
   const [count, setCount] = useState(0);
+  const [chk, setChk] = useState(0);
   const [pagination, setPagination] = useState({
     page: 0,
     limit: 4,
     total: 4,
   });
   const toggleRefresh = () => setRefresh((p) => !p);
+
+
   useEffect(() => {
+    
     loadPost(
       pagination.page,
       pagination.limit,
@@ -52,7 +60,7 @@ export default function Feeds(user) {
     setUserData(user.user);
     const { myPostsCount, totalPostCount } = await totalPosts(user.user._id);
     setCount(myPostsCount);
-    console.log(count);
+    // console.log(pageLoading);
  
     setPagination((pre) => ({ ...pre, total: totalPostCount }));
   }
@@ -68,9 +76,12 @@ export default function Feeds(user) {
 
   const like = (id) => Inlike(id, setPosts, posts);
   const dislike = (id) => unlike(id, setPosts, posts);
-  const commentbox = (id, message, commentInput, setcommentmessage) =>
-    commentBox(id, message, commentInput, setcommentmessage, setPosts, posts);
+  const commentbox = (id, message, commentInput, setcommentmessage) => commentBox(id, message, commentInput, setcommentmessage, setPosts, posts);
   const report = (id) => reportPost(id, setPosts, posts);
+  const postComment = (data,commentmessage,postId,dataid,senderPic,index,replyComment)=>{ postCommentReply(data,commentmessage,postId,dataid,senderPic,index,replyComment,setPosts, posts)
+
+  }
+  const commentLike=(data,commentmessage,postId,dataid,senderPic,index,replyComment,userId) =>{postCommentLike(data,commentmessage,postId,dataid,senderPic,index,replyComment,setPosts, posts,userId)}
 
   const publish = async () => {
     setPageLoading(true);
@@ -116,7 +127,7 @@ export default function Feeds(user) {
                 <div className="card-body">
                   <h5 className="card-title text-center" data-testid="userProName">
                     {'firstname' in user.user
-                      ? user.user.firstname + ' ' + user.user.lastname
+                      ? user.user.firstname + ' ' + user.user.lastname + chk
                       : 'Edit Profile'}
                   </h5>
                   <p className="card-text text-center">Newly Recruit at TTN </p>
@@ -217,6 +228,10 @@ export default function Feeds(user) {
                     userdata={user.user}
                     reportPost={report}
                     uid={user.user._id}
+                    postComment={postComment}
+                    commentLike={commentLike}
+    
+                    
                   />
                 );
               })}

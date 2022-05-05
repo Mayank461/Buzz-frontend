@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { APICOMMENTREPLY_URL,APICOMMENTLIKE_URL } from '../config';
+
 import {
   APICOMMENT_URL,
   APIIMAGEUPLOAD,
@@ -38,7 +40,59 @@ export const unlike = (id, setPosts, posts) => {
     )
     .catch((err) => console.log(err.message));
 };
+export const postCommentReply =(data,commentmessage,postId,dataid,senderPic,index,replyComment,setPosts, posts)=>{
+console.log();
+  axios
+    .post(
+      `${APICOMMENTREPLY_URL}`,
+      {
+        data:data,
+        reply:commentmessage,
+        post_id:postId,
+        commentId:dataid,
+        senderPic:senderPic,
+        index:index
+      },
+      { withCredentials: true }
+    )
+    .then((res) => {
+      replyComment.value=""
+      setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)));
+    })
+    .catch((err) => console.log(err.message));
 
+ 
+ 
+
+}
+
+
+export const postCommentLike =(data,commentmessage,postId,dataid,senderPic,index,replyComment,setPosts, posts,userId)=>{
+  // console.log(userId);
+    axios
+      .post(
+        `${APICOMMENTLIKE_URL}`,
+        {
+          data:data,
+          reply:commentmessage,
+          post_id:postId,
+          commentId:dataid,
+          senderPic:senderPic,
+          index:index,
+          userId:userId
+        },
+        { withCredentials: true }
+      )
+      .then((res) => {
+        // replyComment.value=""
+        // setPosts(posts.map((p) => (p._id === res.data._id ? res.data : p)));
+      })
+      .catch((err) => console.log(err.message));
+  
+   
+   
+  
+  }
 export const commentBox = (
   id,
   message,
@@ -60,6 +114,7 @@ export const commentBox = (
         { withCredentials: true }
       )
       .then((res) => {
+        // console.log(res.data);
         commentInput.current.value = '';
         setcommentmessage('');
 

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import  Comment from './Comment';
 
 export default function Post({
@@ -10,12 +10,21 @@ export default function Post({
   userdata,
   reportPost,
   uid,
+  postComment,
+  commentLike
+
+  
+ 
 }) {
   let { post_url, _id, like, dislike, comment, post_caption } = data;
-  let { firstname, lastname, picture_url } = data.posted_by;
+  let { firstname, lastname, picture_url} = data.posted_by;
   const [commentmessage, setcommentmessage] = useState();
 
   const commentInput = useRef(null);
+
+  // useEffect(()=>{
+  //     console.log(userdata);
+  // },[])
 
   let toggle = true;
 
@@ -33,6 +42,7 @@ export default function Post({
       toggle = true;
     }
   };
+
 
   return (
     <>
@@ -147,6 +157,8 @@ export default function Post({
             <i className="fa-regular fa-message me-2"></i>Comment
           </div>
         </div>
+          {/* ========================================================Comment Section============================================================================== */}
+
         <div  id={index}  style={{ display: 'none' }}>
           <div className=" mt-3 ">
             <div className="d-flex">
@@ -187,8 +199,8 @@ export default function Post({
               </div>
             </div>
           </div>
-          {comment.map((data) => {
-            return <Comment data={data} />;
+          {comment.map((element,index) => {
+            return <Comment data={element} postId = {_id} index={index} senderPic={userdata.picture_url} userDetails={data} postComment={postComment} userdata={userdata} commentLike={commentLike} />;
           })}
         </div>
       </div>
