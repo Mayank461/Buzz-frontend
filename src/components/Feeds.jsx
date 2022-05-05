@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Post from './Post';
 import UserlistWidget from './UserlistWidget';
 import { ToastContainer, toast } from 'react-toastify';
@@ -13,10 +13,9 @@ import {
   publishPost,
 } from '../services/postservices';
 import { loadPost, totalPosts } from '../services/feedServices';
+import UploadPost from './UploadPost';
 
 export default function Feeds(user) {
-  const [refresh, setRefresh] = useState(true);
-  const [newPost, setNewPost] = useState({ title: '', files: '' });
   const [userData, setUserData] = useState({});
   const [posts, setPosts] = useState([]);
   const [pageLoading, setPageLoading] = useState(false);
@@ -27,6 +26,21 @@ export default function Feeds(user) {
     limit: 4,
     total: 4,
   });
+
+  useEffect(() => {
+    async function whenLoad() {
+      setPageLoading(true);
+      setUserData(user.user);
+      const { myPostsCount, totalPostCount } = await totalPosts(user.user._id);
+      setCount(myPostsCount);
+      setPagination((pre) => ({ ...pre, total: totalPostCount }));
+    }
+
+    whenLoad();
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   useEffect(() => {
     loadPost(
       pagination.page,
@@ -35,23 +49,7 @@ export default function Feeds(user) {
       setPageLoading,
       setLoadDisable
     );
-  }, [pagination.page]);
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    whenLoad();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [refresh]);
-
-  async function whenLoad() {
-    setPageLoading(true);
-    setUserData(user.user);
-    const { myPostsCount, totalPostCount } = await totalPosts(user.user._id);
-    setCount(myPostsCount);
-    console.log(count);
-
-    setPagination((pre) => ({ ...pre, total: totalPostCount }));
-  }
+  }, [pagination.limit, pagination.page]);
 
   function handleScroll() {
     if (
@@ -68,9 +66,9 @@ export default function Feeds(user) {
     commentBox(id, message, commentInput, setcommentmessage, setPosts, posts);
   const report = (id) => reportPost(id, setPosts, posts);
 
-  const publish = async () => {
+  const publish = async (postData) => {
     setPageLoading(true);
-    const result = await publishPost(userData._id, newPost);
+    const result = await publishPost(userData._id, postData);
 
     if (result.error) {
       setPageLoading(false);
@@ -78,7 +76,6 @@ export default function Feeds(user) {
       return;
     }
 
-    setNewPost({ title: '', files: undefined });
     setPosts([]);
     const { myPostsCount, totalPostCount } = await totalPosts(user.user._id);
     setCount(myPostsCount);
@@ -86,7 +83,6 @@ export default function Feeds(user) {
     loadPost(0, pagination.limit, setPosts, setPageLoading, setLoadDisable);
     toast.success('Your post uplaoded successfully');
   };
-  const pickFile = useRef(null);
 
   return (
     <>
@@ -153,80 +149,18 @@ export default function Feeds(user) {
             </div>
             {/* ======================================================================= column 2nd ======================================================================== */}
             <div className="col-md-6   mt-3  position-relative">
-              <div className="shadow p-3 mb-4 bg-body rounded">
-                <div className="d-sm-flex align-items-center">
-                  <div className="">
-                    {'picture_url' in user.user ? (
-                      <img
-                        src={user.user.picture_url}
-                        className="d-none d-sm-block card-img-top small-round-pic  round-img"
-                        alt="..."
-                      />
-                    ) : (
-                      <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
-                    )}
-                  </div>
-                  <div className="w-100 ms-2 me-2">
-                    <input
-                      type="text"
-                      id="comment-box"
-                      className="caption p-2 rounded-pill form-control"
-                      placeholder={`What's on your mind ${user.user.firstname} ${user.user.lastname} ?`}
-                      value={newPost.title}
-                      onChange={(e) =>
-                        setNewPost((prev) => ({
-                          ...prev,
-                          title: e.target.value,
-                        }))
-                      }
-                    />
-                  </div>
-                  <div className="text-center d-flex align-items-center">
-                    <div
-                      className="btn d-flex pickFile"
-                      onClick={() => pickFile.current?.click()}
-                    >
-                      <i className="fa-solid fa-photo-film"></i> Photo/video
-                    </div>
-                    <input
-                      ref={pickFile}
-                      type="file"
-                      accept=".jpg, .png, .mp4"
-                      className="d-none"
-                      id="file"
-                      onChange={(e) => {
-                        if (e.target.files[0].size > 10 * 1000000) {
-                          setNewPost((prev) => ({
-                            ...prev,
-                            files: undefined,
-                          }));
-                          toast.error('file size should be less than 10MB');
-                          return;
-                        }
-
-                        setNewPost((prev) => ({
-                          ...prev,
-                          files: e.target.files[0],
-                        }));
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div className="text-center d-grid gap-2 w-100 mt-2 text-center mt-2">
-                  <button
-                    className="btn btn-success rounded-pill"
-                    onClick={publish}
-                  >
-                    Upload
-                  </button>
-                </div>
-              </div>
+              <UploadPost
+                userpic={user.user.picture_url}
+                name={user.user.firstname + ' ' + user.user.lastname}
+                onPublish={publish}
+              />
 
               {posts.map((element, index) => {
                 return (
                   <Post
+                    key={element._id}
                     index={index}
+                    id={element._id}
                     data={element}
                     inclike={like}
                     deslike={dislike}
@@ -234,7 +168,6 @@ export default function Feeds(user) {
                     userdata={user.user}
                     reportPost={report}
                     uid={user.user._id}
-                    key={element._id}
                   />
                 );
               })}
