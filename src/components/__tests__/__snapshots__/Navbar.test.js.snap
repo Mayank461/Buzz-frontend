@@ -7,7 +7,9 @@ exports[`should render Navbar Panel 1`] = `
   <div
     className="container-fluid"
   >
-    <div>
+    <div
+      className="col-4 d-flex"
+    >
       <a
         href="/"
         onClick={[Function]}
@@ -18,6 +20,34 @@ exports[`should render Navbar Panel 1`] = `
           src="https://mma.prnewswire.com/media/728150/TO_THE_NEW_Logo.jpg?p=facebook"
         />
       </a>
+      <div
+        className="mx-3 w-100 align-self-center position-relative"
+      >
+        <input
+          autocomplete="off"
+          className="caption px-4 py-2 bg-transparent w-100 border-0 border-bottom form-control"
+          onChange={[Function]}
+          placeholder="Search by Name or Email"
+          type="search"
+        />
+        <div
+          className="dropdown-search w-100 position-absolute left-0"
+          style={
+            Object {
+              "zIndex": 1,
+            }
+          }
+        >
+          <ul
+            className="list-group overflow-auto"
+            style={
+              Object {
+                "maxHeight": "300px",
+              }
+            }
+          />
+        </div>
+      </div>
     </div>
     <div
       className="d-flex position-relative"
