@@ -1,5 +1,5 @@
 import { debounce } from 'lodash';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { Link } from 'react-router-dom';
 import { handleLogout } from '../services/authServices';
@@ -7,6 +7,7 @@ import { searchUser } from '../services/userservice';
 
 export default function Navbar({ user }) {
   const [SearchList, setSearchList] = useState([]);
+  const searchref = useRef(null);
   const handleSearch = debounce(async (text) => {
     const res = await searchUser(text);
     !res.error && setSearchList(res.data);
@@ -31,6 +32,7 @@ export default function Navbar({ user }) {
                 placeholder="Search by Name or Email"
                 autocomplete="off"
                 onChange={(e) => handleSearch(e.target.value)}
+                ref={searchref}
               />
               <div
                 className="dropdown-search w-100 position-absolute left-0"
@@ -45,6 +47,10 @@ export default function Navbar({ user }) {
                       <Link
                         to={`/profile/${i._id}`}
                         className="text-decoration-none"
+                        onClick={() => {
+                          setSearchList([]);
+                          searchref.current.value = '';
+                        }}
                       >
                         <div className="row text-dark">
                           <div className="col-auto">
