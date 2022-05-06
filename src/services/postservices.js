@@ -2,11 +2,11 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import {
   APICOMMENT_URL,
-  APIIMAGEUPLOAD,
   APILIKE_URL,
   APINEWPOST,
   APIREPORT_URL,
   APIUNLIKE_URL,
+  API_FEEDFILE_UPLOAD,
 } from '../config';
 
 export const Inlike = (id, setPosts, posts) => {
@@ -95,9 +95,9 @@ export const publishPost = async (user_id, data) => {
     if (data.files) {
       const fd = new FormData();
       fd.append('file', data.files);
-      fd.append('upload_preset', 'buzz-app');
-      fd.append('cloud_name', 'buzz-social-app');
-      result = await axios.post(APIIMAGEUPLOAD, fd);
+      fd.append('upload_preset', 'ml_default');
+      fd.append('cloud_name', 'buzzz-social-app');
+      result = await axios.post(`${API_FEEDFILE_UPLOAD}`, fd);
       result = result.data.secure_url;
     }
     const newPost = { pic_url: result, caption: data.title, user_id };

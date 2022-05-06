@@ -7,7 +7,6 @@ import { postData, profilePicChange } from '../services/userservice';
 import FullPageSpinner from './FullPageSpinner';
 
 export default function Selfprofile({ user, suggestFriend, refresh }) {
-  console.log('load');
   const [loading, setLoading] = useState(false);
   const [inputs, setInputs] = useState({
     picture_url: user.picture_url,
@@ -29,7 +28,7 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
   const updateData = async (e) => {
     e.preventDefault();
     setLoading(true);
-    let { error, message } = await postData(user._id, inputs);
+    let { error, message } = await postData(user._id, inputs, refresh);
     setLoading(false);
     if (error) return toast.warning(message);
     refresh();
@@ -55,7 +54,7 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
     if (!file) return toast.warn('No picture selected');
 
     setLoading(true);
-    let { error, message } = await profilePicChange(user._id, file);
+    let { error, message } = await profilePicChange(user._id, file, refresh);
 
     setLoading(false);
     if (error) return toast.error(message);
@@ -105,7 +104,7 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
               </div>
               <div className="d-flex ">
                 <div>
-                  <h1 className="mt-2">
+                  <h1 className="mt-2" data-testid="userProfileName">
                     {'firstname' in user
                       ? user.firstname + ' ' + user.lastname
                       : 'Edit Profile'}
@@ -216,7 +215,7 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
                           className={`btn border-success  w-50 ${
                             inputs.gender === 'Male' && 'bg-success text-white'
                           }`}
-                          for="Male"
+                          htmlFor="Male"
                           value="Male"
                         >
                           Male
@@ -235,7 +234,7 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
                             inputs.gender === 'Female' &&
                             'bg-success text-white'
                           }`}
-                          for="Female"
+                          htmlFor="Female"
                         >
                           Female
                         </label>

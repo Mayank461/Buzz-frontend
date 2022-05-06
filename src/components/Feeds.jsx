@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { APIUSER_URL } from '../config';
 import Post from './Post';
 import UserlistWidget from './UserlistWidget';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Spinner from './Spinner';
 import FullPageSpinner from './FullPageSpinner';
 import DefaultCard from './DefaultCard';
 import {
@@ -15,19 +13,34 @@ import {
   publishPost,
 } from '../services/postservices';
 import { loadPost, totalPosts } from '../services/feedServices';
+import UploadPost from './UploadPost';
 
 export default function Feeds(user) {
-  const [newPost, setNewPost] = useState({ title: '', files: '' });
   const [userData, setUserData] = useState({});
   const [posts, setPosts] = useState([]);
   const [pageLoading, setPageLoading] = useState(false);
   const [loadDisable, setLoadDisable] = useState(false);
   const [count, setCount] = useState(0);
+  const [uploadingPost, setUploadingPost] = useState(false);
   const [pagination, setPagination] = useState({
     page: 0,
     limit: 4,
     total: 4,
   });
+
+  useEffect(() => {
+    async function whenLoad() {
+      setPageLoading(true);
+      setUserData(user.user);
+      const { myPostsCount, totalPostCount } = await totalPosts(user.user._id);
+      setCount(myPostsCount);
+      setPagination((pre) => ({ ...pre, total: totalPostCount }));
+    }
+
+    whenLoad();
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     loadPost(
@@ -37,21 +50,7 @@ export default function Feeds(user) {
       setPageLoading,
       setLoadDisable
     );
-  }, [pagination.page]);
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    whenLoad();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  async function whenLoad() {
-    setPageLoading(true);
-    setUserData(user.user);
-    const { myPostsCount, totalPostCount } = await totalPosts(user.user._id);
-    setCount(myPostsCount);
-    setPagination((pre) => ({ ...pre, total: totalPostCount }));
-  }
+  }, [pagination.limit, pagination.page]);
 
   function handleScroll() {
     if (
@@ -68,23 +67,23 @@ export default function Feeds(user) {
     commentBox(id, message, commentInput, setcommentmessage, setPosts, posts);
   const report = (id) => reportPost(id, setPosts, posts);
 
-  const publish = async () => {
-    setPageLoading(true);
-    const result = await publishPost(userData._id, newPost);
+  const publish = async (postData) => {
+    setUploadingPost(true);
+    const result = await publishPost(userData._id, postData);
 
     if (result.error) {
-      setPageLoading(false);
+      setUploadingPost(false);
       toast.error(result.error);
       return;
     }
 
-    setNewPost({ title: '', files: undefined });
-    setPosts([]);
+    setUploadingPost(false);
+    toast.success('Your post uploaded successfully');
     const { myPostsCount, totalPostCount } = await totalPosts(user.user._id);
     setCount(myPostsCount);
     setPagination((pre) => ({ ...pre, total: totalPostCount }));
+    setPosts([]);
     loadPost(0, pagination.limit, setPosts, setPageLoading, setLoadDisable);
-    toast.success('Your post uplaoded successfully');
   };
 
   return (
@@ -98,9 +97,9 @@ export default function Feeds(user) {
             <div className="col-md-3 sticky side-height mt-3 ">
               <div className="card p-5 shadow-lg p-3 mb-2 bg-body rounded border-0">
                 <div className="d-flex justify-content-center">
-                  {'picture_url' in userData ? (
+                  {'picture_url' in user.user ? (
                     <img
-                      src={userData.picture_url}
+                      src={user.user.picture_url}
                       className="card-img-top small-round-pic  round-img"
                       alt="..."
                     />
@@ -109,9 +108,12 @@ export default function Feeds(user) {
                   )}
                 </div>
                 <div className="card-body">
-                  <h5 className="card-title text-center">
-                    {'firstname' in userData
-                      ? userData.firstname + ' ' + userData.lastname
+                  <h5
+                    className="card-title text-center"
+                    data-testid="userProName"
+                  >
+                    {'firstname' in user.user
+                      ? user.user.firstname + ' ' + user.user.lastname
                       : 'Edit Profile'}
                   </h5>
                   <p className="card-text text-center">Newly Recruit at TTN </p>
@@ -139,6 +141,7 @@ export default function Feeds(user) {
                   />
                   <div className="position-abs">
                     <img
+                      alt=""
                       className=" p-5  "
                       src="https://static1.tothenew.com/blog/wp-content/themes/ttn/images/social-logo.png"
                     ></img>
@@ -148,70 +151,26 @@ export default function Feeds(user) {
             </div>
             {/* ======================================================================= column 2nd ======================================================================== */}
             <div className="col-md-6   mt-3  position-relative">
-              <div className="shadow p-3 mb-4 bg-body rounded">
-                <div className="d-flex align-items-center">
-                  <div className="">
-                    {'picture_url' in userData ? (
-                      <img
-                        src={userData.picture_url}
-                        className="card-img-top small-round-pic  round-img"
-                        alt="..."
-                      />
-                    ) : (
-                      <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
-                    )}
-                  </div>
-                  <div className="w-100 ms-2 me-2">
-                    <input
-                      type="text"
-                      id="comment-box"
-                      className="caption p-2 rounded-pill form-control"
-                      placeholder={`What's on your mind ${userData.firstname} ${userData.lastname} ?`}
-                      value={newPost.title}
-                      onChange={(e) =>
-                        setNewPost((prev) => ({
-                          ...prev,
-                          title: e.target.value,
-                        }))
-                      }
-                    />
-                  </div>
-                  <div className="text-center d-flex align-items-center">
-                    <input
-                      type="file"
-                      className="myFile"
-                      id="file"
-                      onChange={(e) =>
-                        setNewPost((prev) => ({
-                          ...prev,
-                          files: e.target.files[0],
-                        }))
-                      }
-                    />
-                  </div>
-                </div>
-
-                <div className="text-center d-grid gap-2 w-100 mt-5 text-center mt-2">
-                  <button
-                    className="btn btn-success rounded-pill"
-                    onClick={publish}
-                  >
-                    Upload
-                  </button>
-                </div>
-              </div>
+              <UploadPost
+                userpic={user.user.picture_url}
+                name={user.user.firstname + ' ' + user.user.lastname}
+                onPublish={publish}
+                uploading={uploadingPost}
+              />
 
               {posts.map((element, index) => {
                 return (
                   <Post
+                    key={element._id}
                     index={index}
+                    id={element._id}
                     data={element}
                     inclike={like}
                     deslike={dislike}
                     commentBox={commentbox}
-                    userdata={userData}
+                    userdata={user.user}
                     reportPost={report}
-                    uid={userData._id}
+                    uid={user.user._id}
                   />
                 );
               })}
@@ -248,6 +207,7 @@ export default function Feeds(user) {
           </div>
         </div>
       </div>
+
       <ToastContainer theme="colored" />
     </>
   );

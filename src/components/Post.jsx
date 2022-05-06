@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Comments } from './Comment';
+import Comment from './Comment';
 
 export default function Post({
   index,
@@ -10,6 +10,7 @@ export default function Post({
   userdata,
   reportPost,
   uid,
+  id,
 }) {
   let { post_url, _id, like, dislike, comment, post_caption } = data;
   let { firstname, lastname, picture_url } = data.posted_by;
@@ -55,7 +56,9 @@ export default function Post({
               ></i>
             )}
 
-            <div className="ms-2 fw-bold">{firstname + ' ' + lastname}</div>
+            <div className="ms-2 fw-bold" data-testid="whoPosted">
+              {firstname + ' ' + lastname}
+            </div>
           </div>
 
           {/* ========================================================Report System============================================================================== */}
@@ -82,11 +85,15 @@ export default function Post({
           {/* ========================================================Report System============================================================================== */}
         </div>
         <div className="ms-2 mb-2">{post_caption}</div>
-        {'post_url' in data ? (
-          <img src={post_url} className="card-img-top rounded-3" alt="..." />
-        ) : (
-          ''
-        )}
+
+        {'post_url' in data &&
+          (post_url.endsWith('.mp4') ? (
+            <video controls width="100%" src={post_url}>
+              Your browser does not support the video.
+            </video>
+          ) : (
+            <img src={post_url} className="card-img-top rounded-3" alt="..." />
+          ))}
 
         <div className="d-flex justify-content-between mt-2">
           <div className="d-flex">
@@ -188,7 +195,7 @@ export default function Post({
             </div>
           </div>
           {comment.map((data) => {
-            return <Comments data={data} />;
+            return <Comment data={data} />;
           })}
         </div>
       </div>

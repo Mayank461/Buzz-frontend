@@ -17,7 +17,6 @@ function App() {
   const [SFriend, setSFriend] = useState([]);
   const [refresh, setRefresh] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [admin, setAdmin] = useState(false);
 
   useEffect(() => {
     fetchUser();
@@ -48,7 +47,13 @@ function App() {
           <Routes>
             <Route
               path="/"
-              element={<Feeds user={user} suggestFriend={SFriend} />}
+              element={
+                <Feeds
+                  user={user}
+                  suggestFriend={SFriend}
+                  refresh={toggleRefresh}
+                />
+              }
             />
             <Route
               path="/profile"

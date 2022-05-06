@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Navbar test Navbar render check 1`] = `
+exports[`should render Navbar Panel 1`] = `
 <nav
   className="navbar  navbar-light bg-light p-0"
 >
@@ -33,15 +33,13 @@ exports[`Navbar test Navbar render check 1`] = `
           <div
             className=""
           >
-            <img
-              alt="..."
-              className="card-img-top small-round-pic  round-img"
-              src="https://user.com/img.png"
+            <i
+              className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"
             />
           </div>
           <div
-            className="d-flex align-items-center ms-2"
-            title="displayname"
+            className=" align-items-center ms-2 resp-hide"
+            data-testid="userInfo"
           >
             John Doe
           </div>
@@ -76,7 +74,7 @@ exports[`Navbar test Navbar render check 1`] = `
           className="round-img bg-danger p-1 text-white incoming position-absolute bottom-50 end-0"
           title="friend_req_count"
         >
-          3
+          1
         </div>
       </div>
       <div
