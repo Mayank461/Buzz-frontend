@@ -7,15 +7,18 @@ export default function FullPageSpinner() {
         zIndex: 1000,
         display: 'flex',
         alignItems: 'center',
-        height: '100vh',
+        height: '10vh',
+        width:"7%",
         position: 'fixed',
-        top: 0,
-        left: 0,
+        top: "40%",
+        left: "50%",
         right: 0,
         background: '#fff',
+        justifyContent:"center"
       }}
+      className="shadow-lg p-3 mb-5 bg-body rounded"
     >
-      <div className="spinner-border text-dark position-absolute start-50">
+      <div className="spinner-border text-dark position-absolute">
         <span className="visually-hidden">Loading...</span>
       </div>
     </div>

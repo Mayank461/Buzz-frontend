@@ -25,10 +25,9 @@ export default function Feeds(user) {
   const [newPost, setNewPost] = useState({ title: '', files: '' });
   const [userData, setUserData] = useState({});
   const [posts, setPosts] = useState([]);
-  const [pageLoading, setPageLoading] = useState(true);
+  const [pageLoading, setPageLoading] = useState(false);
   const [loadDisable, setLoadDisable] = useState(false);
   const [count, setCount] = useState(0);
-  const [chk, setChk] = useState(0);
   const [pagination, setPagination] = useState({
     page: 0,
     limit: 4,
@@ -106,7 +105,6 @@ export default function Feeds(user) {
   return (
     <>
       {pageLoading && <FullPageSpinner />}
-
       <div style={{ backgroundColor: '#F0F2F5' }}>
         <div className="container">
           <div className="row">
@@ -127,7 +125,7 @@ export default function Feeds(user) {
                 <div className="card-body">
                   <h5 className="card-title text-center" data-testid="userProName">
                     {'firstname' in user.user
-                      ? user.user.firstname + ' ' + user.user.lastname + chk
+                      ? user.user.firstname + ' ' + user.user.lastname
                       : 'Edit Profile'}
                   </h5>
                   <p className="card-text text-center">Newly Recruit at TTN </p>
@@ -230,8 +228,6 @@ export default function Feeds(user) {
                     uid={user.user._id}
                     postComment={postComment}
                     commentLike={commentLike}
-    
-                    
                   />
                 );
               })}
@@ -268,6 +264,7 @@ export default function Feeds(user) {
           </div>
         </div>
       </div>
+     
 
       <ToastContainer theme="colored" />
     </>
