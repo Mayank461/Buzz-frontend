@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react'
 
-export default function Comment({ data,postId,index,senderPic,postComment ,userdata,userDetails,commentLike}) {
+export default function Comment({ dataComment,postId,index,senderPic,postComment ,userdata,userDetails,commentLike}) {
 
   const [loadmore, setloadmore] = useState(false);
 
@@ -30,11 +30,11 @@ export default function Comment({ data,postId,index,senderPic,postComment ,userd
     <>
       <div className="d-flex w-100 bg-light mt-1 align-items-center">
         <div className="">
-          {data.picture_url ? (
+          {dataComment.picture_url ? (
             <div className="">
               <img
                 data-testid='userCommentPic'
-                src={data.picture_url}
+                src={dataComment.picture_url}
                 className=" mt-2 small-round-pic me-2  round-img "
                 alt="..."
               />
@@ -44,7 +44,7 @@ export default function Comment({ data,postId,index,senderPic,postComment ,userd
           )}
         </div>
        
-        <div data-testid='cmnt' className='text-comment && border && form-control rounded-pill' >{data.message}</div>      
+        <div data-testid='cmnt' className='text-comment && border && form-control rounded-pill' >{dataComment.message}</div>      
       </div>
 
 
@@ -54,8 +54,9 @@ export default function Comment({ data,postId,index,senderPic,postComment ,userd
 
       <div className='d-flex justify-content-between'>
         <div className='d-flex'>
-        <div className='seemore' onClick={()=>{commentLike(data,commentmessage,postId,data._id,senderPic,index,replyComment,userDetails.posted_by._id)}} style={{marginLeft:"65px", cursor:"pointer"}}>
-         {data.likes.includes(userdata._id)?<><i className="fa-solid fa-heart text-danger me-2"></i>Unlike</>:<><i className="fa-solid fa-heart me-2"></i>Like</>}
+        <div className='seemore' onClick={()=>{commentLike(dataComment,commentmessage,postId,dataComment._id,senderPic,index,replyComment,userDetails.posted_by._id)}} style={{marginLeft:"65px", cursor:"pointer"}}>
+          <div data-testid='cmntlike'>{dataComment.likes.includes(userdata._id)?<><i className="fa-solid fa-heart text-danger me-2"></i>Unlike</>:<><i className="fa-solid fa-heart me-2"></i>Like</>}
+         </div>
      
           
           </div>
@@ -69,7 +70,7 @@ export default function Comment({ data,postId,index,senderPic,postComment ,userd
             setReply(false);
             setToggle(true);
           }}
-        > { data.replyBy.length>0 ? "See More":""}
+        > { dataComment.replyBy.length>0 ? "See More":""}
         </div>
       </div>
       
@@ -102,7 +103,7 @@ export default function Comment({ data,postId,index,senderPic,postComment ,userd
             onChange={(e) => oninputchange(e)}
           />
           <div className="d-flex align-items-center pointer justify-content-center position-absolute end-0 me-3 rounded-circle   p-2">
-            <i className="fa-solid  fa-paper-plane text-success circle p-1" onClick={()=>{postComment(data,commentmessage,postId,data._id,senderPic,index,replyComment)}}  ></i>
+            <i className="fa-solid  fa-paper-plane text-success circle p-1" onClick={()=>{postComment(dataComment,commentmessage,postId,dataComment._id,senderPic,index,replyComment)}}  ></i>
           </div>
         </div> :
         ""} 
@@ -113,13 +114,13 @@ export default function Comment({ data,postId,index,senderPic,postComment ,userd
     {loadmore?
     <>
        <div className='container ms-4 '>
-       {data.replyBy.map((element)=>{
+       {dataComment.replyBy.map((element)=>{
          return  <> 
 
          <div className="d-flex align-items-center">
          <i className="fa-solid fa-reply fa-rotate-180 me-2"></i>
 
-         {data.picture_url ? (
+         {dataComment.picture_url ? (
            <div className="">
              <img
                data-testid='userCommentPic'

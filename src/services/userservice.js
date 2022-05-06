@@ -3,10 +3,10 @@ import { toast } from 'react-toastify';
 import {
   APICONFIRMREQ_URL,
   APIDELETEREQ_URL,
-  APIIMAGEUPLOAD,
   APISENTREQ_URL,
   APIUPDATEUSERDETAILS_URL,
   API_GETSUGGESTFRIENDS,
+  API_PROFILE_UPLOAD,
 } from '../config';
 
 export const getSuggestFriends = async () => {
@@ -67,7 +67,7 @@ export const handleDeleteRequest = (id, refresh) => {
     .catch((err) => console.log(err.message));
 };
 
-export const postData = async (uid, inputs,refresh) => {
+export const postData = async (uid, inputs, refresh) => {
   try {
     if (inputs.firstname === '' || inputs.lastname === '')
       throw new Error('First name and Last name are required');
@@ -76,21 +76,21 @@ export const postData = async (uid, inputs,refresh) => {
       withCredentials: true,
     });
     refresh();
-    toast.success("Profile Updated");
+    toast.success('Profile Updated');
   } catch (error) {
     return { error: true, message: error.message };
   }
 };
 
-export const profilePicChange = async (user_id, file,refresh) => {
+export const profilePicChange = async (user_id, file, refresh) => {
   try {
     if (!user_id) throw new Error('cant find user id');
 
     const fd = new FormData();
     fd.append('file', file);
-    fd.append('upload_preset', 'buzz-app-pic');
-    fd.append('cloud_name', 'buzz-social-app');
-    const result = await axios.post(APIIMAGEUPLOAD, fd);
+    fd.append('upload_preset', 'ml_default');
+    fd.append('cloud_name', 'buzzz-social-app');
+    const result = await axios.post(API_PROFILE_UPLOAD, fd);
 
     await axios.post(
       `${APIUPDATEUSERDETAILS_URL}/${user_id}`,
@@ -98,7 +98,7 @@ export const profilePicChange = async (user_id, file,refresh) => {
       { withCredentials: true }
     );
     refresh();
-    toast.success("Picture Changed Successfully")
+    toast.success('Picture Changed Successfully');
     // return { message: 'Picture change successfully' };
   } catch (error) {
     return { error: true, message: error.message };

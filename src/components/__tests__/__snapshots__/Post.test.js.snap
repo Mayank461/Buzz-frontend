@@ -64,13 +64,13 @@ exports[`should render Post Panel 1`] = `
         <i
           className="fa-solid fa-thumbs-up bg-primary round-img text-white p-1 me-2"
         />
-        1
+        0
       </div>
       <div>
         <i
           className="fa-solid fa-thumbs-down bg-danger round-img text-white p-1 me-2"
         />
-        1
+        0
       </div>
     </div>
     <div
@@ -151,7 +151,7 @@ exports[`should render Post Panel 1`] = `
       </div>
     </div>
     <div
-      className="d-flex container bg-light mt-1 align-items-center"
+      className="d-flex w-100 bg-light mt-1 align-items-center"
     >
       <div
         className=""
@@ -161,15 +161,48 @@ exports[`should render Post Panel 1`] = `
         />
       </div>
       <div
-        className="text-comment"
+        className="text-comment && border && form-control rounded-pill"
         data-testid="cmnt"
       />
     </div>
     <div
-      className="seemore"
-      onClick={[Function]}
+      className="d-flex justify-content-between"
     >
-      Show More
+      <div
+        className="d-flex"
+      >
+        <div
+          className="seemore"
+          onClick={[Function]}
+          style={
+            Object {
+              "cursor": "pointer",
+              "marginLeft": "65px",
+            }
+          }
+        >
+          <div
+            data-testid="cmntlike"
+          >
+            <i
+              className="fa-solid fa-heart me-2"
+            />
+            Like
+          </div>
+        </div>
+        <div
+          className="seemore"
+          onClick={[Function]}
+        >
+          Reply
+        </div>
+      </div>
+      <div
+        className="seemore"
+        onClick={[Function]}
+      >
+         
+      </div>
     </div>
   </div>
 </div>

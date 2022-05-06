@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import  Comment from './Comment';
+import React, { useState, useRef } from 'react';
+import Comment from './Comment';
 
 export default function Post({
   index,
@@ -11,21 +11,14 @@ export default function Post({
   reportPost,
   uid,
   postComment,
-  commentLike
-
-  
- 
+  commentLike,
+  id,
 }) {
   let { post_url, _id, like, dislike, comment, post_caption } = data;
   let { firstname, lastname, picture_url} = data.posted_by;
   const [commentmessage, setcommentmessage] = useState();
 
   const commentInput = useRef(null);
-
-  // useEffect(()=>{
-  //     console.log(userdata);
-  // },[])
-
   let toggle = true;
 
   const oninputchange = (e) => {
@@ -65,7 +58,9 @@ export default function Post({
               ></i>
             )}
 
-            <div className="ms-2 fw-bold" data-testid="whoPosted">{firstname + ' ' + lastname}</div>
+            <div className="ms-2 fw-bold" data-testid="whoPosted">
+              {firstname + ' ' + lastname}
+            </div>
           </div>
 
           {/* ========================================================Report System============================================================================== */}
@@ -92,11 +87,15 @@ export default function Post({
           {/* ========================================================Report System============================================================================== */}
         </div>
         <div className="ms-2 mb-2">{post_caption}</div>
-        {'post_url' in data ? (
-          <img src={post_url} className="card-img-top rounded-3" alt="..." />
-        ) : (
-          ''
-        )}
+
+        {'post_url' in data &&
+          (post_url.endsWith('.mp4') ? (
+            <video controls width="100%" src={post_url}>
+              Your browser does not support the video.
+            </video>
+          ) : (
+            <img src={post_url} className="card-img-top rounded-3" alt="..." />
+          ))}
 
         <div className="d-flex justify-content-between mt-2">
           <div className="d-flex">
@@ -157,9 +156,7 @@ export default function Post({
             <i className="fa-regular fa-message me-2"></i>Comment
           </div>
         </div>
-          {/* ========================================================Comment Section============================================================================== */}
-
-        <div  id={index}  style={{ display: 'none' }}>
+        <div id={index} style={{ display: 'none' }}>
           <div className=" mt-3 ">
             <div className="d-flex">
               {userdata.picture_url ? (
@@ -200,7 +197,7 @@ export default function Post({
             </div>
           </div>
           {comment.map((element,index) => {
-            return <Comment data={element} postId = {_id} index={index} senderPic={userdata.picture_url} userDetails={data} postComment={postComment} userdata={userdata} commentLike={commentLike} />;
+            return <Comment dataComment={element} postId = {_id} index={index} senderPic={userdata.picture_url} userDetails={data} postComment={postComment} userdata={userdata} commentLike={commentLike} />;
           })}
         </div>
       </div>
