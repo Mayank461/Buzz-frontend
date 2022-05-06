@@ -1,9 +1,17 @@
+import { debounce } from 'lodash';
 import { useState } from 'react';
+
 import { Link } from 'react-router-dom';
 import { handleLogout } from '../services/authServices';
+import { searchUser } from '../services/userservice';
 
 export default function Navbar({ user }) {
-  const [searchValue, setSearchValue] = useState('');
+  const [SearchList, setSearchList] = useState([]);
+  const handleSearch = debounce(async (text) => {
+    const res = await searchUser(text);
+    !res.error && setSearchList(res.data);
+  }, 500);
+
   return (
     <>
       <nav className="navbar  navbar-light bg-light p-0">
@@ -22,8 +30,7 @@ export default function Navbar({ user }) {
                 className="caption px-4 py-2 bg-transparent w-100 border-0 border-bottom form-control"
                 placeholder="Search by Name or Email"
                 autocomplete="off"
-                onChange={(e) => setSearchValue(e.target.value)}
-                value={searchValue}
+                onChange={(e) => handleSearch(e.target.value)}
               />
               <div
                 className="dropdown-search w-100 position-absolute left-0"
@@ -33,9 +40,12 @@ export default function Navbar({ user }) {
                   className="list-group overflow-auto"
                   style={{ maxHeight: '300px' }}
                 >
-                  {[1, 2, 3, 4].map((i) => (
+                  {SearchList.map((i) => (
                     <li className="list-group-item">
-                      <Link to={'/'} className="text-decoration-none">
+                      <Link
+                        to={`/profile/${i._id}`}
+                        className="text-decoration-none"
+                      >
                         <div className="row text-dark">
                           <div className="col-auto">
                             <img
@@ -46,8 +56,10 @@ export default function Navbar({ user }) {
                             />
                           </div>
                           <div className="col-auto d-flex flex-column">
-                            <h5 className="m-0">Mahir Asrani</h5>
-                            <span>mahir.asrani@tothenew.com</span>
+                            <h5 className="m-0">
+                              {i.firstname} {i.lastname}
+                            </h5>
+                            <span>{i.email}</span>
                           </div>
                         </div>
                       </Link>
