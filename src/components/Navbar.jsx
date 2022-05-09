@@ -16,7 +16,7 @@ export default function Navbar({ user }) {
 
   return (
     <>
-      <nav className="navbar  navbar-light bg-light p-0">
+      <nav className="navbar  navbar-light bg-white p-0">
         <div className="container-fluid">
           <div className="col-6 col-md-8 d-flex">
             <Link to={'/'}>
@@ -54,11 +54,11 @@ export default function Navbar({ user }) {
                         }}
                       >
                         <div className="row text-dark">
-                          <div className="col-auto">
+                          <div className="col-auto d-flex align-items-center">
                             <img
                               src="https://res.cloudinary.com/buzz-social-app/image/upload/v1651815905/fzwayynsijb4hxpdf5gx.jpg"
                               alt=""
-                              className="card-img-top small-round-pic round-img"
+                              className="card-img-top small-round-pic round-img "
                               width={'100%'}
                             />
                           </div>
@@ -166,7 +166,7 @@ export default function Navbar({ user }) {
                         }}
                       >
                         <div className="row text-dark">
-                          <div className="col-auto">
+                          <div className="col-auto d-flex align-items-center">
                             <img
                               src="https://res.cloudinary.com/buzz-social-app/image/upload/v1651815905/fzwayynsijb4hxpdf5gx.jpg"
                               alt=""
