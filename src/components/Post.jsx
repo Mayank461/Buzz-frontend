@@ -183,7 +183,7 @@ export default function Post({
                   />
                   <div class="input-group-append">
                     <button
-                      class="btn btn-outline-dark "
+                      class="btn btn-outline-darkgit  "
                       type="button"
                       onClick={() => {
                         commentBox(
