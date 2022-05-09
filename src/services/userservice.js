@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import {  toast } from 'react-toastify';
+
 import {
   APICONFIRMREQ_URL,
   APIDELETEREQ_URL,
@@ -21,13 +22,16 @@ export const getSuggestFriends = async () => {
   }
 };
 
-export const SendReq = (id, refresh) => {
+export const SendReq = async(id, refresh) => {
   axios
     .get(`${APISENTREQ_URL}` + id, {
       withCredentials: true,
     })
     .then((res) => {
       refresh();
+     toast("friend request sent")
+        
+     
     })
     .catch((err) => console.log(err.message));
 };
@@ -39,6 +43,7 @@ export const DeleteFriend = (id, refresh) => {
     })
     .then((res) => {
       refresh();
+      
     })
     .catch((err) => console.log(err.message));
 };
@@ -76,7 +81,7 @@ export const postData = async (uid, inputs, refresh) => {
       withCredentials: true,
     });
     refresh();
-    toast.success('Profile Updated');
+    
   } catch (error) {
     return { error: true, message: error.message };
   }
@@ -104,3 +109,4 @@ export const profilePicChange = async (user_id, file, refresh) => {
     return { error: true, message: error.message };
   }
 };
+
