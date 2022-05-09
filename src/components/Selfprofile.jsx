@@ -93,7 +93,7 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
                     )}
                   </div>
 
-                  <div className="position-absolute bottom-0 end-0">
+                  <div className="position-absolute bottom-0 end-0 ">
                     <input
                       type="file"
                       className="camera"

@@ -31,9 +31,9 @@ export default function Userprofile({ suggestFriend, myData, refresh }) {
   const DelReq = () => DeleteFriend(id, refresh);
 
   return (
-    <div className="container mt-3">
+    <div className="container">
       <div className="row">
-        <div className="col-md-9 bg-white">
+        <div className="col-md-8 col-lg-9 bg-white mt-md-3 pb-4 p-0 shadow-lg  bg-body rounded ">
           <div className="position-relative">
             <img
               src="https://images.unsplash.com/photo-1495277493816-4c359911b7f1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1165&q=80"
@@ -79,7 +79,7 @@ export default function Userprofile({ suggestFriend, myData, refresh }) {
             </div>
           </div>
         </div>
-        <div className="col-md-3 profile-sidebar">
+        <div className="col-md-4 col-lg-3 profile-sidebar mt-3">
           <UserlistWidget
             title="Friend Suggestions"
             friendList={suggestFriend}
