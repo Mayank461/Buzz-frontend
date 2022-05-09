@@ -150,7 +150,7 @@
   font-weight: 500;
 }
 .login-panel {
-  height: 75%;
+  min-height: 75%;
 }
 .viewport-height {
   height: 100vh;
