@@ -194,7 +194,10 @@ export default function Post({
                         );
                       }}
                     >
-                      <i className="fa-solid fa-2x fa-paper-plane text-success"></i>
+                      <i
+                        className="fa-solid fa-2x fa-paper-plane text-success"
+                        style={{ fontSize: '1.2rem' }}
+                      ></i>
                     </button>
                   </div>
                 </div>
