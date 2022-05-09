@@ -36,10 +36,10 @@ export default function Login({ fetchUser }) {
                   <div className="text-center font-family ">
                     <h3>your journey with us</h3>
                   </div>
-                  <div className="text-center font-family mt-5 text-muted">
+                  <div className="text-center font-family my-4 text-muted">
                     Dont't stop you're proud
                   </div>
-                  <div className="text-center mt-5">
+                  <div className="text-center my-2">
                     <button
                       title="gAuthBtn"
                       onClick={GoogleAuth}
