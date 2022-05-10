@@ -242,3 +242,46 @@
     height: 32px;
   }
 }
+
+/* messenger css */
+
+.chatbubble {
+  max-width: 70%;
+}
+
+.chatbubble .time {
+  font-size: 0.8rem;
+  color: #b2b2b2;
+  font-weight: 500;
+  padding: 0 15px;
+}
+
+.chatbubble .bubbletext {
+  background-color: #ededed;
+  padding: 5px 10px;
+  border-radius: 10px;
+  border-top-left-radius: 0px;
+  text-align: left;
+  max-width: max-content;
+}
+
+.chatbubble .bubbletext p {
+  font-size: 1.2rem;
+}
+
+.myMessage {
+  justify-content: flex-end;
+  margin-left: auto;
+}
+.myMessage .bubbletext {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 0px;
+}
+
+.myMessage .rowalign {
+  justify-content: flex-end;
+}
+.myMessage .bubbletext {
+  background-color: #dcffb8;
+  margin-left: auto;
+}

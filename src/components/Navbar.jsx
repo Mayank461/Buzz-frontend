@@ -87,7 +87,7 @@ export default function Navbar({ user }) {
                     alt="..."
                   />
                 ) : (
-                  <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
+                  <i className="fa-solid fa-user card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
                 )}
 
                 <div
@@ -113,6 +113,21 @@ export default function Navbar({ user }) {
               <Link to={'/'} className="text-dark">
                 <i className="fa-solid fa-house"></i>
               </Link>
+            </div>
+
+            <div className="position-relative d-flex ">
+              <Link
+                to={'/chat'}
+                className="d-flex align-items-center  ms-2 round-img border rounded-circle icon-bg text-dark p-2 text-decoration-none"
+              >
+                <i className="fas fa-comments"></i>
+              </Link>
+              <div
+                className="round-img bg-danger p-1 text-white incoming position-absolute bottom-50 end-0"
+                title="new_message_count"
+              >
+                {'0'}
+              </div>
             </div>
 
             <div className="position-relative d-flex ">
