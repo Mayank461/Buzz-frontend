@@ -25,14 +25,14 @@ function App() {
   const toggleRefresh = () => setRefresh((p) => !p);
 
   async function fetchUser() {
-    setLoading(true);
+    // setLoading(true);
     let { success, user } = await checkAuth();
     success && setUser(user);
     if (user) {
       let friends = await getSuggestFriends();
       setSFriend([...friends]);
     }
-    setLoading(false);
+    // setLoading(false);
   }
 
   if (loading) {

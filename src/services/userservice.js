@@ -80,8 +80,8 @@ export const postData = async (uid, inputs, refresh) => {
     await axios.post(`${APIUPDATEUSERDETAILS_URL}/${uid}`, inputs, {
       withCredentials: true,
     });
-    refresh();
-    
+    // refresh();
+    return { message: 'success' };
   } catch (error) {
     return { error: true, message: error.message };
   }

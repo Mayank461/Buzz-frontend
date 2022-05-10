@@ -27,12 +27,16 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
 
   const updateData = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    let { error, message } = await postData(user._id, inputs, refresh);
-    setLoading(false);
-    if (error) return toast.warning(message);
-    refresh();
-    toast.success(message);
+    const data= await postData(user._id, inputs, refresh);
+    if(data.message === 'success')
+    {
+      toast.success("Data updated successfully")
+      refresh();
+    }
+    else{
+      toast.warn('Somthing wents wrong!!');
+      refresh();
+    }
   };
 
   const reset = () => {

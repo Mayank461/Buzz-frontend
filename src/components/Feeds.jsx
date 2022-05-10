@@ -99,7 +99,7 @@ export default function Feeds(user) {
 
   return (
     <>
-      {pageLoading && <FullPageSpinner />}
+      {/* {pageLoading && <FullPageSpinner />} */}
       <div style={{ backgroundColor: '#F0F2F5' }}>
         <div className="container">
           <div className="row">
