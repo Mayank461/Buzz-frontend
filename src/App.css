@@ -285,3 +285,7 @@
   background-color: #dcffb8;
   margin-left: auto;
 }
+
+.snackbar {
+  box-shadow: 0px 0px 10px #c7c6c64f;
+}

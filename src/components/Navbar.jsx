@@ -31,7 +31,7 @@ export default function Navbar({ user }) {
                 type="search"
                 className="caption px-4 py-2 bg-transparent w-100 border-0 border-bottom form-control"
                 placeholder="Search by Name or Email"
-                autocomplete="off"
+                autoComplete="off"
                 onChange={(e) => handleSearch(e.target.value)}
                 ref={searchref}
               />
