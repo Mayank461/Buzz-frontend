@@ -1,6 +1,6 @@
 import React from 'react';
 import UserlistWidget from './UserlistWidget';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {
   handleConfirmRequest,
@@ -103,7 +103,7 @@ function Friends({ user, refresh }) {
 
           {/* ===========================================================Friend Lists==================================================================  */}
 
-          <div className="col-lg-4 ">
+          <div className="col-md-4 col-lg-3 profile-sidebar">
             <UserlistWidget
               title="My Friend"
               friendList={user.friends.myFriends}

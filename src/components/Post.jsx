@@ -158,41 +158,51 @@ export default function Post({
         </div>
         <div id={index} style={{ display: 'none' }}>
           <div className=" mt-3 ">
-            <div className="d-flex">
-              {userdata.picture_url ? (
-                <div className="d-flex align-items-center">
+            <div className="row align-items-center">
+              <div className="col-12 px-2 mb-2 d-flex align-items-center">
+                {userdata.picture_url ? (
                   <img
                     src={userdata.picture_url}
-                    className="card-img-top small-round-pic   round-img"
+                    className="card-img-top small-round-pic round-img mx-2"
                     alt="..."
                   />
+                ) : (
+                  <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
+                )}
+
+                <div class="input-group">
+                  <input
+                    style={{
+                      borderBottomLeftRadius: '50px',
+                      borderTopLeftRadius: '50px',
+                    }}
+                    type="text"
+                    class="form-control"
+                    ref={commentInput}
+                    placeholder="Write a comment..."
+                    onChange={(e) => oninputchange(e)}
+                    name="message"
+                  />
+                  <div class="input-group-append">
+                    <button
+                      class="btn btn-outline-darkgit  "
+                      type="button"
+                      onClick={() => {
+                        commentBox(
+                          _id,
+                          commentmessage,
+                          commentInput,
+                          setcommentmessage
+                        );
+                      }}
+                    >
+                      <i
+                        className="fa-solid fa-2x fa-paper-plane text-success"
+                        style={{ fontSize: '1.2rem' }}
+                      ></i>
+                    </button>
+                  </div>
                 </div>
-              ) : (
-                <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
-              )}
-              <div className="form-control d-flex align-items-center border-0 ">
-                <input
-                  type="text"
-                  className="form-control  rounded-pill  p-2"
-                  ref={commentInput}
-                  placeholder="Write a comment..."
-                  onChange={(e) => oninputchange(e)}
-                  name="message"
-                />
-              </div>
-              <div
-                onClick={() => {
-                  commentBox(
-                    _id,
-                    commentmessage,
-                    commentInput,
-                    setcommentmessage
-                  );
-                }}
-                className="d-flex align-items-center pointer justify-content-center  rounded-circle border border-success p-2  "
-              >
-                {' '}
-                <i className="fa-solid fa-2x fa-paper-plane text-success circle p-2"></i>
               </div>
             </div>
           </div>

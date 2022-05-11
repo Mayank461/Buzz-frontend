@@ -74,8 +74,8 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
     <>
       <div style={{ backgroundColor: '#F0F2F5' }}>
         <div className="container">
-          <div className="row">
-            <div className="col-md-9 bg-white mt-3 p-2 shadow-lg  bg-body rounded">
+          <div className="row my-md-3">
+            <div className="col-md-8 col-lg-9 bg-white mt-md-3 p-0 shadow-lg  bg-body rounded ">
               <div className="">
                 <div className="">
                   <img
@@ -97,7 +97,7 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
                     )}
                   </div>
 
-                  <div className="position-absolute bottom-0 end-0">
+                  <div className="position-absolute bottom-0 end-0 ">
                     <input
                       type="file"
                       className="camera"
@@ -106,7 +106,7 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
                   </div>
                 </div>
               </div>
-              <div className="d-flex ">
+              <div className="d-flex px-4">
                 <div>
                   <h1 className="mt-2" data-testid="userProfileName">
                     {'firstname' in user
@@ -120,10 +120,10 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
               </div>
 
               <div>
-                <form method="POST">
+                <form method="POST" className="px-4 pb-5">
                   {/* 1st Row  */}
                   <div className="row mt-4">
-                    <div className="col-md-4 ">
+                    <div className="col-md-6 col-lg-4">
                       <label htmlFor="floatingInput">First Name</label>
                       <input
                         type="text"
@@ -136,7 +136,7 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
                         onChange={(e) => OnInputChange(e)}
                       />
                     </div>
-                    <div className="col-md-4">
+                    <div className="col-md-6 col-lg-4">
                       <label htmlFor="floatingInput">Last Name</label>
                       <input
                         type="text"
@@ -154,7 +154,7 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
                   {/* 2nd Row  */}
 
                   <div className="row mt-4">
-                    <div className="col-md-4">
+                    <div className="col-md-6 col-lg-4">
                       <label htmlFor="floatingInput">Designation</label>
                       <br />
                       <select
@@ -187,7 +187,7 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
                         <option value="OTT-Department">OTT-Department</option>
                       </select>
                     </div>
-                    <div className="col-md-4">
+                    <div className="col-md-6 col-lg-4">
                       <label htmlFor="floatingInput">My Website</label>
                       <input
                         type="text"
@@ -204,7 +204,7 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
 
                   {/* 3rd Row  */}
                   <div className="row mt-4">
-                    <div className="col-md-4">
+                    <div className="col-md-6 col-lg-4">
                       <label htmlFor="floatingInput">Gender</label>
                       <div className="border p-1 mt-2">
                         <input
@@ -244,7 +244,7 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
                         </label>
                       </div>
                     </div>
-                    <div className="col-md-4">
+                    <div className="col-md-6 col-lg-4">
                       <label htmlFor="floatingInput">Birthday</label>
 
                       <input
@@ -262,7 +262,7 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
 
                   {/* 4th Row  */}
                   <div className="row mt-4">
-                    <div className="col-md-4">
+                    <div className="col-md-4 col-lg-2">
                       <label htmlFor="floatingInput">City</label>
                       <input
                         type="text"
@@ -275,88 +275,83 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
                         onChange={(e) => OnInputChange(e)}
                       />
                     </div>
-                    <div className=" d-flex col-md-4">
-                      <div className="col">
-                        <label htmlFor="floatingInput">state</label>
-                        <select
-                          name="state"
-                          id="state"
-                          value={inputs.state}
-                          onChange={(e) => OnInputChange(e)}
-                          className="form-control mt-2"
-                        >
-                          <option value="" disabled="true" selected="true">
-                            Select State
-                          </option>
-                          <option value="Andaman and Nicobar (UT)">
-                            Andaman and Nicobar (UT)
-                          </option>
-                          <option value="Andhra Pradesh">Andhra Pradesh</option>
-                          <option value="Arunachal Pradesh">
-                            Arunachal Pradesh
-                          </option>
-                          <option value="Assam">Assam</option>
-                          <option value="Chandigarh (UT)">
-                            Chandigarh (UT)
-                          </option>
-                          <option value="Chhattisgarh">Chhattisgarh</option>
-                          <option value="Dadra and Nagar Haveli (UT)">
-                            Dadra and Nagar Haveli (UT)
-                          </option>
-                          <option value="Bihar">Bihar</option>
-                          <option value="Daman and Diu (UT)">
-                            Daman and Diu (UT)
-                          </option>
-                          <option value="Delhi">Delhi</option>
-                          <option value="Goa">Goa</option>
-                          <option value="Gujarat">Gujarat</option>
-                          <option value="Haryana">Haryana</option>
-                          <option value="Himachal Pradesh">
-                            Himachal Pradesh
-                          </option>
-                          <option value="Jammu and Kashmir">
-                            Jammu and Kashmir
-                          </option>
-                          <option value="Jharkhand">Jharkhand</option>
-                          <option value="Karnataka">Karnataka</option>
-                          <option value="Kerala">Kerala</option>
-                          <option value="Lakshadweep (UT)">
-                            Lakshadweep (UT)
-                          </option>
-                          <option value="Madhya Pradesh">Madhya Pradesh</option>
-                          <option value="Maharashtra">Maharashtra</option>
-                          <option value="Manipur">Manipur</option>
-                          <option value="Meghalaya">Meghalaya</option>
-                          <option value="Mizoram">Mizoram</option>
-                          <option value="Nagaland">Nagaland</option>
-                          <option value="Orissa">Orissa</option>
-                          <option value="Puducherry (UT)">
-                            Puducherry (UT)
-                          </option>
-                          <option value="Punjab">Punjab</option>
-                          <option value="Rajasthan">Rajasthan</option>
-                          <option value="Sikkim">Sikkim</option>
-                          <option value="Tamil Nadu">Tamil Nadu</option>
-                          <option value="Telangana">Telangana</option>
-                          <option value="Tripura">Tripura</option>
-                          <option value="Uttar Pradesh">Uttar Pradesh</option>
-                          <option value="Uttarakhand">Uttarakhand</option>
-                          <option value="West Bengal">West Bengal</option>
-                        </select>
-                      </div>
-                      <div className="col">
-                        <label htmlFor="floatingInput">Zip</label>
-                        <input
-                          type="text"
-                          className="form-control mt-2"
-                          id="exampleInputEmail1"
-                          name="zip"
-                          value={inputs.zip}
-                          aria-describedby="emailHelp"
-                          placeholder="Zip"
-                          onChange={(e) => OnInputChange(e)}
-                        />
-                      </div>
+
+                    <div className="col-md-4 col-lg-4">
+                      <label htmlFor="floatingInput">state</label>
+                      <select
+                        name="state"
+                        id="state"
+                        value={inputs.state}
+                        onChange={(e) => OnInputChange(e)}
+                        className="form-control mt-2"
+                      >
+                        <option value="" disabled="true" selected="true">
+                          Select State
+                        </option>
+                        <option value="Andaman and Nicobar (UT)">
+                          Andaman and Nicobar (UT)
+                        </option>
+                        <option value="Andhra Pradesh">Andhra Pradesh</option>
+                        <option value="Arunachal Pradesh">
+                          Arunachal Pradesh
+                        </option>
+                        <option value="Assam">Assam</option>
+                        <option value="Chandigarh (UT)">Chandigarh (UT)</option>
+                        <option value="Chhattisgarh">Chhattisgarh</option>
+                        <option value="Dadra and Nagar Haveli (UT)">
+                          Dadra and Nagar Haveli (UT)
+                        </option>
+                        <option value="Bihar">Bihar</option>
+                        <option value="Daman and Diu (UT)">
+                          Daman and Diu (UT)
+                        </option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Goa">Goa</option>
+                        <option value="Gujarat">Gujarat</option>
+                        <option value="Haryana">Haryana</option>
+                        <option value="Himachal Pradesh">
+                          Himachal Pradesh
+                        </option>
+                        <option value="Jammu and Kashmir">
+                          Jammu and Kashmir
+                        </option>
+                        <option value="Jharkhand">Jharkhand</option>
+                        <option value="Karnataka">Karnataka</option>
+                        <option value="Kerala">Kerala</option>
+                        <option value="Lakshadweep (UT)">
+                          Lakshadweep (UT)
+                        </option>
+                        <option value="Madhya Pradesh">Madhya Pradesh</option>
+                        <option value="Maharashtra">Maharashtra</option>
+                        <option value="Manipur">Manipur</option>
+                        <option value="Meghalaya">Meghalaya</option>
+                        <option value="Mizoram">Mizoram</option>
+                        <option value="Nagaland">Nagaland</option>
+                        <option value="Orissa">Orissa</option>
+                        <option value="Puducherry (UT)">Puducherry (UT)</option>
+                        <option value="Punjab">Punjab</option>
+                        <option value="Rajasthan">Rajasthan</option>
+                        <option value="Sikkim">Sikkim</option>
+                        <option value="Tamil Nadu">Tamil Nadu</option>
+                        <option value="Telangana">Telangana</option>
+                        <option value="Tripura">Tripura</option>
+                        <option value="Uttar Pradesh">Uttar Pradesh</option>
+                        <option value="Uttarakhand">Uttarakhand</option>
+                        <option value="West Bengal">West Bengal</option>
+                      </select>
+                    </div>
+                    <div className="col-md-4  col-lg-2">
+                      <label htmlFor="floatingInput">Zip</label>
+                      <input
+                        type="text"
+                        className="form-control mt-2"
+                        id="exampleInputEmail1"
+                        name="zip"
+                        value={inputs.zip}
+                        aria-describedby="emailHelp"
+                        placeholder="Zip"
+                        onChange={(e) => OnInputChange(e)}
+                      />
                     </div>
                   </div>
 
@@ -376,7 +371,7 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
               </div>
             </div>
             {/**part for suggestion */}
-            <div className="col-md-3 profile-sidebar mt-3">
+            <div className="col-md-4 col-lg-3 profile-sidebar mt-3">
               <UserlistWidget
                 title="Friends Sugesstion"
                 friendList={suggestFriend}

@@ -2,7 +2,7 @@ export let API_URL;
 
 if (process.env.REACT_APP_STAGE === 'prod') {
   console.log(process.env);
-  API_URL = 'https://buzz-social-media.herokuapp.com/api';
+  API_URL = 'https://buzzz-server.herokuapp.com/api';
 }
 if (process.env.REACT_APP_STAGE === 'dev') {
   API_URL = 'http://localhost:5000/api';
@@ -29,3 +29,4 @@ export const APISENTREQ_URL = `${API_URL}/users/sendRequest/`;
 export const APIDELREQ_URL = `${API_URL}/users/deleteRequest/`;
 export const API_FEEDFILE_UPLOAD = `https://api.cloudinary.com/v1_1/buzzz-social-app/auto/upload`;
 export const API_PROFILE_UPLOAD = `https://api.cloudinary.com/v1_1/buzzz-social-app/image/upload`;
+export const API_SEARCH_USER = `${API_URL}/users/search/all`;

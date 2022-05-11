@@ -104,7 +104,7 @@ export default function Feeds(user) {
         <div className="container">
           <div className="row">
             {/*======================================================================== column 1st ============================================================================== */}
-            <div className="col-md-3 sticky side-height mt-3 ">
+            <div className="d-none d-lg-block col-lg-3 sticky side-height mt-3 ">
               <div className="card p-5 shadow-lg p-3 mb-2 bg-body rounded border-0">
                 <div className="d-flex justify-content-center">
                   {'picture_url' in user.user ? (
@@ -160,7 +160,7 @@ export default function Feeds(user) {
               </div>
             </div>
             {/* ======================================================================= column 2nd ======================================================================== */}
-            <div className="col-md-6   mt-3  position-relative">
+            <div className="col-lg-6   mt-3  position-relative">
               <UploadPost
                 userpic={user.user.picture_url}
                 name={user.user.firstname + ' ' + user.user.lastname}
@@ -204,7 +204,7 @@ export default function Feeds(user) {
               </div>
             </div>
             {/* ======================================================================= column 3rd ================================================================================================== */}
-            <div className="col-md-3 sticky side-height mt-3 ">
+            <div className="d-none d-lg-block col-lg-3 sticky side-height mt-3 ">
               <UserlistWidget
                 title={'My Contacts'}
                 friendList={user.user.friends.myFriends}

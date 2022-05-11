@@ -11,6 +11,7 @@ import Admin from './components/Admin';
 import { checkAuth } from './services/authServices';
 import { getSuggestFriends } from './services/userservice';
 import FullPageSpinner from './components/FullPageSpinner';
+import Messenger from './components/Messenger';
 
 function App() {
   const [user, setUser] = useState(false);
@@ -25,18 +26,12 @@ function App() {
   const toggleRefresh = () => setRefresh((p) => !p);
 
   async function fetchUser() {
-    // setLoading(true);
     let { success, user } = await checkAuth();
     success && setUser(user);
     if (user) {
       let friends = await getSuggestFriends();
       setSFriend([...friends]);
     }
-    // setLoading(false);
-  }
-
-  if (loading) {
-    return <FullPageSpinner />;
   }
 
   return (
@@ -55,6 +50,7 @@ function App() {
                 />
               }
             />
+            <Route path="/chat" element={<Messenger user={user} />} />
             <Route
               path="/profile"
               element={
