@@ -153,9 +153,10 @@ function Messenger({ user }) {
                         return (
                           <ChatBubble
                             key={msg.timestamp}
-                            my={msg.sentBy === user._id}
+                            my={true}
                             message={msg.message}
                             name={ChatRoom.senderName}
+                            picture_url={user.picture_url}
                             time={time}
                           />
                         );
@@ -163,9 +164,10 @@ function Messenger({ user }) {
                         return (
                           <ChatBubble
                             key={msg.timestamp}
-                            my={msg.sentBy === user._id}
+                            my={false}
                             message={msg.message}
-                            name={ChatRoom.senderName}
+                            name={ChatRoom.receiverName}
+                            picture_url={ChatRoom.receiverPic}
                             time={time}
                           />
                         );
@@ -207,25 +209,14 @@ function Messenger({ user }) {
 
 export default Messenger;
 
-function ChatBubble({
-  my,
-  message,
-  senderName,
-  receiverName,
-  senderPic,
-  receiverPic,
-  time,
-}) {
-  let pic;
-  if (my) pic = senderPic;
-  if (!my) pic = receiverPic;
-  if (!pic) pic = require('../images/blank-profile.png');
+function ChatBubble({ my, message, name, picture_url, time }) {
+  if (!picture_url) picture_url = require('../images/blank-profile.png');
 
   return (
     <div className={`d-flex my-2 chatbubble ${my && 'myMessage'}`}>
       {!my && (
         <img
-          src={pic}
+          src={picture_url}
           className="card-img-top round-img"
           alt="pic"
           style={{
@@ -236,9 +227,9 @@ function ChatBubble({
       )}
       <div className="flex-column px-2 my-1 w-100">
         <div className="d-flex rowalign">
-          {!my && <h6 className="mb-2">{receiverName}</h6>}
+          {!my && <h6 className="mb-2">{name}</h6>}
           <span className="time">{time}</span>
-          {my && <h6 className="mb-2">{senderName}</h6>}
+          {my && <h6 className="mb-2">{name}</h6>}
         </div>
         <div className="d-flex bubbletext">
           <p className="m-0">{message}</p>
@@ -246,7 +237,7 @@ function ChatBubble({
       </div>
       {my && (
         <img
-          src={pic}
+          src={picture_url}
           className="card-img-top round-img"
           alt="pic"
           style={{
