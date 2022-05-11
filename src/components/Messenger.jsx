@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 const socket = io('http://localhost:5000');
 
@@ -50,9 +50,19 @@ function Messenger({ user }) {
     setConversation([]);
   }
 
+  const scrollRef = useRef(null);
+
+  const scrollToBottom = () => {
+    scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [conversation]);
+
   return (
     <div>
-      <div className="container bg-white my-5">
+      <div className="container bg-white my-4">
         <div className="row shadow">
           <div
             className="col-md-4 pt-4 px-0"
@@ -97,7 +107,7 @@ function Messenger({ user }) {
                         </h5>
                         {/* <span className="font-weight-bolder">4:30pm</span> */}
                       </div>
-                      <span className="my-1">Click to open chat</span>
+                      <span className="my-1">Click to chat</span>
                     </div>
                   </div>
                 </div>
@@ -128,19 +138,40 @@ function Messenger({ user }) {
                 <div className="px-4">
                   <div
                     className="chat p-2"
-                    style={{ overflow: 'auto', maxHeight: '70vh' }}
+                    style={{ overflow: 'auto', maxHeight: 'calc(70vh - 55px)' }}
                   >
-                    {conversation.map((msg) => (
-                      <ChatBubble
-                        my={msg.sentBy === user._id}
-                        message={msg.message}
-                        senderName={ChatRoom.senderName}
-                        receiverName={ChatRoom.receiverName}
-                        senderPic={user.picture_url}
-                        receiverPic={ChatRoom.receiverPic}
-                        time={msg.timestamp}
-                      />
-                    ))}
+                    {conversation.map((msg) => {
+                      let time = new Date(msg.timestamp).toLocaleTimeString(
+                        [],
+                        {
+                          hour: 'numeric',
+                          minute: 'numeric',
+                          hour12: true,
+                        }
+                      );
+                      if (msg.sentBy === user._id)
+                        return (
+                          <ChatBubble
+                            key={msg.timestamp}
+                            my={msg.sentBy === user._id}
+                            message={msg.message}
+                            name={ChatRoom.senderName}
+                            time={time}
+                          />
+                        );
+                      else
+                        return (
+                          <ChatBubble
+                            key={msg.timestamp}
+                            my={msg.sentBy === user._id}
+                            message={msg.message}
+                            name={ChatRoom.senderName}
+                            time={time}
+                          />
+                        );
+                    })}
+
+                    <div ref={scrollRef} />
                   </div>
                   <div className="chatinput p-0 m-0">
                     <div className="input-group input-group-lg mb-3">
@@ -203,7 +234,7 @@ function ChatBubble({
           }}
         />
       )}
-      <div className="flex-column px-2 my-1">
+      <div className="flex-column px-2 my-1 w-100">
         <div className="d-flex rowalign">
           {!my && <h6 className="mb-2">{receiverName}</h6>}
           <span className="time">{time}</span>

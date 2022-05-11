@@ -282,8 +282,9 @@
   justify-content: flex-end;
 }
 .myMessage .bubbletext {
-  background-color: #dcffb8;
+  background-color: #162e48;
   margin-left: auto;
+  color: white;
 }
 
 .snackbar {
