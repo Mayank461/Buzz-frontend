@@ -9,7 +9,6 @@ function Messenger({ user, socket }) {
     receiverPic: undefined,
   });
   const [conversation, setConversation] = useState([]);
-  const [onlineUsers, setOnlineUsers] = useState([]);
 
   useEffect(() => {
     socket.on('receive-message', (data) => {
