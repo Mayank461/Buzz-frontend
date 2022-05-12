@@ -9,6 +9,7 @@ import {
   API_GETSUGGESTFRIENDS,
   API_PROFILE_UPLOAD,
   API_SEARCH_USER,
+  APIUSERINFO_URL
 } from '../config';
 
 export const getSuggestFriends = async () => {
@@ -81,7 +82,6 @@ export const postData = async (uid, inputs, refresh) => {
     await axios.post(`${APIUPDATEUSERDETAILS_URL}/${uid}`, inputs, {
       withCredentials: true,
     });
-    // refresh();
     return { message: 'success' };
   } catch (error) {
     return { error: true, message: error.message };
@@ -103,9 +103,7 @@ export const profilePicChange = async (user_id, file, refresh) => {
       { pic_url: result.data.secure_url },
       { withCredentials: true }
     );
-    refresh();
-    toast.success('Picture Changed Successfully');
-    // return { message: 'Picture change successfully' };
+    return { message: 'Picture change successfully' };
   } catch (error) {
     return { error: true, message: error.message };
   }
@@ -119,6 +117,16 @@ export const searchUser = async (searchText) => {
         query: searchText,
       },
     });
+  } catch (error) {
+    return { error: true, message: error.message };
+  }
+};
+
+export const getSpecificUser = async (userId) => {
+  try {
+    
+     return axios.get(`${APIUSERINFO_URL}${userId}`)
+    
   } catch (error) {
     return { error: true, message: error.message };
   }

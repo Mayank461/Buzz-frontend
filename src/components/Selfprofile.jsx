@@ -59,11 +59,13 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
 
     setLoading(true);
     let { error, message } = await profilePicChange(user._id, file, refresh);
-
     setLoading(false);
     if (error) return toast.error(message);
-    refresh();
-    toast.success(message);
+    else{
+      refresh();
+      toast.success(message);
+    }
+   
   };
 
   if (loading) {
@@ -89,7 +91,7 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
                     {'picture_url' in user ? (
                       <img
                         alt="profile pic"
-                        src={inputs.picture_url}
+                        src={user.picture_url}
                         className="profilepic"
                       />
                     ) : (

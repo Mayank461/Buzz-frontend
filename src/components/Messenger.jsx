@@ -1,20 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
+import {API_URL} from '../config'
+import { getSpecificUser } from '../services/userservice';
 const socket = io.connect('http://localhost:5000')
 let room = "";
-function Messenger({ user }) {
+function Messenger({ user ,refresh }) {
   const [messageInput, setMessageInput] = useState('');
-  const [conversation,setConversation] = useState([]);
+  let [conversation,setConversation] = useState();
+  const [userIndex,setUserIndex]=useState(0)
+  let arr = [];
+  const [changeUser,setChangeUser] = useState(false)
   const [personDetails,setPersonDetails] = useState({
     profile_pic:"",
     firstname:"",
-    lastname:''
+    lastname:'',
+    recieverId:""
   });
+  
   const selectUser = (personId,userId,personPic,personFirstName,personLastName)=>{
+    let count =0;
+    user.conversations.map((element,index)=>{
+     if(element.recieverId ===personId){
+      setChangeUser(true)
+      setUserIndex(index)
+     }
+     else{
+    count++;
+     }
+    })
+    if(count=== user.conversations.length)
+    {
+      setChangeUser(false)
+    }
     setPersonDetails({
       profile_pic:personPic,
       firstname:personFirstName,
-      lastname:personLastName
+      lastname:personLastName,
+      recieverId: personId
     })
     if(personId>userId)
     {
@@ -26,12 +48,18 @@ function Messenger({ user }) {
     }
     socket.emit('join_room',room);
   }
+  const findSingleUser = async()=>{
+    let data = await getSpecificUser(user._id);
+    setConversation(data.data);
+    refresh();
+  }
   useEffect(()=>{
+    findSingleUser();
     socket.on("recieve_message",(data)=>{
-      setConversation([...conversation,{message:data.message,senderId:data.senderId,current_time:data.current_time}]);
       setMessageInput("") 
     })
-  })
+
+  },[refresh])
   const sendChat = (e)=>{
     e.preventDefault();
     let today = new Date();
@@ -42,7 +70,7 @@ function Messenger({ user }) {
       hours=hours-12;
     }
     let current_time = hours+":"+min+" "+time;
-    socket.emit("send_message",{message:messageInput,room:room,senderId:user._id,current_time:current_time});   
+    socket.emit("send_message",{message:messageInput,room:room,senderId:user._id,recieverId:personDetails.recieverId,current_time:current_time,float:true});   
   }
   return (
     <div>
@@ -109,36 +137,23 @@ function Messenger({ user }) {
                 </div>
               }
               
-               
-
               </div>
-              {}
-              {conversation.map((element)=>{
-                
-               if(element.senderId == user._id)
-               {
-                return <ChatBubble
-                my={true}
-                message={element.message}
-                name="You"
-                time={element.current_time}
-                pic={
-                  user.picture_url
-                }
-              />
-               }
-               else{
-                return <ChatBubble
-                my={false}
-                message={element.message}
-                name={personDetails.firstname +" "+ personDetails.lastname}
-                time={element.current_time}
-                pic={
-                  personDetails.profile_pic
-                }
-              />
-               }
-              })}
+              {changeUser?
+              conversation.conversations[userIndex].chats.map((element)=>{
+                 return <ChatBubble
+                 my={element.float}
+                 message={element.message}
+                 name={
+                   element.float?`${user.firstname} ${user.lastname}`: personDetails.firstname +" "+ personDetails.lastname
+                  }
+                 time={element.time}
+                 pic={
+                   element.float? user.picture_url: personDetails.profile_pic
+                 }
+               />
+               })
+              :""}
+              
             </div>
             <div className="chatinput p-0 m-0">
               <div className="input-group input-group-lg mb-3">

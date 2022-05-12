@@ -50,7 +50,7 @@ function App() {
                 />
               }
             />
-            <Route path="/chat" element={<Messenger user={user} />} />
+            <Route path="/chat" element={<Messenger user={user} refresh={toggleRefresh} />} />
             <Route
               path="/profile"
               element={
