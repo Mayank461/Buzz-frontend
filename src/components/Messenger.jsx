@@ -1,8 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { io } from 'socket.io-client';
-const socket = io('http://localhost:5000');
 
-function Messenger({ user }) {
+function Messenger({ user, socket }) {
   const [messageInput, setMessageInput] = useState('');
   const [ChatRoom, setChatRoom] = useState({
     roomID: undefined,
@@ -11,12 +9,13 @@ function Messenger({ user }) {
     receiverPic: undefined,
   });
   const [conversation, setConversation] = useState([]);
+  const [onlineUsers, setOnlineUsers] = useState([]);
 
   useEffect(() => {
     socket.on('receive-message', (data) => {
       setConversation((prev) => [...prev, data]);
     });
-  }, []);
+  }, [socket]);
 
   function fireMessage(e) {
     e.preventDefault();
@@ -107,7 +106,9 @@ function Messenger({ user }) {
                         </h5>
                         {/* <span className="font-weight-bolder">4:30pm</span> */}
                       </div>
-                      <span className="my-1">Click to chat</span>
+                      <span className="my-1">
+                        {data.online ? 'Online' : 'Offline'}
+                      </span>
                     </div>
                   </div>
                 </div>

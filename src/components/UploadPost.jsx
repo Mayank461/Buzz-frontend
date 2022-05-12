@@ -100,7 +100,7 @@ function UploadPost({ userpic, name, onPublish, uploading }) {
               className="position-absolute w-100 h-100 d-flex justify-content-center z-index-1"
               style={{ background: 'rgb(0 0 0 / 80%)' }}
             >
-              <div class="lds-facebook align-self-center">
+              <div className="lds-facebook align-self-center">
                 <div></div>
                 <div></div>
                 <div></div>

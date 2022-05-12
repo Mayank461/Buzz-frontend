@@ -12,6 +12,8 @@ import { checkAuth } from './services/authServices';
 import { getSuggestFriends } from './services/userservice';
 import FullPageSpinner from './components/FullPageSpinner';
 import Messenger from './components/Messenger';
+import { io } from 'socket.io-client';
+const socket = io('http://localhost:5000');
 
 function App() {
   const [user, setUser] = useState(false);
@@ -32,6 +34,42 @@ function App() {
     if (user) {
       let friends = await getSuggestFriends();
       setSFriend([...friends]);
+      socket.emit('login', user._id);
+
+      // manage activity
+      socket.on('onlineList', (ids) => {
+        const friendlist_with_status = user.friends.myFriends.map((data) => {
+          if (ids.includes(data._id)) data['online'] = true;
+          return data;
+        });
+
+        setUser((prev) => ({
+          ...prev,
+          friends: { ...prev.friends, myFriends: friendlist_with_status },
+        }));
+      });
+
+      setChangeState('online', user, setUser);
+      setChangeState('offline', user, setUser);
+
+      function setChangeState(state, user, setUser) {
+        socket.on(state, (id) => {
+          if (user.friends.myFriends.some(({ _id }) => _id === id)) {
+            const friendlist_with_status = user.friends.myFriends.map(
+              (data) => {
+                let bool = state === 'online' ? true : false;
+                if (data._id === id) data['online'] = bool;
+                return data;
+              }
+            );
+
+            setUser((prev) => ({
+              ...prev,
+              friends: { ...prev.friends, myFriends: friendlist_with_status },
+            }));
+          }
+        });
+      }
     }
     setLoading(false);
   }
@@ -56,7 +94,10 @@ function App() {
                 />
               }
             />
-            <Route path="/chat" element={<Messenger user={user} />} />
+            <Route
+              path="/chat"
+              element={<Messenger user={user} socket={socket} />}
+            />
             <Route
               path="/profile"
               element={
