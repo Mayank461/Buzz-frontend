@@ -7,8 +7,23 @@ function Messenger({ user, socket }) {
     senderName: undefined,
     receiverName: undefined,
     receiverPic: undefined,
+    status: 'Offline',
   });
   const [conversation, setConversation] = useState([]);
+
+  useEffect(() => {
+    if (ChatRoom.roomID) {
+      const recID = ChatRoom.roomID.split('-').find((id) => id !== user._id);
+      let status = user.friends.myFriends.find(
+        ({ _id }) => _id === recID
+      ).online;
+
+      setChatRoom((prev) => ({
+        ...prev,
+        status: status ? 'Online' : 'Offline',
+      }));
+    }
+  }, [ChatRoom.roomID, user._id, user.friends.myFriends]);
 
   useEffect(() => {
     socket.on('receive-message', (data) => {
@@ -83,20 +98,24 @@ function Messenger({ user, socket }) {
                   }
                 >
                   <div className="mx-4 d-flex w-100">
-                    <img
-                      src={
-                        data.picture_url
-                          ? data.picture_url
-                          : require('../images/blank-profile.png')
-                      }
-                      className="card-img-top round-img"
-                      alt="..."
-                      style={{
-                        width: '60px',
-                        height: '60px',
-                        marginRight: '15px',
-                      }}
-                    />
+                    <div className="img-state">
+                      <div
+                        className={`${data.online ? 'online' : 'offline'}`}
+                      ></div>
+                      <img
+                        src={
+                          data.picture_url
+                            ? data.picture_url
+                            : require('../images/blank-profile.png')
+                        }
+                        className="card-img-top round-img"
+                        alt="..."
+                        style={{
+                          width: '60px',
+                          height: '60px',
+                        }}
+                      />
+                    </div>
 
                     <div className="d-flex w-100 flex-column justify-content-center">
                       <div className="d-flex justify-content-between">
@@ -133,7 +152,10 @@ function Messenger({ user, socket }) {
                       marginRight: '15px',
                     }}
                   />
-                  <h4 className="m-0">{ChatRoom.receiverName}</h4>
+                  <div className="d-flex flex-column">
+                    <h5 className="m-0">{ChatRoom.receiverName}</h5>
+                    <p className="m-0">{ChatRoom.status}</p>
+                  </div>
                 </div>
                 <div className="px-4">
                   <div

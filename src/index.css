@@ -31,3 +31,26 @@ code {
 .pointer {
   cursor: pointer;
 }
+
+.img-state {
+  margin-right: 15px;
+  position: relative;
+}
+
+.img-state > .online {
+  background: rgb(77, 184, 77);
+}
+.img-state > .offline {
+  background: rgb(219, 63, 63);
+}
+
+.img-state > div {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  z-index: 1;
+  border: 3px solid white;
+}
