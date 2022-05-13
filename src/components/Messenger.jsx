@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import ScrollToBottom from 'react-scroll-to-bottom';
+import {Howl, Howler} from 'howler';
 import io from 'socket.io-client';
-import { API_URL } from '../config'
 import { getSpecificUser } from '../services/userservice';
 const socket = io.connect('http://localhost:5000')
 let room = "";
-function Messenger({ user, refresh }) {
+function Messenger({ user }) {
+
+  const [refresh, setRefresh] = useState(true);
   const [messageInput, setMessageInput] = useState('');
   let [conversation, setConversation] = useState();
   const [userIndex, setUserIndex] = useState(0)
-  let arr = [];
   const [changeUser, setChangeUser] = useState(false)
   const [personDetails, setPersonDetails] = useState({
     profile_pic: "",
@@ -17,8 +18,22 @@ function Messenger({ user, refresh }) {
     lastname: '',
     recieverId: ""
   });
+  const toggleRefresh = () => setRefresh((p) => !p);
 
+  // messenger tone setup 
+  const tone = require('../tone/messenger.mp3');
+   const callMySound =(src)=>{
+     const sound= new Howl({
+       src,
+       html5:true,
+     });
+     sound.play();
+
+   };
+
+  //  selecting users in friends list  and joining room 
   const selectUser = (personId, userId, personPic, personFirstName, personLastName) => {
+    
     let count = 0;
     user.conversations.map((element, index) => {
       if (element.recieverId === personId) {
@@ -46,19 +61,34 @@ function Messenger({ user, refresh }) {
     }
     socket.emit('join_room', room);
   }
-  const findSingleUser = async () => {
-    let data = await getSpecificUser(user._id);
+
+  // finding single user record 
+  const findSingleUser =  async() => {
+    let data =  await getSpecificUser(user._id);
     setConversation(data.data);
-    refresh();
   }
+
   useEffect(() => {
     findSingleUser();
-    socket.on("recieve_message", (data) => {
-      setMessageInput("")
-     
-    })
+  },[])
 
-  }, [refresh])
+  // this is for when user recieve new message
+  socket.on("recieve_message", (data) => {
+    if(data.senderId === user._id)
+    {
+     console.log("no");
+    }
+    else{
+      console.log("yes");
+      callMySound(tone);
+    }
+    findSingleUser();
+    setMessageInput("")
+    socket.off();
+   
+  })
+
+  // for sending chat to anyone
   const sendChat = (e) => {
     e.preventDefault();
     let today = new Date();
@@ -71,6 +101,7 @@ function Messenger({ user, refresh }) {
     let current_time = hours + ":" + min + " " + time;
     socket.emit("send_message", { message: messageInput, room: room, senderId: user._id, recieverId: personDetails.recieverId, current_time: current_time, float: true });
     socket.off();
+    toggleRefresh();
   }
   return (
     <div>
