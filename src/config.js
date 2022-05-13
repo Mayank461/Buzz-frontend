@@ -1,11 +1,12 @@
-export let API_URL;
+export let API_URL, SERVER_URL;
 
 if (process.env.REACT_APP_STAGE === 'prod') {
-  console.log(process.env);
   API_URL = 'https://buzzz-server.herokuapp.com/api';
+  SERVER_URL = 'https://buzzz-server.herokuapp.com';
 }
 if (process.env.REACT_APP_STAGE === 'dev') {
   API_URL = 'http://localhost:5000/api';
+  SERVER_URL = 'http://localhost:5000';
 }
 
 export const API_CHECKAUTH = `${API_URL}/auth/login/success`;

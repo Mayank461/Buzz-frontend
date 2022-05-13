@@ -13,7 +13,8 @@ import { getSuggestFriends } from './services/userservice';
 import FullPageSpinner from './components/FullPageSpinner';
 import Messenger from './components/Messenger';
 import { io } from 'socket.io-client';
-const socket = io('http://localhost:5000');
+import { SERVER_URL } from './config';
+const socket = io(SERVER_URL);
 
 function App() {
   const [user, setUser] = useState(false);
