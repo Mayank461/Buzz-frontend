@@ -110,7 +110,7 @@ export default function Feeds(user) {
                   {'picture_url' in user.user ? (
                     <img
                       src={user.user.picture_url}
-                      className="card-img-top small-round-pic  round-img"
+                      className="card-img-top big-round-pic round-img"
                       alt="..."
                     />
                   ) : (

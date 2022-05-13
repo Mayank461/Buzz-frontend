@@ -22,9 +22,21 @@
   height: 38px;
   width: 38px;
 }
+.medium-round-pic {
+  height: 55px;
+  width: 55px;
+}
+.big-round-pic {
+  height: 90px;
+  width: 90px;
+}
 .scroll {
   height: 50%;
   overflow-y: auto;
+}
+.scroll-bottom{
+  height: 70vh;
+  width: 100%;
 }
 .scroll-mid {
   height: 885px;

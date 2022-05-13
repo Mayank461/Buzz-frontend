@@ -1,76 +1,76 @@
 import React, { useEffect, useState } from 'react';
+import ScrollToBottom from 'react-scroll-to-bottom';
 import io from 'socket.io-client';
-import {API_URL} from '../config'
+import { API_URL } from '../config'
 import { getSpecificUser } from '../services/userservice';
 const socket = io.connect('http://localhost:5000')
 let room = "";
-function Messenger({ user ,refresh }) {
+function Messenger({ user, refresh }) {
   const [messageInput, setMessageInput] = useState('');
-  let [conversation,setConversation] = useState();
-  const [userIndex,setUserIndex]=useState(0)
+  let [conversation, setConversation] = useState();
+  const [userIndex, setUserIndex] = useState(0)
   let arr = [];
-  const [changeUser,setChangeUser] = useState(false)
-  const [personDetails,setPersonDetails] = useState({
-    profile_pic:"",
-    firstname:"",
-    lastname:'',
-    recieverId:""
+  const [changeUser, setChangeUser] = useState(false)
+  const [personDetails, setPersonDetails] = useState({
+    profile_pic: "",
+    firstname: "",
+    lastname: '',
+    recieverId: ""
   });
-  
-  const selectUser = (personId,userId,personPic,personFirstName,personLastName)=>{
-    let count =0;
-    user.conversations.map((element,index)=>{
-     if(element.recieverId ===personId){
-      setChangeUser(true)
-      setUserIndex(index)
-     }
-     else{
-    count++;
-     }
+
+  const selectUser = (personId, userId, personPic, personFirstName, personLastName) => {
+    let count = 0;
+    user.conversations.map((element, index) => {
+      if (element.recieverId === personId) {
+        setChangeUser(true)
+        setUserIndex(index)
+      }
+      else {
+        count++;
+      }
     })
-    if(count=== user.conversations.length)
-    {
+    if (count === user.conversations.length) {
       setChangeUser(false)
     }
     setPersonDetails({
-      profile_pic:personPic,
-      firstname:personFirstName,
-      lastname:personLastName,
+      profile_pic: personPic,
+      firstname: personFirstName,
+      lastname: personLastName,
       recieverId: personId
     })
-    if(personId>userId)
-    {
-      room= personId+ "-"+ userId;
+    if (personId > userId) {
+      room = personId + "-" + userId;
     }
-    else
-    {
-      room = userId+ "-"+ personId;
+    else {
+      room = userId + "-" + personId;
     }
-    socket.emit('join_room',room);
+    socket.emit('join_room', room);
   }
-  const findSingleUser = async()=>{
+  const findSingleUser = async () => {
     let data = await getSpecificUser(user._id);
     setConversation(data.data);
     refresh();
   }
-  useEffect(()=>{
+  useEffect(() => {
     findSingleUser();
-    socket.on("recieve_message",(data)=>{
-      setMessageInput("") 
+    socket.on("recieve_message", (data) => {
+      setMessageInput("")
+     
     })
 
-  },[refresh])
-  const sendChat = (e)=>{
+  }, [refresh])
+  const sendChat = (e) => {
     e.preventDefault();
     let today = new Date();
     let hours = today.getHours();
     let min = today.getMinutes();
-    let time = hours>12?"PM":"AM"
-    if(hours>12){
-      hours=hours-12;
+    let time = hours > 12 ? "PM" : "AM"
+    if (hours > 12) {
+      hours = hours - 12;
     }
-    let current_time = hours+":"+min+" "+time;
-    socket.emit("send_message",{message:messageInput,room:room,senderId:user._id,recieverId:personDetails.recieverId,current_time:current_time,float:true});   
+    let current_time = hours + ":" + min + " " + time;
+    socket.emit("send_message", { message: messageInput, room: room, senderId: user._id, recieverId: personDetails.recieverId, current_time: current_time, float: true });
+    socket.off();
   }
   return (
     <div>
@@ -84,31 +84,32 @@ function Messenger({ user ,refresh }) {
 
             <div style={{ height: '70vh', overflow: 'auto' }}>
               {user.friends.myFriends.map((data) => (
-                <div className="d-flex align-items-center my-1 bg-light py-3" onClick={()=>{selectUser(data._id,user._id,data.picture_url,data.firstname,data.lastname)}}>
-                  <div className="mx-4 d-flex w-100" >
-                    {data.picture_url ? (
-                      <img
-                        src={data.picture_url}
-                        className="card-img-top round-img"
-                        alt="..."
-                        style={{
-                          width: '80px',
-                        }}
-                      />
-                    ) : (
-                      <i
-                        className="fa-solid fa-user card-img-top  round-img text-success d-flex justify-content-center align-items-center"
-                        style={{ backgroundColor: '#F0F2F5', width: '80px' }}
-                      ></i>
-                    )}
-                    <div className="d-flex w-100 flex-column">
-                      <div className="d-flex justify-content-between">
-                        <h5 className="m-0">
-                          {data.firstname + ' ' + data.lastname}
-                        </h5>
-                        <span className="font-weight-bolder">4:30pm</span>
-                      </div>
-                      <span className="my-1">last message text</span>
+                <div className="d-flex align-items-center my-1 border bg-light  py-3" onClick={() => { selectUser(data._id, user._id, data.picture_url, data.firstname, data.lastname) }}>
+                  <div className="mx-4 d-flex   w-100" >
+                    <div className='d-flex align-items-center'>
+                      {data.picture_url ? (
+                        <img
+                          src={data.picture_url}
+                          className="card-img-top medium-round-pic round-img "
+                          alt="..."
+                         
+                        />
+                      ) : (
+                        <i
+                          className="fa-solid fa-user fa-2x  card-img-top medium-round-pic round-img round-img text-success d-flex justify-content-center align-items-center"
+                          style={{ backgroundColor: '#F0F2F7'}}
+                        ></i>
+                      )}
+                    </div>
+                    <div className=" w-100 d-flex flex-column ">
+                      <h5 className="m-0 ms-2 ">
+                        {data.firstname + ' ' + data.lastname}
+                      </h5>
+                      <span className="my-1 ms-2">last message text</span>
+                    </div>
+                    <div>
+                      <span className="font-weight-bolder">4:30pm</span>
+
                     </div>
                   </div>
                 </div>
@@ -116,47 +117,49 @@ function Messenger({ user ,refresh }) {
             </div>
           </div>
 
-          <div className="col-md-8 bg-light flex-column d-flex justify-content-between">
-         
-            <div
-              className="chat p-2"
-              id='chatBox'
-              style={{ overflow: 'auto', maxHeight: '70vh' }}
-            >
-              <div className='border'>
-              {personDetails.firstname === ""?"":
-                <div className='d-flex '>
-                {personDetails.profile_pic === undefined?
-                  <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
-                :
-                <img src={personDetails.profile_pic} alt="" className="card-img-top round-img"  style={{ width: '40px', height: '40px',}}/>
-                }
-                
-                <div className='d-flex align-items-center ms-2'>{personDetails.firstname +" "+ personDetails.lastname}</div>
+          <div className="col-md-8 px-0 bg-light flex-column d-flex justify-content-between">
 
-                </div>
-              }
-              
+            <div
+              className="chat"
+              id='chatBox'
+            >
+              <div className='shadow-lg p-2 bg-body rounded'>
+                {personDetails.firstname === "" ? "" :
+                  <div className='d-flex '>
+                    {personDetails.profile_pic === undefined ?
+                      <i className="fa-solid fa-user fa-2x card-img-top medium-round-pic round-img bg-warning d-flex justify-content-center align-items-center"></i>
+                      :
+                      <img src={personDetails.profile_pic} alt="" className="card-img-top round-img medium-round-pic" />
+                    }
+
+                    <div className='d-flex align-items-center fw-bolder ms-2'>{personDetails.firstname + " " + personDetails.lastname}</div>
+
+                  </div>
+                }
+
               </div>
-              {changeUser?
-              conversation.conversations[userIndex].chats.map((element)=>{
-                 return <ChatBubble
-                 my={element.float}
-                 message={element.message}
-                 name={
-                   element.float?`${user.firstname} ${user.lastname}`: personDetails.firstname +" "+ personDetails.lastname
-                  }
-                 time={element.time}
-                 pic={
-                   element.float? user.picture_url: personDetails.profile_pic
-                 }
-               />
-               })
-              :""}
-              
+             
+              {changeUser ?
+               <ScrollToBottom className='scroll-bottom p-2'>
+               { conversation.conversations[userIndex].chats.map((element) => {
+                  return <ChatBubble
+                    my={element.float}
+                    message={element.message}
+                    name={
+                      element.float ? `${user.firstname} ${user.lastname}` : personDetails.firstname + " " + personDetails.lastname
+                    }
+                    time={element.time}
+                    pic={
+                      element.float ? user.picture_url : personDetails.profile_pic
+                    }
+                  />
+                })}
+                </ScrollToBottom>
+                : ""}
+
             </div>
             <div className="chatinput p-0 m-0">
-              <div className="input-group input-group-lg mb-3">
+              <div className="input-group input-group-lg">
                 <form className="d-flex  w-100">
                   <input
                     type="text"
