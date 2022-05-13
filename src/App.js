@@ -17,7 +17,6 @@ function App() {
   const [SFriend, setSFriend] = useState([]);
   const [refresh, setRefresh] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [admin, setAdmin] = useState(false);
 
   useEffect(() => {
     fetchUser();
@@ -26,14 +25,14 @@ function App() {
   const toggleRefresh = () => setRefresh((p) => !p);
 
   async function fetchUser() {
-    setLoading(true);
+    // setLoading(true);
     let { success, user } = await checkAuth();
     success && setUser(user);
     if (user) {
       let friends = await getSuggestFriends();
       setSFriend([...friends]);
     }
-    setLoading(false);
+    // setLoading(false);
   }
 
   if (loading) {
@@ -48,7 +47,13 @@ function App() {
           <Routes>
             <Route
               path="/"
-              element={<Feeds user={user} suggestFriend={SFriend} refresh={toggleRefresh} />}
+              element={
+                <Feeds
+                  user={user}
+                  suggestFriend={SFriend}
+                  refresh={toggleRefresh}
+                />
+              }
             />
             <Route
               path="/profile"

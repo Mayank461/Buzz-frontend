@@ -7,7 +7,6 @@ import { postData, profilePicChange } from '../services/userservice';
 import FullPageSpinner from './FullPageSpinner';
 
 export default function Selfprofile({ user, suggestFriend, refresh }) {
-
   const [loading, setLoading] = useState(false);
   const [inputs, setInputs] = useState({
     picture_url: user.picture_url,
@@ -28,9 +27,16 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
 
   const updateData = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    let { error, message } = await postData(user._id, inputs,refresh);
-
+    const data= await postData(user._id, inputs, refresh);
+    if(data.message === 'success')
+    {
+      toast.success("Data updated successfully")
+      refresh();
+    }
+    else{
+      toast.warn('Somthing wents wrong!!');
+      refresh();
+    }
   };
 
   const reset = () => {
@@ -52,8 +58,12 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
     if (!file) return toast.warn('No picture selected');
 
     setLoading(true);
-    let { error, message } = await profilePicChange(user._id, file,refresh);
-   
+    let { error, message } = await profilePicChange(user._id, file, refresh);
+
+    setLoading(false);
+    if (error) return toast.error(message);
+    refresh();
+    toast.success(message);
   };
 
   if (loading) {
