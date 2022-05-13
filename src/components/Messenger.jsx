@@ -87,7 +87,9 @@ function Messenger({ user, socket }) {
               {user.friends.myFriends.map((data) => (
                 <div
                   key={data._id}
-                  className="d-flex align-items-center my-1 bg-light py-3 pointer"
+                  className={`d-flex align-items-center my-1 py-3 pointer ${
+                    ChatRoom.roomID?.split('-').includes(data._id) && 'bg-light'
+                  }`}
                   onClick={() =>
                     openChatRoom(
                       user._id,
