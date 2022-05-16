@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getChatByRoom, sendMessage } from '../services/chatServices';
 
 function Messenger({ user, socket }) {
   const [messageInput, setMessageInput] = useState('');
@@ -10,6 +12,8 @@ function Messenger({ user, socket }) {
     status: 'Offline',
   });
   const [conversation, setConversation] = useState([]);
+  const navigate = useNavigate();
+  const params = useParams();
 
   useEffect(() => {
     if (ChatRoom.roomID) {
@@ -23,6 +27,8 @@ function Messenger({ user, socket }) {
         status: status ? 'Online' : 'Offline',
       }));
     }
+    getRoomChats();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ChatRoom.roomID, user._id, user.friends.myFriends]);
 
   useEffect(() => {
@@ -39,11 +45,28 @@ function Messenger({ user, socket }) {
       sentBy: user._id,
     };
     socket.emit('send-message', messageData, ChatRoom.roomID);
+    sendMessage(ChatRoom.roomID, messageInput);
     setConversation((prev) => [...prev, messageData]);
     setMessageInput('');
   }
 
-  function openChatRoom(myID, userID, receiverName, receiverPic) {
+  async function getRoomChats() {
+    if (params.id) {
+      const data = await getChatByRoom(params.id);
+      const receiver = data.users.find((u) => u._id !== user._id);
+      setChatRoom({
+        roomID: params.id,
+        senderName: user.firstname + ' ' + user.lastname,
+        receiverName: receiver.firstname + ' ' + receiver.lastname,
+        receiverPic: receiver?.picture_url,
+      });
+
+      setConversation(data.conversation);
+      socket.emit('join', params.id);
+    }
+  }
+
+  async function openChatRoom(myID, userID, receiverName, receiverPic) {
     let roomID;
 
     if (myID > userID) {
@@ -53,14 +76,17 @@ function Messenger({ user, socket }) {
     }
 
     if (ChatRoom.roomID === roomID) return;
-    socket.emit('join', roomID);
+
     setChatRoom({
       roomID,
       senderName: user.firstname + ' ' + user.lastname,
       receiverName,
       receiverPic,
     });
+
+    socket.emit('join', roomID);
     setConversation([]);
+    navigate(`/chat/${roomID}`);
   }
 
   const scrollRef = useRef(null);

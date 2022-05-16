@@ -29,3 +29,6 @@ export const APIDELREQ_URL = `${API_URL}/users/deleteRequest/`;
 export const API_FEEDFILE_UPLOAD = `https://api.cloudinary.com/v1_1/buzzz-social-app/auto/upload`;
 export const API_PROFILE_UPLOAD = `https://api.cloudinary.com/v1_1/buzzz-social-app/image/upload`;
 export const API_SEARCH_USER = `${API_URL}/users/search/all`;
+
+export const API_CHAT_SENDMSG = `${API_URL}/chat/send`;
+export const API_CHAT_GETCHAT = `${API_URL}/chat/getByRoomID`;
