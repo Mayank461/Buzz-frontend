@@ -122,10 +122,10 @@ export const searchUser = async (searchText) => {
   }
 };
 
-export const getSpecificUser =  (userId) => {
+export const getSpecificUser = async (userId) => {
   try {
     
-     return  axios.get(`${APIUSERINFO_URL}${userId}`)
+     return await axios.get(`${APIUSERINFO_URL}${userId}`)
     
   } catch (error) {
     return { error: true, message: error.message };

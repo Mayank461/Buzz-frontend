@@ -5,8 +5,16 @@
   font-size: 15px;
 }
 
+.head{
+  background-image: linear-gradient(to right, #96c93d,#00b09b);
+}
 .round-img {
   clip-path: circle();
+}
+.empty-conversation{
+  position: absolute;
+  top:30%;
+  left: 30%;
 }
 .icon-bg {
   background-color: #e4e5eb;

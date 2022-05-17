@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import ScrollToBottom from 'react-scroll-to-bottom';
-import {Howl, Howler} from 'howler';
+import { Howl } from 'howler';
 import io from 'socket.io-client';
 import { getSpecificUser } from '../services/userservice';
-const socket = io.connect('http://localhost:5000')
+import { API_URL } from '../config';
+const socketURL = API_URL.split('/api');
+const socket = io.connect(socketURL[0])
 let room = "";
 function Messenger({ user }) {
 
   const [refresh, setRefresh] = useState(true);
   const [messageInput, setMessageInput] = useState('');
-  let [conversation, setConversation] = useState();
+  let [conversation, setConversation] = useState([]);
   const [userIndex, setUserIndex] = useState(0)
-  const [changeUser, setChangeUser] = useState(false)
+  const [changeUser, setChangeUser] = useState(true)
+  const [box, setBox] = useState(false)
+  let arr = [];
   const [personDetails, setPersonDetails] = useState({
     profile_pic: "",
     firstname: "",
@@ -22,31 +26,34 @@ function Messenger({ user }) {
 
   // messenger tone setup 
   const tone = require('../tone/messenger.mp3');
-   const callMySound =(src)=>{
-     const sound= new Howl({
-       src,
-       html5:true,
-     });
-     sound.play();
-
-   };
+  const callMySound = (src) => {
+    const sound = new Howl({
+      src,
+      html5: true,
+    });
+    sound.play();
+  };
 
   //  selecting users in friends list  and joining room 
   const selectUser = (personId, userId, personPic, personFirstName, personLastName) => {
-    
+    setBox(true);
     let count = 0;
-    user.conversations.map((element, index) => {
-      if (element.recieverId === personId) {
-        setChangeUser(true)
-        setUserIndex(index)
-      }
-      else {
-        count++;
-      }
+    getSpecificUser(user._id).then(res => {
+      res.data.conversations.map((element, index) => {
+        if (element.recieverId === personId) {
+          setChangeUser(true)
+          setUserIndex(index)
+          setConversation(element.chats);
+        }
+        else {
+          count++;
+        }
+        if (count === user.conversations.length) {
+          setConversation([])
+        }
+      })
     })
-    if (count === user.conversations.length) {
-      setChangeUser(false)
-    }
+
     setPersonDetails({
       profile_pic: personPic,
       firstname: personFirstName,
@@ -61,33 +68,19 @@ function Messenger({ user }) {
     }
     socket.emit('join_room', room);
   }
-
-  // finding single user record 
-  const findSingleUser =  async() => {
-    let data =  await getSpecificUser(user._id);
-    setConversation(data.data);
-  }
-
-  useEffect(() => {
-    findSingleUser();
-  },[])
-
-  // this is for when user recieve new message
-  socket.on("recieve_message", (data) => {
-    if(data.senderId === user._id)
-    {
-     console.log("no");
-    }
-    else{
+    // this is for when user recieve new message
+  socket.on("recieve_message", (data, index) => {
+    let duplicate = data;
+    if (data.senderId === user._id) {}
+    else {
       console.log("yes");
+      duplicate.float = false;
       callMySound(tone);
     }
-    findSingleUser();
+    setConversation([...conversation, duplicate])
     setMessageInput("")
     socket.off();
-   
   })
-
   // for sending chat to anyone
   const sendChat = (e) => {
     e.preventDefault();
@@ -99,9 +92,11 @@ function Messenger({ user }) {
       hours = hours - 12;
     }
     let current_time = hours + ":" + min + " " + time;
-    socket.emit("send_message", { message: messageInput, room: room, senderId: user._id, recieverId: personDetails.recieverId, current_time: current_time, float: true });
-    socket.off();
+
+    socket.emit("send_message", { message: messageInput, room: room, senderId: user._id, recieverId: personDetails.recieverId, time: current_time, float: true });
     toggleRefresh();
+    socket.off();
+
   }
   return (
     <div>
@@ -123,12 +118,12 @@ function Messenger({ user }) {
                           src={data.picture_url}
                           className="card-img-top medium-round-pic round-img "
                           alt="..."
-                         
+
                         />
                       ) : (
                         <i
                           className="fa-solid fa-user fa-2x  card-img-top medium-round-pic round-img round-img text-success d-flex justify-content-center align-items-center"
-                          style={{ backgroundColor: '#F0F2F7'}}
+                          style={{ backgroundColor: '#F0F2F7' }}
                         ></i>
                       )}
                     </div>
@@ -148,66 +143,76 @@ function Messenger({ user }) {
             </div>
           </div>
 
-          <div className="col-md-8 px-0 bg-light flex-column d-flex justify-content-between">
+          <div className="col-md-8 px-0 bg-light flex-column d-flex justify-content-between position-relative">
+            {box ?
+              <>
+                <div
+                  className="chat"
+                  id='chatBox'
+                >
+                  <div className='shadow-lg p-2 bg-body rounded head'>
+                    {personDetails.firstname === "" ? "" :
+                      <div className='d-flex '>
+                        {personDetails.profile_pic === undefined ?
+                          <i className="fa-solid fa-user fa-2x card-img-top medium-round-pic round-img bg-warning d-flex justify-content-center align-items-center"></i>
+                          :
+                          <img src={personDetails.profile_pic} alt="" className="card-img-top round-img medium-round-pic" />
+                        }
 
-            <div
-              className="chat"
-              id='chatBox'
-            >
-              <div className='shadow-lg p-2 bg-body rounded'>
-                {personDetails.firstname === "" ? "" :
-                  <div className='d-flex '>
-                    {personDetails.profile_pic === undefined ?
-                      <i className="fa-solid fa-user fa-2x card-img-top medium-round-pic round-img bg-warning d-flex justify-content-center align-items-center"></i>
-                      :
-                      <img src={personDetails.profile_pic} alt="" className="card-img-top round-img medium-round-pic" />
+                        <div className='d-flex align-items-center  fw-bolder ms-2'>{personDetails.firstname + " " + personDetails.lastname}</div>
+
+                      </div>
                     }
-
-                    <div className='d-flex align-items-center fw-bolder ms-2'>{personDetails.firstname + " " + personDetails.lastname}</div>
 
                   </div>
-                }
 
-              </div>
-             
-              {changeUser ?
-               <ScrollToBottom className='scroll-bottom p-2'>
-               { conversation.conversations[userIndex].chats.map((element) => {
-                  return <ChatBubble
-                    my={element.float}
-                    message={element.message}
-                    name={
-                      element.float ? `${user.firstname} ${user.lastname}` : personDetails.firstname + " " + personDetails.lastname
-                    }
-                    time={element.time}
-                    pic={
-                      element.float ? user.picture_url : personDetails.profile_pic
-                    }
-                  />
-                })}
-                </ScrollToBottom>
-                : ""}
+                  {changeUser ?
+                    <ScrollToBottom className='scroll-bottom p-2'>
+                      {conversation.map((element) => {
+                        return <ChatBubble
+                          my={element.float}
+                          message={element.message}
+                          name={
+                            element.float ? `You` : personDetails.firstname + " " + personDetails.lastname
+                          }
+                          time={element.time}
+                          pic={
+                            element.float ? user.picture_url : personDetails.profile_pic
+                          }
+                        />
+                      })}
+                    </ScrollToBottom>
+                    : ""
+                  }
+                </div>
+                <div className="chatinput p-0 m-0">
+                  <div className="input-group input-group-lg">
 
-            </div>
-            <div className="chatinput p-0 m-0">
-              <div className="input-group input-group-lg">
-                <form className="d-flex  w-100">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Your message.."
-                    autoComplete="off"
-                    value={messageInput}
-                    onChange={(e) => setMessageInput(e.target.value)}
-                  />
-                  <div className="input-group-append input-group-lg">
-                    <button className="btn btn-outline-primary" type="submit" onClick={sendChat}>
-                      Send
-                    </button>
+
+                    <form className="d-flex  w-100">
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Your message.."
+                        autoComplete="off"
+                        value={messageInput}
+                        onChange={(e) => setMessageInput(e.target.value)}
+                      />
+                      <div className="input-group-append input-group-lg">
+                        <button className="btn btn-outline-primary" type="submit" onClick={sendChat}>
+                          Send
+                        </button>
+                      </div>
+                    </form>
+
                   </div>
-                </form>
-              </div>
-            </div>
+                </div>
+              </>
+              : <div className='d-flex justify-content-center flex-column empty-conversation'>
+                <img src='https://ssl.gstatic.com/dynamite/images/new_chat_room_1x.png' className='' />
+                <h3>Select a conversation</h3>
+              </div>}
+
           </div>
         </div>
       </div>
