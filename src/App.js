@@ -14,7 +14,8 @@ import FullPageSpinner from './components/FullPageSpinner';
 import Messenger from './components/Messenger';
 import { io } from 'socket.io-client';
 import { SERVER_URL } from './config';
-const socket = io(SERVER_URL);
+import { toast } from 'react-toastify';
+export const socket = io(SERVER_URL);
 
 function App() {
   const [user, setUser] = useState(false);
@@ -27,6 +28,13 @@ function App() {
   }, [refresh]);
 
   const toggleRefresh = () => setRefresh((p) => !p);
+
+  useEffect(() => {
+    socket.on('notification', (data) => {
+      toast(data);
+      toggleRefresh();
+    });
+  }, []);
 
   async function fetchUser() {
     setLoading(true);

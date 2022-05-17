@@ -8,7 +8,8 @@ import {
 } from '../services/userservice';
 
 function Friends({ user, refresh }) {
-  const confirmReq = (id) => handleConfirmRequest(id, refresh);
+  const confirmReq = (id) =>
+    handleConfirmRequest(id, refresh, `${user.firstname} is now your Friend`);
   const delReq = (id) => handleDeleteRequest(id, refresh);
 
   return (
@@ -24,7 +25,7 @@ function Friends({ user, refresh }) {
               )}
               {user &&
                 user.friends.myFriendRequests.map((friend) => (
-                  <div className="col-12 col-md-6 ">
+                  <div className="col-12">
                     <div className="d-flex friend-req justify-content-between">
                       <div className="d-flex align-items-center">
                         <img

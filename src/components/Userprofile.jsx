@@ -26,7 +26,8 @@ export default function Userprofile({ suggestFriend, myData, refresh }) {
       .catch((err) => console.log(err.message));
   }, [id]);
 
-  const SentReq = () => SendReq(id, refresh);
+  const SentReq = () =>
+    SendReq(id, refresh, `New Friend Request from ${user.firstname}`);
 
   const DelReq = () => DeleteFriend(id, refresh);
 

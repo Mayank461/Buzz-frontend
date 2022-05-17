@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { socket } from '../App';
 import {
   APICONFIRMREQ_URL,
   APIDELETEREQ_URL,
@@ -22,13 +23,14 @@ export const getSuggestFriends = async () => {
   }
 };
 
-export const SendReq = (id, refresh) => {
+export const SendReq = (id, refresh, notifymsg) => {
   axios
     .get(`${APISENTREQ_URL}` + id, {
       withCredentials: true,
     })
     .then((res) => {
       refresh();
+      socket.emit('notification', id, notifymsg);
     })
     .catch((err) => console.log(err.message));
 };
@@ -44,13 +46,14 @@ export const DeleteFriend = (id, refresh) => {
     .catch((err) => console.log(err.message));
 };
 
-export const handleConfirmRequest = (id, refresh) => {
+export const handleConfirmRequest = (id, refresh, notifymsg) => {
   axios
     .get(`${APICONFIRMREQ_URL}${id}`, {
       withCredentials: true,
     })
     .then((res) => {
       refresh();
+      socket.emit('notification', id, notifymsg);
       toast.success('Friend added');
     })
     .catch((err) => console.log(err.message));
