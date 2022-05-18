@@ -14,7 +14,10 @@ function Messenger({ user }) {
   let [conversation, setConversation] = useState([]);
   const [userIndex, setUserIndex] = useState(0)
   const [changeUser, setChangeUser] = useState(true)
-  const [box, setBox] = useState(false)
+  const [box, setBox] = useState(false);
+  const [lastMsg,setLastMsg]=useState([]);
+  const [chk,setChk]=useState([]);
+  const [readMsg,setReadMSg] = useState(false)
   let arr = [];
   const [personDetails, setPersonDetails] = useState({
     profile_pic: "",
@@ -37,8 +40,11 @@ function Messenger({ user }) {
   //  selecting users in friends list  and joining room 
   const selectUser = (personId, userId, personPic, personFirstName, personLastName) => {
     setBox(true);
+
     let count = 0;
+    setLastMsg([])
     getSpecificUser(user._id).then(res => {
+      setChk(res.data.conversations);
       res.data.conversations.map((element, index) => {
         if (element.recieverId === personId) {
           setChangeUser(true)
@@ -74,11 +80,20 @@ function Messenger({ user }) {
     if (data.senderId === user._id) {}
     else {
       console.log("yes");
+     
       duplicate.float = false;
       callMySound(tone);
     }
+    setLastMsg(data)
     setConversation([...conversation, duplicate])
+   
     setMessageInput("")
+    socket.off();
+  })
+  
+  socket.on("last_conversation", (data, index) => { 
+  
+    setLastMsg(data)
     socket.off();
   })
   // for sending chat to anyone
@@ -98,6 +113,12 @@ function Messenger({ user }) {
     socket.off();
 
   }
+
+  useEffect(()=>{
+   
+      setChk(user.conversations)       
+  },[])
+
   return (
     <div>
       <div className="container bg-white my-5">
@@ -127,16 +148,31 @@ function Messenger({ user }) {
                         ></i>
                       )}
                     </div>
+                  
                     <div className=" w-100 d-flex flex-column ">
                       <h5 className="m-0 ms-2 ">
                         {data.firstname + ' ' + data.lastname}
                       </h5>
-                      <span className="my-1 ms-2">last message text</span>
+                      <span className="my-1 ms-2">{
+                      data._id === lastMsg.recieverId || data._id ===lastMsg.senderId? lastMsg.message:
+                      chk.map((e)=>{
+                        if(data._id === e.recieverId )
+                        {
+                          return e.chats[e.chats.length-1].message
+                        }
+                      })}</span>
                     </div>
                     <div>
-                      <span className="font-weight-bolder">4:30pm</span>
-
+                      <span className="font-weight-bolder">{
+                      data._id === lastMsg.recieverId || data._id ===lastMsg.senderId? lastMsg.time:
+                      chk.map((e)=>{
+                        if(data._id === e.recieverId )
+                        {
+                          return e.chats[e.chats.length-1].time
+                        }
+                      })}</span>
                     </div>
+                    
                   </div>
                 </div>
               ))}
@@ -179,6 +215,7 @@ function Messenger({ user }) {
                           pic={
                             element.float ? user.picture_url : personDetails.profile_pic
                           }
+                      
                         />
                       })}
                     </ScrollToBottom>
@@ -222,7 +259,7 @@ function Messenger({ user }) {
 
 export default Messenger;
 
-function ChatBubble({ my, message, name, time, pic }) {
+function ChatBubble({ my, message, name, time, pic}) {
   if (!pic) {
     pic = require('../images/blank-profile.png');
   }
