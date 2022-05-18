@@ -14,6 +14,7 @@ import {
 } from '../services/postservices';
 import { loadPost, totalPosts } from '../services/feedServices';
 import UploadPost from './UploadPost';
+import { socket } from '../App';
 
 export default function Feeds(user) {
   const [userData, setUserData] = useState({});
@@ -36,6 +37,8 @@ export default function Feeds(user) {
       setCount(myPostsCount);
       setPagination((pre) => ({ ...pre, total: totalPostCount }));
     }
+
+    socket.on('notification_newPost', (data) => toast(data));
 
     whenLoad();
     window.addEventListener('scroll', handleScroll);
@@ -70,7 +73,13 @@ export default function Feeds(user) {
 
   const publish = async (postData) => {
     setUploadingPost(true);
-    const result = await publishPost(userData._id, postData);
+    const notifyToList = userData?.friends?.myFriends.map(({ _id }) => _id);
+    const result = await publishPost(
+      userData._id,
+      postData,
+      notifyToList,
+      userData.firstname
+    );
 
     if (result.error) {
       setUploadingPost(false);
@@ -80,6 +89,7 @@ export default function Feeds(user) {
 
     setUploadingPost(false);
     toast.success('Your post uploaded successfully');
+
     const { myPostsCount, totalPostCount } = await totalPosts(user.user._id);
     setCount(myPostsCount);
     setPagination((pre) => ({ ...pre, total: totalPostCount }));
