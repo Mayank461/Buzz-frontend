@@ -14,22 +14,19 @@ function Messenger({ user, socket }) {
   const [conversation, setConversation] = useState([]);
   const navigate = useNavigate();
   const params = useParams();
+  const [onlineUsersList, setOnlineUsersList] = useState([]);
 
   useEffect(() => {
-    if (ChatRoom.roomID) {
-      const recID = ChatRoom.roomID.split('-').find((id) => id !== user._id);
-      let status = user.friends.myFriends.find(
-        ({ _id }) => _id === recID
-      ).online;
+    const onlineList = user.friends.myFriends
+      .map((x) => x.online === true && x._id)
+      .filter(Boolean);
+    setOnlineUsersList(onlineList);
+  }, [user.friends.myFriends]);
 
-      setChatRoom((prev) => ({
-        ...prev,
-        status: status ? 'Online' : 'Offline',
-      }));
-    }
+  useEffect(() => {
     getRoomChats();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ChatRoom.roomID, user._id, user.friends.myFriends]);
+  }, [ChatRoom.roomID]);
 
   useEffect(() => {
     socket.on('receive-message', (data) => {
@@ -98,6 +95,15 @@ function Messenger({ user, socket }) {
   useEffect(() => {
     scrollToBottom();
   }, [conversation]);
+
+  function getOnlineStatus(rid) {
+    return onlineUsersList.includes(
+      rid
+        .split('-')
+        .filter((x) => x !== user._id)
+        .toString()
+    );
+  }
 
   return (
     <div>
@@ -182,7 +188,9 @@ function Messenger({ user, socket }) {
                   />
                   <div className="d-flex flex-column">
                     <h5 className="m-0">{ChatRoom.receiverName}</h5>
-                    <p className="m-0">{ChatRoom.status}</p>
+                    <p className="m-0">
+                      {getOnlineStatus(ChatRoom.roomID) ? 'Online' : 'Offline'}
+                    </p>
                   </div>
                 </div>
                 <div className="px-4">
