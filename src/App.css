@@ -290,3 +290,18 @@
 .snackbar {
   box-shadow: 0px 0px 10px #c7c6c64f;
 }
+
+.iconIninput {
+  position: relative;
+}
+.iconIninput > i {
+  position: absolute;
+  top: 30%;
+  bottom: 0;
+  left: 2%;
+  color: #6d7073;
+}
+
+.iconIninput > input {
+  padding-left: 30px;
+}

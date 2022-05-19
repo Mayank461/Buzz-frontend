@@ -15,6 +15,7 @@ function Messenger({ user, socket }) {
   const navigate = useNavigate();
   const params = useParams();
   const [onlineUsersList, setOnlineUsersList] = useState([]);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     const onlineList = user.friends.myFriends
@@ -114,57 +115,76 @@ function Messenger({ user, socket }) {
             style={{ borderRight: '5px solid #ecebeb' }}
           >
             <h2 className="mb-3 mx-4">Messages</h2>
-
+            <div className="mx-4">
+              <div class="form-group iconIninput">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Search User"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+                <i class="fa fa-search"></i>
+              </div>
+            </div>
             <div style={{ height: '70vh', overflow: 'auto' }}>
-              {user.friends.myFriends.map((data) => (
-                <div
-                  key={data._id}
-                  className={`d-flex align-items-center my-1 py-3 pointer ${
-                    ChatRoom.roomID?.split('-').includes(data._id) && 'bg-light'
-                  }`}
-                  onClick={() =>
-                    openChatRoom(
-                      user._id,
-                      data._id,
-                      `${data.firstname} ${data.lastname}`,
-                      data.picture_url
-                    )
-                  }
-                >
-                  <div className="mx-4 d-flex w-100">
-                    <div className="img-state">
-                      <div
-                        className={`${data.online ? 'online' : 'offline'}`}
-                      ></div>
-                      <img
-                        src={
-                          data.picture_url
-                            ? data.picture_url
-                            : require('../images/blank-profile.png')
-                        }
-                        className="card-img-top round-img"
-                        alt="..."
-                        style={{
-                          width: '60px',
-                          height: '60px',
-                        }}
-                      />
-                    </div>
-
-                    <div className="d-flex w-100 flex-column justify-content-center">
-                      <div className="d-flex justify-content-between">
-                        <h5 className="m-0">
-                          {data.firstname + ' ' + data.lastname}
-                        </h5>
-                        {/* <span className="font-weight-bolder">4:30pm</span> */}
+              {user.friends.myFriends
+                .filter(({ firstname, lastname }) => {
+                  let s = search.replaceAll(' ', '');
+                  if (s.length < 2) return true;
+                  let name = firstname + lastname;
+                  return name.toLowerCase().includes(s.toLowerCase());
+                })
+                .map((data) => (
+                  <div
+                    key={data._id}
+                    className={`d-flex align-items-center my-1 py-3 pointer ${
+                      ChatRoom.roomID?.split('-').includes(data._id) &&
+                      'bg-light'
+                    }`}
+                    onClick={() =>
+                      openChatRoom(
+                        user._id,
+                        data._id,
+                        `${data.firstname} ${data.lastname}`,
+                        data.picture_url
+                      )
+                    }
+                  >
+                    <div className="mx-4 d-flex w-100">
+                      <div className="img-state">
+                        <div
+                          className={`${data.online ? 'online' : 'offline'}`}
+                        ></div>
+                        <img
+                          src={
+                            data.picture_url
+                              ? data.picture_url
+                              : require('../images/blank-profile.png')
+                          }
+                          className="card-img-top round-img"
+                          alt="..."
+                          style={{
+                            width: '60px',
+                            height: '60px',
+                          }}
+                        />
                       </div>
-                      <span className="my-1">
-                        {data.online ? 'Online' : 'Offline'}
-                      </span>
+
+                      <div className="d-flex w-100 flex-column justify-content-center">
+                        <div className="d-flex justify-content-between">
+                          <h5 className="m-0">
+                            {data.firstname + ' ' + data.lastname}
+                          </h5>
+                          {/* <span className="font-weight-bolder">4:30pm</span> */}
+                        </div>
+                        <span className="my-1">
+                          {data.online ? 'Online' : 'Offline'}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
 
