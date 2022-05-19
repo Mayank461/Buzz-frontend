@@ -120,7 +120,7 @@ function Messenger({ user, socket }) {
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="Search User"
+                  placeholder="Search your friends"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
