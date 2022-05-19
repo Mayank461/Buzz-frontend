@@ -109,6 +109,23 @@ export const profilePicChange = async (user_id, file, refresh) => {
   }
 };
 
+export const picChat = async (user_id, file, refresh) => {
+  try {
+    // if (!user_id) throw new Error('cant find user id');
+
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', 'ml_default');
+    fd.append('cloud_name', 'buzzz-social-app');
+    const result = await axios.post(API_PROFILE_UPLOAD, fd);
+
+  
+    return result;
+  } catch (error) {
+    return { error: true, message: error.message };
+  }
+};
+
 export const searchUser = async (searchText) => {
   try {
     if (searchText.length <= 1) return { data: [] };

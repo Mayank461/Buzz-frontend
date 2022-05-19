@@ -144,6 +144,26 @@
   user-select: none;
   margin-left: 15px;
 }
+.gallery {
+  outline: none;
+  color: transparent;
+  box-sizing: border-box;
+  cursor: pointer;
+  width: 50px;
+  transition: 0.5s;
+}
+.gallery::-webkit-file-upload-button {
+  visibility: hidden;
+}
+.gallery::before {
+  content: '\f03e';
+  font-family: fontAwesome;
+  font-size: 30px;
+  color: green;
+  display: inline-block;
+  user-select: none;
+  margin-left: 15px;
+}
 .camera:hover {
   background-color: #f0f2f5;
 }

@@ -1,32 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import ScrollToBottom from 'react-scroll-to-bottom';
+import { picChat } from '../services/userservice';
 import { Howl } from 'howler';
 import io from 'socket.io-client';
 import { getSpecificUser } from '../services/userservice';
 import { API_URL } from '../config';
+import FullPageSpinner from './FullPageSpinner';
 const socketURL = API_URL.split('/api');
 const socket = io.connect(socketURL[0])
 let room = "";
 function Messenger({ user }) {
 
-  const [refresh, setRefresh] = useState(true);
   const [messageInput, setMessageInput] = useState('');
+  let [sendPic,setSendPic] = useState('');
   let [conversation, setConversation] = useState([]);
-  const [userIndex, setUserIndex] = useState(0)
   const [changeUser, setChangeUser] = useState(true)
   const [box, setBox] = useState(false);
-  const [lastMsg,setLastMsg]=useState([]);
-  const [chk,setChk]=useState([]);
-  const [readMsg,setReadMSg] = useState(false)
-  let arr = [];
+  const [lastMsg, setLastMsg] = useState([]);
+  const [chk, setChk] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [personDetails, setPersonDetails] = useState({
     profile_pic: "",
     firstname: "",
     lastname: '',
     recieverId: ""
   });
-  const toggleRefresh = () => setRefresh((p) => !p);
-
   // messenger tone setup 
   const tone = require('../tone/messenger.mp3');
   const callMySound = (src) => {
@@ -48,7 +46,6 @@ function Messenger({ user }) {
       res.data.conversations.map((element, index) => {
         if (element.recieverId === personId) {
           setChangeUser(true)
-          setUserIndex(index)
           setConversation(element.chats);
         }
         else {
@@ -74,53 +71,64 @@ function Messenger({ user }) {
     }
     socket.emit('join_room', room);
   }
-    // this is for when user recieve new message
+  // this is for when user recieve new message
   socket.on("recieve_message", (data, index) => {
     let duplicate = data;
-    if (data.senderId === user._id) {}
+    if (data.senderId === user._id) { }
     else {
-      console.log("yes");
-     
       duplicate.float = false;
       callMySound(tone);
     }
     setLastMsg(data)
     setConversation([...conversation, duplicate])
-   
+
     setMessageInput("")
     socket.off();
   })
-  
-  socket.on("last_conversation", (data, index) => { 
-  
-    setLastMsg(data)
-    socket.off();
-  })
+
   // for sending chat to anyone
   const sendChat = (e) => {
     e.preventDefault();
+  
     let today = new Date();
     let hours = today.getHours();
-    let min = today.getMinutes();
+    let min = today.getMinutes().toString();
+    if (min.length === 1) min = "0" + today.getMinutes();
+
     let time = hours > 12 ? "PM" : "AM"
     if (hours > 12) {
       hours = hours - 12;
     }
     let current_time = hours + ":" + min + " " + time;
+    if(sendPic==='')
+    {
+      socket.emit("send_message", { message: messageInput, room: room, senderId: user._id, recieverId: personDetails.recieverId, time: current_time, float: true });
 
-    socket.emit("send_message", { message: messageInput, room: room, senderId: user._id, recieverId: personDetails.recieverId, time: current_time, float: true });
-    toggleRefresh();
+    }
+    else{
+    socket.emit("send_message", { message: messageInput, pic: sendPic, room: room, senderId: user._id, recieverId: personDetails.recieverId, time: current_time, float: true });
+
+    }
+    setSendPic("")
     socket.off();
 
   }
-
-  useEffect(()=>{
+  const inputpic = async (e) => {
+    setLoading(true);
    
-      setChk(user.conversations)       
-  },[])
+    const file = e.target.files[0];
+    await picChat(user._id, file).then((res)=>{
+      setSendPic(res.data.secure_url)
+      setLoading(false);
+    })
+  };
+  useEffect(() => {
+    setChk(user.conversations)
+  }, [])
 
   return (
     <div>
+      {loading?<FullPageSpinner></FullPageSpinner>:""}
       <div className="container bg-white my-5">
         <div className="row">
           <div
@@ -148,31 +156,29 @@ function Messenger({ user }) {
                         ></i>
                       )}
                     </div>
-                  
+
                     <div className=" w-100 d-flex flex-column ">
                       <h5 className="m-0 ms-2 ">
                         {data.firstname + ' ' + data.lastname}
                       </h5>
                       <span className="my-1 ms-2">{
-                      data._id === lastMsg.recieverId || data._id ===lastMsg.senderId? lastMsg.message:
-                      chk.map((e)=>{
-                        if(data._id === e.recieverId )
-                        {
-                          return e.chats[e.chats.length-1].message
-                        }
-                      })}</span>
+                        data._id === lastMsg.recieverId || data._id === lastMsg.senderId ? lastMsg.message :
+                          chk.map((e) => {
+                            if (data._id === e.recieverId) {
+                              return e.chats[e.chats.length - 1].message
+                            }
+                          })}</span>
                     </div>
-                    <div>
-                      <span className="font-weight-bolder">{
-                      data._id === lastMsg.recieverId || data._id ===lastMsg.senderId? lastMsg.time:
-                      chk.map((e)=>{
-                        if(data._id === e.recieverId )
-                        {
-                          return e.chats[e.chats.length-1].time
-                        }
-                      })}</span>
-                    </div>
-                    
+
+                    <span className="w-50 text-end">{
+                      data._id === lastMsg.recieverId || data._id === lastMsg.senderId ? lastMsg.time :
+                        chk.map((e) => {
+                          if (data._id === e.recieverId) {
+                            return e.chats[e.chats.length - 1].time
+                          }
+                        })}</span>
+
+
                   </div>
                 </div>
               ))}
@@ -208,6 +214,7 @@ function Messenger({ user }) {
                         return <ChatBubble
                           my={element.float}
                           message={element.message}
+                          chatPic={'pic' in element ? element.pic:""}
                           name={
                             element.float ? `You` : personDetails.firstname + " " + personDetails.lastname
                           }
@@ -215,7 +222,7 @@ function Messenger({ user }) {
                           pic={
                             element.float ? user.picture_url : personDetails.profile_pic
                           }
-                      
+
                         />
                       })}
                     </ScrollToBottom>
@@ -226,21 +233,31 @@ function Messenger({ user }) {
                   <div className="input-group input-group-lg">
 
 
-                    <form className="d-flex  w-100">
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Your message.."
-                        autoComplete="off"
-                        value={messageInput}
-                        onChange={(e) => setMessageInput(e.target.value)}
-                      />
-                      <div className="input-group-append input-group-lg">
-                        <button className="btn btn-outline-primary" type="submit" onClick={sendChat}>
-                          Send
-                        </button>
+                    <div className="d-flex w-100 mb-2">
+                      <div className='d-flex w-100 position-relative'>
+                        <input
+                          type="text"
+                          className="form-control rounded-pill"
+                          placeholder="Your message.."
+                          autoComplete="off"
+                          value={messageInput}
+                          onChange={(e) => setMessageInput(e.target.value)}
+                        />
+                        <div className='d-flex align-items-center'>
+                          {/* <i className="fa-solid fa-2x fa-image position-absolute end-0 me-2"></i> */}
+                          <input
+                            type="file"
+                            className="gallery position-absolute end-0 me-2"
+                            onChange={(e) => inputpic(e)}
+                          />
+                        </div>
                       </div>
-                    </form>
+
+                      <div className="input-group-append input-group-lg ms-2 rounded-circle bg-success d-flex justify-content-center p-1" style={{cursor:"pointer"}}>
+                        <i className="fa-solid fa-2x fa-paper-plane text-white  round-img d-flex justify-content-center align-items-center p-2"  onClick={sendChat}></i>
+                      </div>
+
+                    </div>
 
                   </div>
                 </div>
@@ -259,7 +276,7 @@ function Messenger({ user }) {
 
 export default Messenger;
 
-function ChatBubble({ my, message, name, time, pic}) {
+function ChatBubble({ my, message,chatPic, name, time, pic }) {
   if (!pic) {
     pic = require('../images/blank-profile.png');
   }
@@ -282,8 +299,19 @@ function ChatBubble({ my, message, name, time, pic}) {
           <span className="time">{time}</span>
           {my && <h6 className="mb-2">{name}</h6>}
         </div>
-        <div className="d-flex bubbletext">
+        <div className="d-flex flex-column bubbletext">
           <p className="m-0">{message}</p>
+          <div>{chatPic ===""?"":
+         (<img 
+          src={chatPic}
+          alt="no pic"
+          style={{
+            width: '300px',
+            height: '300px',
+          }}
+          />)
+          }</div>
+        
         </div>
       </div>
       {my && (
