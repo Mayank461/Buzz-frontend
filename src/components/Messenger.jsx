@@ -225,8 +225,11 @@ function Messenger({ user, socket }) {
                           hour: 'numeric',
                           minute: 'numeric',
                           hour12: true,
+                          day: '2-digit',
+                          month: 'short',
                         }
                       );
+
                       if (msg.sentBy === user._id)
                         return (
                           <ChatBubble
@@ -287,43 +290,53 @@ function Messenger({ user, socket }) {
 
 export default Messenger;
 
-function ChatBubble({ my, message, name, picture_url, time }) {
+function ChatBubble({
+  my,
+  message,
+  name,
+  picture_url,
+  time,
+  currentMsgDate,
+  previousMsgDate,
+}) {
   if (!picture_url) picture_url = require('../images/blank-profile.png');
 
   return (
-    <div className={`d-flex my-2 chatbubble ${my && 'myMessage'}`}>
-      {!my && (
-        <img
-          src={picture_url}
-          className="card-img-top round-img"
-          alt="pic"
-          style={{
-            width: '40px',
-            height: '40px',
-          }}
-        />
-      )}
-      <div className="flex-column px-2 my-1 w-100">
-        <div className="d-flex rowalign">
-          {!my && <h6 className="mb-2">{name}</h6>}
-          <span className="time">{time}</span>
-          {my && <h6 className="mb-2">{name}</h6>}
+    <>
+      <div className={`d-flex my-2 chatbubble ${my && 'myMessage'}`}>
+        {!my && (
+          <img
+            src={picture_url}
+            className="card-img-top round-img"
+            alt="pic"
+            style={{
+              width: '40px',
+              height: '40px',
+            }}
+          />
+        )}
+        <div className="flex-column px-2 my-1 w-100">
+          <div className="d-flex rowalign">
+            {!my && <h6 className="mb-2">{name}</h6>}
+            <span className="time">{time}</span>
+            {my && <h6 className="mb-2">{name}</h6>}
+          </div>
+          <div className="d-flex bubbletext">
+            <p className="m-0">{message}</p>
+          </div>
         </div>
-        <div className="d-flex bubbletext">
-          <p className="m-0">{message}</p>
-        </div>
+        {my && (
+          <img
+            src={picture_url}
+            className="card-img-top round-img"
+            alt="pic"
+            style={{
+              width: '40px',
+              height: '40px',
+            }}
+          />
+        )}
       </div>
-      {my && (
-        <img
-          src={picture_url}
-          className="card-img-top round-img"
-          alt="pic"
-          style={{
-            width: '40px',
-            height: '40px',
-          }}
-        />
-      )}
-    </div>
+    </>
   );
 }
