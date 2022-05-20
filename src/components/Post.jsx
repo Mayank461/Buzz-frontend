@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import  Comment from './Comment';
+import Comment from './Comment';
 
 export default function Post({
   index,
@@ -10,13 +10,15 @@ export default function Post({
   userdata,
   reportPost,
   uid,
+  postComment,
+  commentLike,
+  id,
 }) {
   let { post_url, _id, like, dislike, comment, post_caption } = data;
-  let { firstname, lastname, picture_url } = data.posted_by;
+  let { firstname, lastname, picture_url} = data.posted_by;
   const [commentmessage, setcommentmessage] = useState();
 
   const commentInput = useRef(null);
-
   let toggle = true;
 
   const oninputchange = (e) => {
@@ -33,6 +35,7 @@ export default function Post({
       toggle = true;
     }
   };
+
 
   return (
     <>
@@ -55,7 +58,9 @@ export default function Post({
               ></i>
             )}
 
-            <div className="ms-2 fw-bold" data-testid="whoPosted">{firstname + ' ' + lastname}</div>
+            <div className="ms-2 fw-bold" data-testid="whoPosted">
+              {firstname + ' ' + lastname}
+            </div>
           </div>
 
           {/* ========================================================Report System============================================================================== */}
@@ -82,11 +87,15 @@ export default function Post({
           {/* ========================================================Report System============================================================================== */}
         </div>
         <div className="ms-2 mb-2">{post_caption}</div>
-        {'post_url' in data ? (
-          <img src={post_url} className="card-img-top rounded-3" alt="..." />
-        ) : (
-          ''
-        )}
+
+        {'post_url' in data &&
+          (post_url.endsWith('.mp4') ? (
+            <video controls width="100%" src={post_url}>
+              Your browser does not support the video.
+            </video>
+          ) : (
+            <img src={post_url} className="card-img-top rounded-3" alt="..." />
+          ))}
 
         <div className="d-flex justify-content-between mt-2">
           <div className="d-flex">
@@ -147,48 +156,58 @@ export default function Post({
             <i className="fa-regular fa-message me-2"></i>Comment
           </div>
         </div>
-        <div  id={index}  style={{ display: 'none' }}>
+        <div id={index} style={{ display: 'none' }}>
           <div className=" mt-3 ">
-            <div className="d-flex">
-              {userdata.picture_url ? (
-                <div className="d-flex align-items-center">
+            <div className="row align-items-center">
+              <div className="col-12 px-2 mb-2 d-flex align-items-center">
+                {userdata.picture_url ? (
                   <img
                     src={userdata.picture_url}
-                    className="card-img-top small-round-pic   round-img"
+                    className="card-img-top small-round-pic round-img mx-2"
                     alt="..."
                   />
+                ) : (
+                  <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
+                )}
+
+                <div class="input-group">
+                  <input
+                    style={{
+                      borderBottomLeftRadius: '50px',
+                      borderTopLeftRadius: '50px',
+                    }}
+                    type="text"
+                    class="form-control"
+                    ref={commentInput}
+                    placeholder="Write a comment..."
+                    onChange={(e) => oninputchange(e)}
+                    name="message"
+                  />
+                  <div class="input-group-append">
+                    <button
+                      class="btn btn-outline-darkgit  "
+                      type="button"
+                      onClick={() => {
+                        commentBox(
+                          _id,
+                          commentmessage,
+                          commentInput,
+                          setcommentmessage
+                        );
+                      }}
+                    >
+                      <i
+                        className="fa-solid fa-2x fa-paper-plane text-success"
+                        style={{ fontSize: '1.2rem' }}
+                      ></i>
+                    </button>
+                  </div>
                 </div>
-              ) : (
-                <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
-              )}
-              <div className="form-control d-flex align-items-center border-0 ">
-                <input
-                  type="text"
-                  className="form-control  rounded-pill  p-2"
-                  ref={commentInput}
-                  placeholder="Write a comment..."
-                  onChange={(e) => oninputchange(e)}
-                  name="message"
-                />
-              </div>
-              <div
-                onClick={() => {
-                  commentBox(
-                    _id,
-                    commentmessage,
-                    commentInput,
-                    setcommentmessage
-                  );
-                }}
-                className="d-flex align-items-center pointer justify-content-center  rounded-circle border border-success p-2  "
-              >
-                {' '}
-                <i className="fa-solid fa-2x fa-paper-plane text-success circle p-2"></i>
               </div>
             </div>
           </div>
-          {comment.map((data) => {
-            return <Comment data={data} />;
+          {comment.map((element,index) => {
+            return <Comment dataComment={element} postId = {_id} index={index} senderPic={userdata.picture_url} userDetails={data} postComment={postComment} userdata={userdata} commentLike={commentLike} />;
           })}
         </div>
       </div>

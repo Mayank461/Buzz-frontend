@@ -1,12 +1,15 @@
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import {  toast } from 'react-toastify';
+
 import {
   APICONFIRMREQ_URL,
   APIDELETEREQ_URL,
-  APIIMAGEUPLOAD,
   APISENTREQ_URL,
   APIUPDATEUSERDETAILS_URL,
   API_GETSUGGESTFRIENDS,
+  API_PROFILE_UPLOAD,
+  API_SEARCH_USER,
+  APIUSERINFO_URL
 } from '../config';
 
 export const getSuggestFriends = async () => {
@@ -21,13 +24,16 @@ export const getSuggestFriends = async () => {
   }
 };
 
-export const SendReq = (id, refresh) => {
+export const SendReq = async(id, refresh) => {
   axios
     .get(`${APISENTREQ_URL}` + id, {
       withCredentials: true,
     })
     .then((res) => {
       refresh();
+     toast("friend request sent")
+        
+     
     })
     .catch((err) => console.log(err.message));
 };
@@ -39,6 +45,7 @@ export const DeleteFriend = (id, refresh) => {
     })
     .then((res) => {
       refresh();
+      
     })
     .catch((err) => console.log(err.message));
 };
@@ -67,7 +74,7 @@ export const handleDeleteRequest = (id, refresh) => {
     .catch((err) => console.log(err.message));
 };
 
-export const postData = async (uid, inputs,refresh) => {
+export const postData = async (uid, inputs, refresh) => {
   try {
     if (inputs.firstname === '' || inputs.lastname === '')
       throw new Error('First name and Last name are required');
@@ -75,31 +82,68 @@ export const postData = async (uid, inputs,refresh) => {
     await axios.post(`${APIUPDATEUSERDETAILS_URL}/${uid}`, inputs, {
       withCredentials: true,
     });
-    refresh();
-    toast.success("Profile Updated");
+    return { message: 'success' };
   } catch (error) {
     return { error: true, message: error.message };
   }
 };
 
-export const profilePicChange = async (user_id, file,refresh) => {
+export const profilePicChange = async (user_id, file, refresh) => {
   try {
     if (!user_id) throw new Error('cant find user id');
 
     const fd = new FormData();
     fd.append('file', file);
-    fd.append('upload_preset', 'buzz-app-pic');
-    fd.append('cloud_name', 'buzz-social-app');
-    const result = await axios.post(APIIMAGEUPLOAD, fd);
+    fd.append('upload_preset', 'ml_default');
+    fd.append('cloud_name', 'buzzz-social-app');
+    const result = await axios.post(API_PROFILE_UPLOAD, fd);
 
     await axios.post(
       `${APIUPDATEUSERDETAILS_URL}/${user_id}`,
       { pic_url: result.data.secure_url },
       { withCredentials: true }
     );
-    refresh();
-    toast.success("Picture Changed Successfully")
-    // return { message: 'Picture change successfully' };
+    return { message: 'Picture change successfully' };
+  } catch (error) {
+    return { error: true, message: error.message };
+  }
+};
+
+export const picChat = async (user_id, file, refresh) => {
+  try {
+    // if (!user_id) throw new Error('cant find user id');
+
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', 'ml_default');
+    fd.append('cloud_name', 'buzzz-social-app');
+    const result = await axios.post(API_PROFILE_UPLOAD, fd);
+
+  
+    return result;
+  } catch (error) {
+    return { error: true, message: error.message };
+  }
+};
+
+export const searchUser = async (searchText) => {
+  try {
+    if (searchText.length <= 1) return { data: [] };
+    return await axios.get(`${API_SEARCH_USER}`, {
+      params: {
+        query: searchText,
+      },
+    });
+  } catch (error) {
+    return { error: true, message: error.message };
+  }
+};
+
+export const getSpecificUser = async (userId) => {
+  try {
+    
+     return await axios.get(`${APIUSERINFO_URL}${userId}`)
+    
   } catch (error) {
     return { error: true, message: error.message };
   }
