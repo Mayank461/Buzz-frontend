@@ -102,8 +102,8 @@ export const profilePicChange = async (user_id, file, refresh) => {
       { withCredentials: true }
     );
     refresh();
-    toast.success('Picture Changed Successfully');
-    // return { message: 'Picture change successfully' };
+
+    return { message: 'Picture change successfully' };
   } catch (error) {
     return { error: true, message: error.message };
   }
