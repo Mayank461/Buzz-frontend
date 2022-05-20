@@ -1,12 +1,24 @@
 .font-family {
   font-family: 'Poppins', sans-serif;
 }
+.chat-box{
+  background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+}
 .font-size {
   font-size: 15px;
 }
 
 .head{
-  background-image: linear-gradient(to right, #96c93d,#00b09b);
+  background-image: linear-gradient(-20deg, #00cdac 0%, #8ddad5 100%);
+
+}
+.chat-list{
+  text-transform: uppercase;
+	background: linear-gradient(to right, #30CFD0 0%, #330867 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+  font-size: 2vw;
+
 }
 .round-img {
   clip-path: circle();
@@ -33,6 +45,10 @@
 .medium-round-pic {
   height: 55px;
   width: 55px;
+}
+.typing {
+  height: 50px;
+  width: 50px;
 }
 .big-round-pic {
   height: 90px;
@@ -289,11 +305,13 @@
   max-width: 70%;
 }
 
-.chatbubble .time {
+.time {
   font-size: 0.8rem;
-  color: #b2b2b2;
+  background: linear-gradient(to right, #30CFD0 0%, #330867 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
   font-weight: 500;
-  padding: 0 15px;
+
 }
 
 .chatbubble .bubbletext {
@@ -322,6 +340,7 @@
   justify-content: flex-end;
 }
 .myMessage .bubbletext {
-  background-color: #dcffb8;
+  background-image: linear-gradient(-20deg, #00cdac 0%, #8ddad5 100%);
+  color: black;
   margin-left: auto;
 }

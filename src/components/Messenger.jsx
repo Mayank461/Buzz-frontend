@@ -12,13 +12,14 @@ let room = "";
 function Messenger({ user }) {
 
   const [messageInput, setMessageInput] = useState('');
-  let [sendPic,setSendPic] = useState('');
+  let [sendPic, setSendPic] = useState('');
   let [conversation, setConversation] = useState([]);
   const [changeUser, setChangeUser] = useState(true)
   const [box, setBox] = useState(false);
   const [lastMsg, setLastMsg] = useState([]);
   const [chk, setChk] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [typing, setTyping] = useState(false)
   const [personDetails, setPersonDetails] = useState({
     profile_pic: "",
     firstname: "",
@@ -73,6 +74,7 @@ function Messenger({ user }) {
   }
   // this is for when user recieve new message
   socket.on("recieve_message", (data, index) => {
+    setTyping(false)
     let duplicate = data;
     if (data.senderId === user._id) { }
     else {
@@ -89,7 +91,7 @@ function Messenger({ user }) {
   // for sending chat to anyone
   const sendChat = (e) => {
     e.preventDefault();
-  
+    setTyping(false)
     let today = new Date();
     let hours = today.getHours();
     let min = today.getMinutes().toString();
@@ -100,13 +102,12 @@ function Messenger({ user }) {
       hours = hours - 12;
     }
     let current_time = hours + ":" + min + " " + time;
-    if(sendPic==='')
-    {
+    if (sendPic === '') {
       socket.emit("send_message", { message: messageInput, room: room, senderId: user._id, recieverId: personDetails.recieverId, time: current_time, float: true });
 
     }
-    else{
-    socket.emit("send_message", { message: messageInput, pic: sendPic, room: room, senderId: user._id, recieverId: personDetails.recieverId, time: current_time, float: true });
+    else {
+      socket.emit("send_message", { message: messageInput, pic: sendPic, room: room, senderId: user._id, recieverId: personDetails.recieverId, time: current_time, float: true });
 
     }
     setSendPic("")
@@ -115,32 +116,42 @@ function Messenger({ user }) {
   }
   const inputpic = async (e) => {
     setLoading(true);
-   
+
     const file = e.target.files[0];
-    await picChat(user._id, file).then((res)=>{
+    await picChat(user._id, file).then((res) => {
       setSendPic(res.data.secure_url)
       setLoading(false);
     })
   };
+
+  const OnInputChange = (e) => {
+
+    setMessageInput(e.target.value);
+
+    socket.emit("typing", "Typing...")
+  }
+  socket.on("recieve_signal", (text) => {
+    setTyping(true);
+  })
   useEffect(() => {
     setChk(user.conversations)
   }, [])
 
   return (
     <div>
-      {loading?<FullPageSpinner></FullPageSpinner>:""}
+      {loading ? <FullPageSpinner></FullPageSpinner> : ""}
       <div className="container bg-white my-5">
         <div className="row">
           <div
             className="col-md-4 pt-5 px-0 shadow"
             style={{ borderRight: '5px solid #ecebeb' }}
           >
-            <h2 className="mb-3 mx-4">Messages</h2>
+            <h5 className="mb-3 mx-4 chat-list border-bottom">Messages</h5>
 
             <div style={{ height: '70vh', overflow: 'auto' }}>
               {user.friends.myFriends.map((data) => (
-                <div className="d-flex align-items-center my-1 border bg-light  py-3" onClick={() => { selectUser(data._id, user._id, data.picture_url, data.firstname, data.lastname) }}>
-                  <div className="mx-4 d-flex   w-100" >
+                <div className="d-flex align-items-center my-1 bg-light   py-3" onClick={() => { selectUser(data._id, user._id, data.picture_url, data.firstname, data.lastname) }} style={{ cursor: "pointer" }}>
+                  <div className="mx-4 d-flex   w-100 " >
                     <div className='d-flex align-items-center'>
                       {data.picture_url ? (
                         <img
@@ -157,7 +168,7 @@ function Messenger({ user }) {
                       )}
                     </div>
 
-                    <div className=" w-100 d-flex flex-column ">
+                    <div className=" w-100 d-flex flex-column ms-2 border-bottom ">
                       <h5 className="m-0 ms-2 ">
                         {data.firstname + ' ' + data.lastname}
                       </h5>
@@ -170,7 +181,7 @@ function Messenger({ user }) {
                           })}</span>
                     </div>
 
-                    <span className="w-50 text-end">{
+                    <span className="w-50 text-end border-bottom time ">{
                       data._id === lastMsg.recieverId || data._id === lastMsg.senderId ? lastMsg.time :
                         chk.map((e) => {
                           if (data._id === e.recieverId) {
@@ -185,12 +196,13 @@ function Messenger({ user }) {
             </div>
           </div>
 
-          <div className="col-md-8 px-0 bg-light flex-column d-flex justify-content-between position-relative">
+          <div className="col-md-8 px-0 bg-light flex-column bg-danger d-flex justify-content-between  position-relative">
             {box ?
-              <>
+              <div className='chat-box'>
                 <div
-                  className="chat"
+                  className="chat "
                   id='chatBox'
+
                 >
                   <div className='shadow-lg p-2 bg-body rounded head'>
                     {personDetails.firstname === "" ? "" :
@@ -201,7 +213,7 @@ function Messenger({ user }) {
                           <img src={personDetails.profile_pic} alt="" className="card-img-top round-img medium-round-pic" />
                         }
 
-                        <div className='d-flex align-items-center  fw-bolder ms-2'>{personDetails.firstname + " " + personDetails.lastname}</div>
+                        <div className='d-flex align-items-center  fw-bolder ms-2 fs-5'>{personDetails.firstname + " " + personDetails.lastname}</div>
 
                       </div>
                     }
@@ -211,20 +223,41 @@ function Messenger({ user }) {
                   {changeUser ?
                     <ScrollToBottom className='scroll-bottom p-2'>
                       {conversation.map((element) => {
-                        return <ChatBubble
-                          my={element.float}
-                          message={element.message}
-                          chatPic={'pic' in element ? element.pic:""}
+                        return <>
+                          <ChatBubble
+                            my={element.float}
+                            message={element.message}
+                            typing={typing}
+                            chatPic={'pic' in element ? element.pic : ""}
+                            name={
+                              element.float ? `You` : personDetails.firstname + " " + personDetails.lastname
+                            }
+                            time={element.time}
+                            pic={
+                              element.float ? user.picture_url : personDetails.profile_pic
+                            }
+
+                          />
+
+                        </>
+
+                      })}
+                      {typing ?
+                        <ChatBubble
+                          my={false}
+                          message="Typing..."
+
+                          chatPic=""
                           name={
-                            element.float ? `You` : personDetails.firstname + " " + personDetails.lastname
+                            personDetails.firstname + " " + personDetails.lastname
                           }
-                          time={element.time}
+                          time=""
                           pic={
-                            element.float ? user.picture_url : personDetails.profile_pic
+                            personDetails.profile_pic
                           }
 
                         />
-                      })}
+                        : ""}
                     </ScrollToBottom>
                     : ""
                   }
@@ -237,14 +270,14 @@ function Messenger({ user }) {
                       <div className='d-flex w-100 position-relative'>
                         <input
                           type="text"
-                          className="form-control rounded-pill"
+                          className="form-control rounded-pill ms-2"
                           placeholder="Your message.."
                           autoComplete="off"
                           value={messageInput}
-                          onChange={(e) => setMessageInput(e.target.value)}
+                          onChange={(e) => OnInputChange(e)}
+
                         />
                         <div className='d-flex align-items-center'>
-                          {/* <i className="fa-solid fa-2x fa-image position-absolute end-0 me-2"></i> */}
                           <input
                             type="file"
                             className="gallery position-absolute end-0 me-2"
@@ -253,15 +286,15 @@ function Messenger({ user }) {
                         </div>
                       </div>
 
-                      <div className="input-group-append input-group-lg ms-2 rounded-circle bg-success d-flex justify-content-center p-1" style={{cursor:"pointer"}}>
-                        <i className="fa-solid fa-2x fa-paper-plane text-white  round-img d-flex justify-content-center align-items-center p-2"  onClick={sendChat}></i>
+                      <div className="input-group-append input-group-lg ms-2 rounded-circle bg-success d-flex justify-content-center p-1 me-2" style={{ cursor: "pointer" }}>
+                        <i className="fa-solid fa-2x fa-paper-plane text-white  round-img d-flex justify-content-center align-items-center p-2" onClick={sendChat}></i>
                       </div>
 
                     </div>
 
                   </div>
                 </div>
-              </>
+              </div>
               : <div className='d-flex justify-content-center flex-column empty-conversation'>
                 <img src='https://ssl.gstatic.com/dynamite/images/new_chat_room_1x.png' className='' />
                 <h3>Select a conversation</h3>
@@ -276,7 +309,7 @@ function Messenger({ user }) {
 
 export default Messenger;
 
-function ChatBubble({ my, message,chatPic, name, time, pic }) {
+function ChatBubble({ my, message, chatPic, name, time, pic }) {
   if (!pic) {
     pic = require('../images/blank-profile.png');
   }
@@ -294,24 +327,24 @@ function ChatBubble({ my, message,chatPic, name, time, pic }) {
         />
       )}
       <div className="flex-column px-2 my-1">
-        <div className="d-flex rowalign">
-          {!my && <h6 className="mb-2">{name}</h6>}
-          <span className="time">{time}</span>
-          {my && <h6 className="mb-2">{name}</h6>}
-        </div>
+
         <div className="d-flex flex-column bubbletext">
-          <p className="m-0">{message}</p>
-          <div>{chatPic ===""?"":
-         (<img 
-          src={chatPic}
-          alt="no pic"
-          style={{
-            width: '300px',
-            height: '300px',
-          }}
-          />)
+          {message === "Typing..." ? <img className='typing' src='http://leadfunnel.co.in/Livechat/public/img/loading.gif' /> : <p className="m-0">{message}</p>}
+
+          <div>{chatPic === "" ? "" :
+            (<img
+              src={chatPic}
+              alt="no pic"
+              style={{
+                width: '300px',
+                height: '300px',
+              }}
+            />)
           }</div>
-        
+          <div className="  ">
+            <div className="time d-flex justify-content-end ">{time}</div>
+          </div>
+
         </div>
       </div>
       {my && (
@@ -325,6 +358,8 @@ function ChatBubble({ my, message,chatPic, name, time, pic }) {
           }}
         />
       )}
+
+
     </div>
   );
 }
