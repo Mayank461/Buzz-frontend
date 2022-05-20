@@ -2,13 +2,13 @@
 
 exports[`should render Navbar Panel 1`] = `
 <nav
-  className="navbar  navbar-light bg-light p-0"
+  className="navbar  navbar-light bg-white p-0"
 >
   <div
     className="container-fluid"
   >
     <div
-      className="col-4 d-flex"
+      className="col-6 col-md-8 d-flex"
     >
       <a
         href="/"
@@ -21,10 +21,10 @@ exports[`should render Navbar Panel 1`] = `
         />
       </a>
       <div
-        className="mx-3 w-100 align-self-center position-relative"
+        className="d-none d-sm-block mx-3 w-100 align-self-center position-relative"
       >
         <input
-          autocomplete="off"
+          autoComplete="off"
           className="caption px-4 py-2 bg-transparent w-100 border-0 border-bottom form-control"
           onChange={[Function]}
           placeholder="Search by Name or Email"
@@ -50,31 +50,35 @@ exports[`should render Navbar Panel 1`] = `
       </div>
     </div>
     <div
-      className="d-flex position-relative"
+      className="col-6 col-md-4 justify-content-end d-flex position-relative align-items-center"
     >
       <a
-        className="nav-link text-dark"
+        className="nav-link text-dark p-0 p-lg-2"
         href="/profile"
         onClick={[Function]}
       >
         <div
           className="d-flex"
         >
+          <i
+            className="fa-solid fa-user card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"
+          />
           <div
-            className=""
-          >
-            <i
-              className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"
-            />
-          </div>
-          <div
-            className=" align-items-center ms-2 resp-hide"
+            className=" align-items-center ms-2 d-none d-lg-block d-flex align-self-center"
             data-testid="userInfo"
           >
             John Doe
           </div>
         </div>
       </a>
+      <div
+        className="pointer d-sm-none d-flex align-items-center  ms-2 round-img border rounded-circle icon-bg text-dark p-2 false"
+        onClick={[Function]}
+      >
+        <i
+          className="fa-solid fa-search"
+        />
+      </div>
       <div
         className="d-flex align-items-center ms-2 round-img border rounded-circle icon-bg text-dark p-2"
       >
@@ -87,6 +91,25 @@ exports[`should render Navbar Panel 1`] = `
             className="fa-solid fa-house"
           />
         </a>
+      </div>
+      <div
+        className="position-relative d-flex "
+      >
+        <a
+          className="d-flex align-items-center  ms-2 round-img border rounded-circle icon-bg text-dark p-2 text-decoration-none"
+          href="/chat"
+          onClick={[Function]}
+        >
+          <i
+            className="fas fa-comments"
+          />
+        </a>
+        <div
+          className="round-img bg-danger p-1 text-white incoming position-absolute bottom-50 end-0"
+          title="new_message_count"
+        >
+          0
+        </div>
       </div>
       <div
         className="position-relative d-flex "

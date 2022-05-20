@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render Messenger Panel 1`] = `
+<div>
+  <div
+    className="container bg-white my-4"
+  >
+    <div
+      className="row shadow"
+    >
+      <div
+        className="col-md-4 pt-4 px-0"
+        style={
+          Object {
+            "borderRight": "5px solid #ecebeb",
+          }
+        }
+      >
+        <h2
+          className="mb-3 mx-4"
+        >
+          Messages
+        </h2>
+        <div
+          className="mx-4"
+        >
+          <div
+            class="form-group iconIninput"
+          >
+            <input
+              className="form-control"
+              onChange={[Function]}
+              placeholder="Search your friends"
+              type="text"
+              value=""
+            />
+            <i
+              class="fa fa-search"
+            />
+          </div>
+        </div>
+        <div
+          style={
+            Object {
+              "height": "70vh",
+              "overflow": "auto",
+            }
+          }
+        />
+      </div>
+      <div
+        className="col-md-8 bg-light p-0 flex-column d-flex justify-content-between"
+      />
+    </div>
+  </div>
+</div>
+`;

@@ -23,7 +23,7 @@ export default function Comment({ data }) {
           {data.message}
         </div>
       </div>
-      {data.message.length > 335 && (
+      {data?.message?.length > 335 && (
         <div
           className="seemore"
           onClick={() => {
