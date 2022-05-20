@@ -151,7 +151,7 @@ function Messenger({ user, socket }) {
                       )
                     }
                   >
-                    <div className="mx-4 d-flex w-100">
+                    <div className="mx-4 d-flex w-100 align-items-center">
                       <div className="img-state">
                         <div
                           className={`${data.online ? 'online' : 'offline'}`}
@@ -188,10 +188,13 @@ function Messenger({ user, socket }) {
             </div>
           </div>
 
-          <div className="col-md-8 bg-light p-0 flex-column d-flex justify-content-between">
+          <div
+            className="col-md-8 bg-light p-0 flex-column d-flex justify-content-between"
+            style={{ minHeight: '80vh' }}
+          >
             {ChatRoom.roomID && (
               <>
-                <div className="col-12 bg-white px-4 py-2 d-flex align-items-center snackbar">
+                <div className="col-12 bg-white px-4 py-2 d-flex align-'items-center snackbar">
                   <img
                     src={
                       ChatRoom.receiverPic
