@@ -25,7 +25,7 @@ function Friends({ user, refresh }) {
               )}
               {user &&
                 user.friends.myFriendRequests.map((friend) => (
-                  <div className="col-12">
+                  <div className="col-12" key={friend._id}>
                     <div className="d-flex friend-req justify-content-between">
                       <div className="d-flex align-items-center">
                         <img
@@ -70,7 +70,7 @@ function Friends({ user, refresh }) {
               )}
               {user &&
                 user.friends.mySentRequests.map((friend) => (
-                  <div className="col ">
+                  <div className="col " key={friend._id}>
                     <div className="d-flex friend-req justify-content-between">
                       <div className="d-flex align-items-center">
                         <img

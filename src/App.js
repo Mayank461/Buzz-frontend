@@ -24,7 +24,8 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchUser();
+    fetchUser(user);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refresh]);
 
   const toggleRefresh = () => setRefresh((p) => !p);
@@ -36,8 +37,8 @@ function App() {
     });
   }, []);
 
-  async function fetchUser() {
-    setLoading(true);
+  async function fetchUser(userState) {
+    if (!userState) setLoading(true);
     let { success, user } = await checkAuth();
     success && setUser(user);
     if (user) {
