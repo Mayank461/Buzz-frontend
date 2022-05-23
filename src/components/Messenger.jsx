@@ -12,6 +12,9 @@ let room = "";
 function Messenger({ user }) {
 
   const [messageInput, setMessageInput] = useState('');
+  const [refresh, setRefresh] = useState(true);
+  const [preview, setPreview] = useState(false);
+  const [disable, setDisable] = useState(true);
   let [sendPic, setSendPic] = useState('');
   let [conversation, setConversation] = useState([]);
   const [changeUser, setChangeUser] = useState(true)
@@ -26,6 +29,8 @@ function Messenger({ user }) {
     lastname: '',
     recieverId: ""
   });
+  const toggleRefresh = () => setRefresh((p) => !p);
+
   // messenger tone setup 
   const tone = require('../tone/messenger.mp3');
   const callMySound = (src) => {
@@ -39,7 +44,7 @@ function Messenger({ user }) {
   //  selecting users in friends list  and joining room 
   const selectUser = (personId, userId, personPic, personFirstName, personLastName) => {
     setBox(true);
-
+    setTyping(false);
     let count = 0;
     setLastMsg([])
     getSpecificUser(user._id).then(res => {
@@ -73,7 +78,8 @@ function Messenger({ user }) {
     socket.emit('join_room', room);
   }
   // this is for when user recieve new message
-  socket.on("recieve_message", (data, index) => {
+  socket.on("recieve_message", (data) => {
+
     setTyping(false)
     let duplicate = data;
     if (data.senderId === user._id) { }
@@ -81,11 +87,13 @@ function Messenger({ user }) {
       duplicate.float = false;
       callMySound(tone);
     }
-    setLastMsg(data)
+    setLastMsg(data);
+    setChk(user.conversations)
     setConversation([...conversation, duplicate])
 
     setMessageInput("")
     socket.off();
+
   })
 
   // for sending chat to anyone
@@ -111,20 +119,30 @@ function Messenger({ user }) {
 
     }
     setSendPic("")
+
+    setPreview(false);
+    setDisable(true)
     socket.off();
 
   }
   const inputpic = async (e) => {
     setLoading(true);
-
+    setDisable(false)
     const file = e.target.files[0];
+    console.log(file);
     await picChat(user._id, file).then((res) => {
       setSendPic(res.data.secure_url)
+      setPreview(true);
       setLoading(false);
     })
   };
-
   const OnInputChange = (e) => {
+    if (e.target.value.length == 0) {
+      setDisable(true)
+    }
+    else {
+      setDisable(false)
+    }
 
     setMessageInput(e.target.value);
 
@@ -133,8 +151,14 @@ function Messenger({ user }) {
   socket.on("recieve_signal", (text) => {
     setTyping(true);
   })
+
+  const cancelPreview = () => {
+    setSendPic("");
+    setPreview(false);
+  }
   useEffect(() => {
     setChk(user.conversations)
+
   }, [])
 
   return (
@@ -200,7 +224,7 @@ function Messenger({ user }) {
             {box ?
               <div className='chat-box'>
                 <div
-                  className="chat "
+                  className="chat"
                   id='chatBox'
 
                 >
@@ -264,10 +288,20 @@ function Messenger({ user }) {
                 </div>
                 <div className="chatinput p-0 m-0">
                   <div className="input-group input-group-lg">
+                    {preview ?
+                      <div className="card  ms-3 mb-1 preview rounded-3">
+                        <div className="card-body position-relative">
+                          <img className='rounded-3' src={sendPic} style={{ width: '200px', height: "200px" }} />
+                          <div className='bg-danger round-img  small-round-pic d-flex justify-content-center align-items-center position-absolute top-0 end-0' onClick={cancelPreview}><i className="fa-solid text-white fa-xmark"></i></div>
 
+                        </div>
+                      </div>
+                      : ""
+                    }
 
                     <div className="d-flex w-100 mb-2">
                       <div className='d-flex w-100 position-relative'>
+
                         <input
                           type="text"
                           className="form-control rounded-pill ms-2"
@@ -286,9 +320,9 @@ function Messenger({ user }) {
                         </div>
                       </div>
 
-                      <div className="input-group-append input-group-lg ms-2 rounded-circle bg-success d-flex justify-content-center p-1 me-2" style={{ cursor: "pointer" }}>
-                        <i className="fa-solid fa-2x fa-paper-plane text-white  round-img d-flex justify-content-center align-items-center p-2" onClick={sendChat}></i>
-                      </div>
+                      <button className="border-0 ms-2 rounded-circle bg-success d-flex justify-content-center p-1 me-2" disabled={disable} onClick={sendChat} style={{ cursor: "pointer" }}>
+                        {disable ? <i className="fa-solid fa-2x fa-paper-plane  round-img d-flex justify-content-center align-items-center p-2" ></i> : <i className="fa-solid fa-2x fa-paper-plane text-white round-img d-flex justify-content-center align-items-center p-2" ></i>}
+                      </button>
 
                     </div>
 
@@ -333,6 +367,7 @@ function ChatBubble({ my, message, chatPic, name, time, pic }) {
 
           <div>{chatPic === "" ? "" :
             (<img
+              className='rounded-3'
               src={chatPic}
               alt="no pic"
               style={{

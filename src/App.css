@@ -344,3 +344,8 @@
   color: black;
   margin-left: auto;
 }
+.preview{
+  position: absolute;
+  bottom :100%;
+ 
+}
