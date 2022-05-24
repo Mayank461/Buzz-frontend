@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { API_CHAT_SENDMSG, API_CHAT_GETCHAT } from '../config';
+import { API_CHAT_SENDMSG, API_CHAT_GETROOMS } from '../config';
 
 export const sendMessage = (roomID, message) => {
   axios
@@ -12,13 +12,13 @@ export const sendMessage = (roomID, message) => {
     .catch((err) => toast.warn(err.message));
 };
 
-export const getChatByRoom = async (roomID) => {
+export const getMyRooms = async () => {
   try {
-    let res = await axios.get(`${API_CHAT_GETCHAT}/${roomID}`, {
+    let res = await axios.get(`${API_CHAT_GETROOMS}`, {
       withCredentials: true,
     });
     if (res.data.status === 200) return res.data.message;
-    toast.warn(res.data.message);
+    throw Error(res.data.message);
   } catch (error) {
     toast.warn(error.message);
   }

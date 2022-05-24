@@ -104,16 +104,12 @@ function App() {
                 />
               }
             />
-            <Route path="/chat">
-              <Route
-                index
-                element={<Messenger user={user} socket={socket} />}
-              />
-              <Route
-                path=":id"
-                element={<Messenger user={user} socket={socket} />}
-              />
-            </Route>
+
+            <Route
+              path="/chat"
+              index
+              element={<Messenger user={user} socket={socket} />}
+            />
 
             <Route
               path="/profile"

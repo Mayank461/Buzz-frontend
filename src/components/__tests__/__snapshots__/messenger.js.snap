@@ -25,7 +25,7 @@ exports[`should render Messenger Panel 1`] = `
           className="mx-4"
         >
           <div
-            class="form-group iconIninput"
+            className="form-group iconIninput"
           >
             <input
               className="form-control"
@@ -35,7 +35,7 @@ exports[`should render Messenger Panel 1`] = `
               value=""
             />
             <i
-              class="fa fa-search"
+              className="fa fa-search"
             />
           </div>
         </div>

@@ -305,3 +305,10 @@
 .iconIninput > input {
   padding-left: 30px;
 }
+
+.seen {
+  font-size: 14px !important;
+  margin: 0;
+  text-align: right;
+  color: #5441ff;
+}
