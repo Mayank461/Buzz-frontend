@@ -6,13 +6,18 @@ import io from 'socket.io-client';
 import { getSpecificUser } from '../services/userservice';
 import { API_URL } from '../config';
 import FullPageSpinner from './FullPageSpinner';
+import Voice from './Voice';
 const socketURL = API_URL.split('/api');
 const socket = io.connect(socketURL[0])
 let room = "";
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const mic = new SpeechRecognition();
+mic.continuous = true
+mic.interimResults = true
+mic.lang = 'en-IN'
 function Messenger({ user }) {
-
+  const [isListening, setIsListening] = useState(false)
   const [messageInput, setMessageInput] = useState('');
-  const [refresh, setRefresh] = useState(true);
   const [preview, setPreview] = useState(false);
   const [disable, setDisable] = useState(true);
   let [sendPic, setSendPic] = useState('');
@@ -29,7 +34,7 @@ function Messenger({ user }) {
     lastname: '',
     recieverId: ""
   });
-  const toggleRefresh = () => setRefresh((p) => !p);
+
 
   // messenger tone setup 
   const tone = require('../tone/messenger.mp3');
@@ -43,6 +48,8 @@ function Messenger({ user }) {
 
   //  selecting users in friends list  and joining room 
   const selectUser = (personId, userId, personPic, personFirstName, personLastName) => {
+    setMessageInput("");
+    setDisable(true)
     setBox(true);
     setTyping(false);
     let count = 0;
@@ -122,6 +129,8 @@ function Messenger({ user }) {
 
     setPreview(false);
     setDisable(true)
+    isListening(false)
+    setMessageInput("");
     socket.off();
 
   }
@@ -149,6 +158,7 @@ function Messenger({ user }) {
     socket.emit("typing", "Typing...")
   }
   socket.on("recieve_signal", (text) => {
+    
     setTyping(true);
   })
 
@@ -161,9 +171,39 @@ function Messenger({ user }) {
 
   }, [])
 
+
+  useEffect(() => {
+    handleListen();
+  }, [isListening])
+  const handleListen = () => {
+    if (isListening) {
+      mic.start()
+      mic.onend = () => {
+        mic.start();
+      }
+    }
+    else {
+      mic.stop();
+      mic.onend = () => {
+      }
+    }
+    mic.onstart = () => {
+    }
+    mic.onresult = e => {
+      const transcript = Array.from(e.results).map(result => result[0]).map(result => result.transcript).join('');
+      setMessageInput(transcript);
+      setDisable(false)
+      mic.onerror = e => {
+      }
+    }
+  }
+
+  const switchListening = () => setIsListening((prev) => !prev);
+
   return (
     <div>
       {loading ? <FullPageSpinner></FullPageSpinner> : ""}
+      {isListening ? <Voice listenHandle={switchListening}></Voice> : ""}
       <div className="container bg-white my-5">
         <div className="row">
           <div
@@ -173,6 +213,7 @@ function Messenger({ user }) {
             <h5 className="mb-3 mx-4 chat-list border-bottom">Messages</h5>
 
             <div style={{ height: '70vh', overflow: 'auto' }}>
+
               {user.friends.myFriends.map((data) => (
                 <div className="d-flex align-items-center my-1 bg-light   py-3" onClick={() => { selectUser(data._id, user._id, data.picture_url, data.firstname, data.lastname) }} style={{ cursor: "pointer" }}>
                   <div className="mx-4 d-flex   w-100 " >
@@ -304,23 +345,26 @@ function Messenger({ user }) {
 
                         <input
                           type="text"
-                          className="form-control rounded-pill ms-2"
+                          className="form-control rounded-pill ms-2 "
                           placeholder="Your message.."
                           autoComplete="off"
                           value={messageInput}
                           onChange={(e) => OnInputChange(e)}
 
                         />
-                        <div className='d-flex align-items-center'>
+
+                        <div className='d-flex align-items-center position-absolute end-0 mt-1  '>
+                          <div className=' ' onClick={() => switchListening()} style={{ cursor: "pointer" }}>
+                            {isListening ? <i className="fa-solid fa-2x text-danger fa-microphone bg-white" ></i> : <i className="fa-solid fa-2x text-success ps-2 bg-white fa-microphone" ></i>}
+                          </div>
                           <input
                             type="file"
-                            className="gallery position-absolute end-0 me-2"
+                            className="gallery  me-2 bg-white rounded-pill"
                             onChange={(e) => inputpic(e)}
                           />
                         </div>
                       </div>
-
-                      <button className="border-0 ms-2 rounded-circle bg-success d-flex justify-content-center p-1 me-2" disabled={disable} onClick={sendChat} style={{ cursor: "pointer" }}>
+                      <button className="border-0 ms-2  rounded-circle bg-success d-flex justify-content-center p-1 me-2" disabled={disable} onClick={sendChat} style={{ cursor: "pointer" }}>
                         {disable ? <i className="fa-solid fa-2x fa-paper-plane  round-img d-flex justify-content-center align-items-center p-2" ></i> : <i className="fa-solid fa-2x fa-paper-plane text-white round-img d-flex justify-content-center align-items-center p-2" ></i>}
                       </button>
 
