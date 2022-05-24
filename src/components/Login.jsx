@@ -19,9 +19,9 @@ export default function Login({ fetchUser }) {
     <>
       <div className="">
         <div className="container ">
-          <div className="d-flex justify-content-center align-items-center viewport-height">
-            <div className=" d-flex justify-content-center align-items-center row shadow-lg p-3 mb-5 bg-body rounded p-5 w-100 login-panel  ">
-              <div className="col-md-6">
+          <div className="d-flex justify-content-center align-items-center vh-100">
+            <div className=" d-flex justify-content-center align-items-center row shadow-lg bg-body rounded w-100 login-panel">
+              <div className="col-lg-6">
                 <div className="p-3">
                   <div className="d-flex justify-content-center">
                     <img
@@ -36,10 +36,10 @@ export default function Login({ fetchUser }) {
                   <div className="text-center font-family ">
                     <h3>your journey with us</h3>
                   </div>
-                  <div className="text-center font-family mt-5 text-muted">
+                  <div className="text-center font-family my-4 text-muted">
                     Dont't stop you're proud
                   </div>
-                  <div className="text-center mt-5">
+                  <div className="text-center mt-2">
                     <button
                       title="gAuthBtn"
                       onClick={GoogleAuth}
@@ -50,7 +50,7 @@ export default function Login({ fetchUser }) {
                   </div>
                 </div>
               </div>
-              <div className="col-md-6">
+              <div className="col-md-10 col-lg-6">
                 <form method="POST">
                   <div className="p-3">
                     <h3 className=" text-center font-family fw-bolder">
