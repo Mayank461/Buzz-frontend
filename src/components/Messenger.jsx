@@ -86,20 +86,6 @@ function Messenger({ user, socket }) {
         ...p,
         conversation: [...p.conversation, data],
       }));
-
-      rooms &&
-        setRooms(
-          rooms.map((r) => {
-            if (conversation._id === r._id) {
-              return {
-                ...r,
-                conversation: [...r.conversation, data],
-                updatedAt: data.timestamp,
-              };
-            }
-            return r;
-          })
-        );
     });
     socket.on('seen', (id) => {
       setConversation((p) => ({
@@ -114,6 +100,26 @@ function Messenger({ user, socket }) {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
+
+  useEffect(() => {
+    const updateData =
+      rooms &&
+      rooms.map((r) => {
+        if (conversation._id === r._id) {
+          return {
+            ...r,
+            conversation: conversation.conversation,
+            updatedAt:
+              conversation.conversation[conversation.conversation.length - 1]
+                .timestamp,
+          };
+        }
+        return r;
+      });
+
+    setRooms(updateData);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conversation.conversation]);
 
   function fireMessage(e) {
     e.preventDefault();
@@ -257,7 +263,7 @@ function Messenger({ user, socket }) {
                           </div>
                           <span className="my-1">
                             {Rdata.conversation[Rdata.conversation.length - 1]
-                              .message || ''}
+                              .message || '--'}
                           </span>
                         </div>
                       </div>
