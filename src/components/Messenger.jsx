@@ -192,18 +192,17 @@ function Messenger({ user, socket }) {
             <div style={{ height: '70vh', overflow: 'auto' }}>
               {rooms &&
                 rooms
-                  .filter(({ users }) => {
-                    return (
-                      users
-                        .filter(({ _id }) => _id !== user._id)
-                        .filter(({ firstname, lastname }) => {
-                          let s = search.replaceAll(' ', '');
-                          if (s.length < 2) return true;
-                          let name = firstname + lastname;
-                          return name.toLowerCase().includes(s.toLowerCase());
-                        }).length !== 0
-                    );
-                  })
+                  .filter(
+                    ({ users }) =>
+                      users.filter(({ _id, firstname, lastname }) => {
+                        if (_id === user._id) return false;
+                        let name = firstname + lastname;
+                        return name
+                          .toLowerCase()
+                          .replaceAll(' ', '')
+                          .includes(search.replaceAll(' ', '').toLowerCase());
+                      }).length !== 0
+                  )
                   .map((Rdata) => (
                     <div
                       key={Rdata._id}
@@ -274,14 +273,11 @@ function Messenger({ user, socket }) {
                 user.friends.myFriends
                   .filter(({ _id, firstname, lastname }) => {
                     if (!rooms.find((r) => r._id.includes(_id))) {
-                      if (search.length > 1) {
-                        let name = firstname + lastname;
-                        return name
-                          .toLowerCase()
-                          .replaceAll(' ', '')
-                          .includes(search.replaceAll(' ', '').toLowerCase());
-                      }
-                      return true;
+                      let name = firstname + lastname;
+                      return name
+                        .toLowerCase()
+                        .replaceAll(' ', '')
+                        .includes(search.replaceAll(' ', '').toLowerCase());
                     }
                     return false;
                   })
