@@ -93,8 +93,15 @@ export default function Feeds(user) {
     const { myPostsCount, totalPostCount } = await totalPosts(user.user._id);
     setCount(myPostsCount);
     setPagination((pre) => ({ ...pre, total: totalPostCount }));
-    setPosts([]);
-    loadPost(0, pagination.limit, setPosts, setPageLoading, setLoadDisable);
+    const newpost = result.data;
+    newpost.posted_by = {
+      firstname: userData.firstname,
+      lastname: userData.lastname,
+      picture_url: userData.picture_url,
+    };
+
+    setPosts((pre) => [newpost, ...pre]);
+    // loadPost(0, pagination.limit, setPosts, setPageLoading, setLoadDisable);
   };
 
   return (
