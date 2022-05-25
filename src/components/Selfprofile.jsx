@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import UserlistWidget from './UserlistWidget';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Spinner from './Spinner';
 import { postData, profilePicChange } from '../services/userservice';
-import FullPageSpinner from './FullPageSpinner';
+import FullPageSpinner from '../components/FullPageSpinner';
 
 export default function Selfprofile({ user, suggestFriend, refresh }) {
   const [loading, setLoading] = useState(false);
@@ -27,9 +26,9 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
 
   const updateData = async (e) => {
     e.preventDefault();
-    setLoading(true);
+
     let { error, message } = await postData(user._id, inputs, refresh);
-    setLoading(false);
+
     if (error) return toast.warning(message);
     refresh();
     toast.success(message);
@@ -55,19 +54,18 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
 
     setLoading(true);
     let { error, message } = await profilePicChange(user._id, file, refresh);
-
     setLoading(false);
     if (error) return toast.error(message);
-    refresh();
-    toast.success(message);
-  };
 
-  if (loading) {
-    return <FullPageSpinner />;
-  }
+    setInputs({ ...inputs, picture_url: URL.createObjectURL(file) });
+
+    toast.success(message);
+    setLoading(false);
+  };
 
   return (
     <>
+      {loading && <FullPageSpinner />}
       <div style={{ backgroundColor: '#F0F2F5' }}>
         <div className="container">
           <div className="row my-md-3">
@@ -109,9 +107,6 @@ export default function Selfprofile({ user, suggestFriend, refresh }) {
                       ? user.firstname + ' ' + user.lastname
                       : 'Edit Profile'}
                   </h1>
-                </div>
-                <div className="d-flex align-items-center">
-                  {loading && <Spinner />}
                 </div>
               </div>
 

@@ -14,7 +14,8 @@ import FullPageSpinner from './components/FullPageSpinner';
 import Messenger from './components/Messenger';
 import { io } from 'socket.io-client';
 import { SERVER_URL } from './config';
-const socket = io(SERVER_URL);
+import { toast } from 'react-toastify';
+export const socket = io(SERVER_URL);
 
 function App() {
   const [user, setUser] = useState(false);
@@ -23,13 +24,21 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchUser();
+    fetchUser(user);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refresh]);
 
   const toggleRefresh = () => setRefresh((p) => !p);
 
-  async function fetchUser() {
-    setLoading(true);
+  useEffect(() => {
+    socket.on('notification', (data) => {
+      toast(data);
+      toggleRefresh();
+    });
+  }, []);
+
+  async function fetchUser(userState) {
+    if (!userState) setLoading(true);
     let { success, user } = await checkAuth();
     success && setUser(user);
     if (user) {
@@ -95,16 +104,12 @@ function App() {
                 />
               }
             />
-            <Route path="/chat">
-              <Route
-                index
-                element={<Messenger user={user} socket={socket} />}
-              />
-              <Route
-                path=":id"
-                element={<Messenger user={user} socket={socket} />}
-              />
-            </Route>
+
+            <Route
+              path="/chat"
+              index
+              element={<Messenger user={user} socket={socket} />}
+            />
 
             <Route
               path="/profile"

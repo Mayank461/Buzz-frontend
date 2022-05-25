@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { socket } from '../App';
 import {
   APICOMMENT_URL,
   APILIKE_URL,
@@ -85,7 +86,12 @@ export const reportPost = (data, setPosts, posts) => {
     .catch((err) => console.log(err.message));
 };
 
-export const publishPost = async (user_id, data) => {
+export const publishPost = async (
+  user_id,
+  data,
+  notifyToList = [],
+  myname = ''
+) => {
   try {
     if (!user_id) throw new Error('cant find user id');
     if (!data.files && data.title === '')
@@ -105,6 +111,8 @@ export const publishPost = async (user_id, data) => {
     data.title === '' && delete newPost['caption'];
 
     await axios.post(APINEWPOST, newPost, { withCredentials: true });
+    notifyToList && socket.emit('notification_newPost', notifyToList, myname);
+
     return { success: 'done' };
   } catch (error) {
     return { error: error.message };

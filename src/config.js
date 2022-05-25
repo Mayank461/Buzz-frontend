@@ -31,4 +31,4 @@ export const API_PROFILE_UPLOAD = `https://api.cloudinary.com/v1_1/buzzz-social-
 export const API_SEARCH_USER = `${API_URL}/users/search/all`;
 
 export const API_CHAT_SENDMSG = `${API_URL}/chat/send`;
-export const API_CHAT_GETCHAT = `${API_URL}/chat/getByRoomID`;
+export const API_CHAT_GETROOMS = `${API_URL}/chat/getMyRooms`;

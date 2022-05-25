@@ -1,40 +1,118 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { getChatByRoom, sendMessage } from '../services/chatServices';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { getMyRooms } from '../services/chatServices';
 
 function Messenger({ user, socket }) {
   const [messageInput, setMessageInput] = useState('');
-  const [ChatRoom, setChatRoom] = useState({
-    roomID: undefined,
-    senderName: undefined,
-    receiverName: undefined,
-    receiverPic: undefined,
-    status: 'Offline',
-  });
   const [conversation, setConversation] = useState([]);
+  const [onlineUsersList, setOnlineUsersList] = useState([]);
+  const [search, setSearch] = useState('');
+  const [rooms, setRooms] = useState(null);
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const params = useParams();
+  const inRoom = useRef();
 
   useEffect(() => {
-    if (ChatRoom.roomID) {
-      const recID = ChatRoom.roomID.split('-').find((id) => id !== user._id);
-      let status = user.friends.myFriends.find(
-        ({ _id }) => _id === recID
-      ).online;
+    paramsCheckData();
 
-      setChatRoom((prev) => ({
-        ...prev,
-        status: status ? 'Online' : 'Offline',
-      }));
-    }
-    getRoomChats();
+    return () => {
+      socket.emit('leave', inRoom.current);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ChatRoom.roomID, user._id, user.friends.myFriends]);
+  }, [searchParams]);
+
+  useEffect(() => {
+    conversation._id && socket.emit('join', conversation._id, user._id);
+    inRoom.current = conversation._id;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conversation._id, socket]);
+
+  async function getallrooms() {
+    const data = await getMyRooms();
+    setRooms(data);
+    return data;
+  }
+
+  function genRoomID(id, id2) {
+    if (id > id2) return `${id}-${id2}`;
+    return `${id2}-${id}`;
+  }
+
+  async function paramsCheckData() {
+    const rooms = await getallrooms();
+    setRooms(rooms);
+
+    const recipient = searchParams.get('recipient');
+    if (!recipient || recipient === user._id) return;
+    if (conversation?._id?.includes(recipient)) return;
+
+    const roomID = genRoomID(user._id, recipient);
+
+    if (rooms.length > 0) {
+      const chatObj = rooms.find(({ _id }) => _id === roomID);
+      if (chatObj) return setConversation(chatObj);
+    }
+
+    const myFriends = user.friends.myFriends;
+    if (myFriends.length > 0) {
+      const RDetail = myFriends.find(({ _id }) => _id === recipient);
+      const { _id, firstname, lastname, picture_url } = RDetail;
+      return setConversation({
+        _id: roomID,
+        users: [
+          {
+            _id: user._id,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            picture_url: user.picture_url,
+          },
+          { _id, firstname, lastname, picture_url },
+        ],
+        conversation: [],
+      });
+    }
+  }
+
+  useEffect(() => {
+    const onlineList = user.friends.myFriends
+      .map((x) => x.online === true && x._id)
+      .filter(Boolean);
+    setOnlineUsersList(onlineList);
+  }, [user.friends.myFriends]);
 
   useEffect(() => {
     socket.on('receive-message', (data) => {
-      setConversation((prev) => [...prev, data]);
+      setConversation((p) => ({
+        ...p,
+        conversation: [...p.conversation, data],
+      }));
+
+      rooms &&
+        setRooms(
+          rooms.map((r) => {
+            if (conversation._id === r._id) {
+              return {
+                ...r,
+                conversation: [...r.conversation, data],
+                updatedAt: data.timestamp,
+              };
+            }
+            return r;
+          })
+        );
     });
+    socket.on('seen', (id) => {
+      setConversation((p) => ({
+        ...p,
+        conversation: [
+          ...p.conversation.map((x) => ({
+            ...x,
+            seen: id === user._id ? id === user._id : x.seen,
+          })),
+        ],
+      }));
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
 
   function fireMessage(e) {
@@ -43,50 +121,17 @@ function Messenger({ user, socket }) {
       timestamp: Date.now(),
       message: messageInput,
       sentBy: user._id,
+      seen: false,
     };
-    socket.emit('send-message', messageData, ChatRoom.roomID);
-    sendMessage(ChatRoom.roomID, messageInput);
-    setConversation((prev) => [...prev, messageData]);
+    socket.emit('send-message', messageData, conversation._id);
+    // sendMessage(conversation._id, messageInput);
+
+    // setConversation((p) => ({
+    //   ...p,
+    //   conversation: [...p.conversation, messageData],
+    // }));
+
     setMessageInput('');
-  }
-
-  async function getRoomChats() {
-    if (params.id) {
-      const data = await getChatByRoom(params.id);
-      const receiver = data.users.find((u) => u._id !== user._id);
-      setChatRoom({
-        roomID: params.id,
-        senderName: user.firstname + ' ' + user.lastname,
-        receiverName: receiver.firstname + ' ' + receiver.lastname,
-        receiverPic: receiver?.picture_url,
-      });
-
-      setConversation(data.conversation);
-      socket.emit('join', params.id);
-    }
-  }
-
-  async function openChatRoom(myID, userID, receiverName, receiverPic) {
-    let roomID;
-
-    if (myID > userID) {
-      roomID = `${myID}-${userID}`;
-    } else {
-      roomID = `${userID}-${myID}`;
-    }
-
-    if (ChatRoom.roomID === roomID) return;
-
-    setChatRoom({
-      roomID,
-      senderName: user.firstname + ' ' + user.lastname,
-      receiverName,
-      receiverPic,
-    });
-
-    socket.emit('join', roomID);
-    setConversation([]);
-    navigate(`/chat/${roomID}`);
   }
 
   const scrollRef = useRef(null);
@@ -99,6 +144,24 @@ function Messenger({ user, socket }) {
     scrollToBottom();
   }, [conversation]);
 
+  function toTime(date) {
+    let todayData = new Date()
+      .toLocaleTimeString([], {
+        day: '2-digit',
+        month: 'short',
+      })
+      .substring(0, 8);
+    let data = new Date(date).toLocaleTimeString([], {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true,
+      day: '2-digit',
+      month: 'short',
+    });
+
+    return data.split(todayData).join('');
+  }
+
   return (
     <div>
       <div className="container bg-white my-4">
@@ -107,70 +170,167 @@ function Messenger({ user, socket }) {
             className="col-md-4 pt-4 px-0"
             style={{ borderRight: '5px solid #ecebeb' }}
           >
-            <h2 className="mb-3 mx-4">Messages</h2>
-
+            <h2 className="mb-3 mx-4">Messenger</h2>
+            <div className="mx-4">
+              <div className="form-group iconIninput mb-2">
+                <input
+                  type="text"
+                  className="form-control "
+                  placeholder="Search your friends"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+                <i className="fa fa-search"></i>
+              </div>
+            </div>
             <div style={{ height: '70vh', overflow: 'auto' }}>
-              {user.friends.myFriends.map((data) => (
-                <div
-                  key={data._id}
-                  className={`d-flex align-items-center my-1 py-3 pointer ${
-                    ChatRoom.roomID?.split('-').includes(data._id) && 'bg-light'
-                  }`}
-                  onClick={() =>
-                    openChatRoom(
-                      user._id,
-                      data._id,
-                      `${data.firstname} ${data.lastname}`,
-                      data.picture_url
-                    )
-                  }
-                >
-                  <div className="mx-4 d-flex w-100">
-                    <div className="img-state">
-                      <div
-                        className={`${data.online ? 'online' : 'offline'}`}
-                      ></div>
-                      <img
-                        src={
-                          data.picture_url
-                            ? data.picture_url
-                            : require('../images/blank-profile.png')
-                        }
-                        className="card-img-top round-img"
-                        alt="..."
-                        style={{
-                          width: '60px',
-                          height: '60px',
-                        }}
-                      />
-                    </div>
+              {rooms &&
+                rooms
+                  .filter(({ users }) => {
+                    return (
+                      users
+                        .filter(({ _id }) => _id !== user._id)
+                        .filter(({ firstname, lastname }) => {
+                          let s = search.replaceAll(' ', '');
+                          if (s.length < 2) return true;
+                          let name = firstname + lastname;
+                          return name.toLowerCase().includes(s.toLowerCase());
+                        }).length !== 0
+                    );
+                  })
+                  .map((Rdata) => (
+                    <div
+                      key={Rdata._id}
+                      className={`d-flex align-items-center my-1 py-3 pointer ${
+                        conversation._id === Rdata._id && 'bg-light'
+                      }`}
+                      onClick={() => {
+                        navigate({
+                          pathname: '/chat',
+                          search: `?recipient=${
+                            Rdata.users.find((x) => x._id !== user._id)._id
+                          }`,
+                        });
+                      }}
+                    >
+                      <div className="mx-4 d-flex w-100 align-items-center">
+                        <div className="img-state">
+                          <div
+                            className={`${
+                              onlineUsersList.includes(
+                                Rdata._id
+                                  .split('-')
+                                  .find((x) => x !== user._id)
+                                  .toString()
+                              )
+                                ? 'online'
+                                : 'offline'
+                            }`}
+                          ></div>
+                          <img
+                            src={
+                              Rdata.users.find(({ _id }) => _id !== user._id)
+                                .picture_url ||
+                              require('../images/blank-profile.png')
+                            }
+                            className="card-img-top round-img"
+                            alt="..."
+                            style={{
+                              width: '60px',
+                              height: '60px',
+                            }}
+                          />
+                        </div>
 
-                    <div className="d-flex w-100 flex-column justify-content-center">
-                      <div className="d-flex justify-content-between">
-                        <h5 className="m-0">
-                          {data.firstname + ' ' + data.lastname}
-                        </h5>
-                        {/* <span className="font-weight-bolder">4:30pm</span> */}
+                        <div className="d-flex w-100 flex-column justify-content-center">
+                          <div className="d-flex justify-content-between">
+                            <h5 className="m-0">
+                              {Rdata.users.find(({ _id }) => _id !== user._id)
+                                .firstname +
+                                ' ' +
+                                Rdata.users.find(({ _id }) => _id !== user._id)
+                                  .lastname}
+                            </h5>
+                            <span className="font-weight-bolder">
+                              {toTime(Rdata.updatedAt)}
+                            </span>
+                          </div>
+                          <span className="my-1">
+                            {Rdata.conversation[Rdata.conversation.length - 1]
+                              .message || ''}
+                          </span>
+                        </div>
                       </div>
-                      <span className="my-1">
-                        {data.online ? 'Online' : 'Offline'}
-                      </span>
                     </div>
-                  </div>
-                </div>
-              ))}
+                  ))}
+
+              {rooms &&
+                user.friends.myFriends
+                  .filter(({ _id }) => !rooms.find((r) => r._id.includes(_id)))
+                  .map((Fdata) => (
+                    <div
+                      key={Fdata._id}
+                      className={`d-flex align-items-center my-1 py-3 pointer ${
+                        conversation?._id?.includes(Fdata._id) && 'bg-light'
+                      }`}
+                      onClick={() => {
+                        navigate({
+                          pathname: '/chat',
+                          search: `?recipient=${Fdata._id}`,
+                        });
+                      }}
+                    >
+                      <div className="mx-4 d-flex w-100 align-items-center">
+                        <div className="img-state">
+                          <div
+                            className={`${
+                              onlineUsersList.includes(Fdata._id)
+                                ? 'online'
+                                : 'offline'
+                            }`}
+                          ></div>
+                          <img
+                            src={
+                              Fdata.picture_url ||
+                              require('../images/blank-profile.png')
+                            }
+                            className="card-img-top round-img"
+                            alt="..."
+                            style={{
+                              width: '60px',
+                              height: '60px',
+                            }}
+                          />
+                        </div>
+
+                        <div className="d-flex w-100 flex-column justify-content-center">
+                          <div className="d-flex justify-content-between">
+                            <h5 className="m-0">
+                              {Fdata.firstname + ' ' + Fdata.lastname}
+                            </h5>
+                            <span className="font-weight-bolder">
+                              {/* {toTime(Fdata.updatedAt)} */}
+                            </span>
+                          </div>
+                          <span className="my-1">Start chat </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
             </div>
           </div>
 
-          <div className="col-md-8 bg-light p-0 flex-column d-flex justify-content-between">
-            {ChatRoom.roomID && (
+          <div
+            className="col-md-8 bg-light p-0 flex-column d-flex justify-content-between"
+            style={{ minHeight: '80vh' }}
+          >
+            {conversation._id && (
               <>
-                <div className="col-12 bg-white px-4 py-2 d-flex align-items-center snackbar">
+                <div className="col-12 bg-white px-4 py-2 d-flex align-'items-center snackbar">
                   <img
                     src={
-                      ChatRoom.receiverPic
-                        ? ChatRoom.receiverPic
-                        : require('../images/blank-profile.png')
+                      conversation.users.find(({ _id }) => _id !== user._id)
+                        .picture_url || require('../images/blank-profile.png')
                     }
                     className="card-img-top round-img"
                     alt="..."
@@ -181,8 +341,21 @@ function Messenger({ user, socket }) {
                     }}
                   />
                   <div className="d-flex flex-column">
-                    <h5 className="m-0">{ChatRoom.receiverName}</h5>
-                    <p className="m-0">{ChatRoom.status}</p>
+                    <h5 className="m-0">
+                      {conversation.users.find(({ _id }) => _id !== user._id)
+                        .firstname +
+                        ' ' +
+                        conversation.users.find(({ _id }) => _id !== user._id)
+                          .lastname}
+                    </h5>
+                    <p className="m-0">
+                      {onlineUsersList.includes(
+                        conversation.users.find(({ _id }) => _id !== user._id)
+                          ._id
+                      )
+                        ? 'Online'
+                        : 'Offline'}
+                    </p>
                   </div>
                 </div>
                 <div className="px-4">
@@ -190,37 +363,37 @@ function Messenger({ user, socket }) {
                     className="chat p-2"
                     style={{ overflow: 'auto', maxHeight: 'calc(70vh - 55px)' }}
                   >
-                    {conversation.map((msg) => {
+                    {conversation.conversation.map((msg) => {
                       let time = new Date(msg.timestamp).toLocaleTimeString(
                         [],
                         {
                           hour: 'numeric',
                           minute: 'numeric',
                           hour12: true,
+                          day: '2-digit',
+                          month: 'short',
                         }
                       );
-                      if (msg.sentBy === user._id)
-                        return (
-                          <ChatBubble
-                            key={msg.timestamp}
-                            my={true}
-                            message={msg.message}
-                            name={ChatRoom.senderName}
-                            picture_url={user.picture_url}
-                            time={time}
-                          />
-                        );
-                      else
-                        return (
-                          <ChatBubble
-                            key={msg.timestamp}
-                            my={false}
-                            message={msg.message}
-                            name={ChatRoom.receiverName}
-                            picture_url={ChatRoom.receiverPic}
-                            time={time}
-                          />
-                        );
+
+                      return (
+                        <ChatBubble
+                          key={msg.timestamp}
+                          my={msg.sentBy === user._id}
+                          message={msg.message}
+                          name={
+                            conversation.users.find(
+                              ({ _id }) => _id === msg.sentBy
+                            )?.firstname
+                          }
+                          picture_url={
+                            conversation.users.find(
+                              ({ _id }) => _id === msg.sentBy
+                            )?.picture_url
+                          }
+                          time={time}
+                          seen={msg.seen}
+                        />
+                      );
                     })}
 
                     <div ref={scrollRef} />
@@ -259,43 +432,51 @@ function Messenger({ user, socket }) {
 
 export default Messenger;
 
-function ChatBubble({ my, message, name, picture_url, time }) {
+function ChatBubble({ my, message, name, picture_url, time, seen }) {
   if (!picture_url) picture_url = require('../images/blank-profile.png');
 
   return (
-    <div className={`d-flex my-2 chatbubble ${my && 'myMessage'}`}>
-      {!my && (
-        <img
-          src={picture_url}
-          className="card-img-top round-img"
-          alt="pic"
-          style={{
-            width: '40px',
-            height: '40px',
-          }}
-        />
-      )}
-      <div className="flex-column px-2 my-1 w-100">
-        <div className="d-flex rowalign">
-          {!my && <h6 className="mb-2">{name}</h6>}
-          <span className="time">{time}</span>
-          {my && <h6 className="mb-2">{name}</h6>}
+    <>
+      <div className={`d-flex my-2 chatbubble ${my && 'myMessage'}`}>
+        {!my && (
+          <img
+            src={picture_url}
+            className="card-img-top round-img"
+            alt="pic"
+            style={{
+              width: '40px',
+              height: '40px',
+            }}
+          />
+        )}
+        <div className="flex-column px-2 my-1 w-100">
+          <div className="d-flex rowalign">
+            {!my && <h6 className="mb-2">{name}</h6>}
+            <span className="time">{time}</span>
+            {my && <h6 className="mb-2">{name}</h6>}
+          </div>
+          <div className="d-flex bubbletext">
+            <p className="m-0">{message}</p>
+          </div>
+          {seen && (
+            <p className={`seen ${!my && 'd-none'}`}>
+              seen
+              <i className="fa fa-check ms-2" aria-hidden="true"></i>
+            </p>
+          )}
         </div>
-        <div className="d-flex bubbletext">
-          <p className="m-0">{message}</p>
-        </div>
+        {my && (
+          <img
+            src={picture_url}
+            className="card-img-top round-img"
+            alt="pic"
+            style={{
+              width: '40px',
+              height: '40px',
+            }}
+          />
+        )}
       </div>
-      {my && (
-        <img
-          src={picture_url}
-          className="card-img-top round-img"
-          alt="pic"
-          style={{
-            width: '40px',
-            height: '40px',
-          }}
-        />
-      )}
-    </div>
+    </>
   );
 }
