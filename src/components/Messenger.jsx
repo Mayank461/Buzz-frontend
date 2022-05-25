@@ -272,7 +272,19 @@ function Messenger({ user, socket }) {
 
               {rooms &&
                 user.friends.myFriends
-                  .filter(({ _id }) => !rooms.find((r) => r._id.includes(_id)))
+                  .filter(({ _id, firstname, lastname }) => {
+                    if (!rooms.find((r) => r._id.includes(_id))) {
+                      if (search.length > 1) {
+                        let name = firstname + lastname;
+                        return name
+                          .toLowerCase()
+                          .replaceAll(' ', '')
+                          .includes(search.replaceAll(' ', '').toLowerCase());
+                      }
+                      return true;
+                    }
+                    return false;
+                  })
                   .map((Fdata) => (
                     <div
                       key={Fdata._id}
