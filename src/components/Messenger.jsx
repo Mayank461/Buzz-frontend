@@ -24,6 +24,7 @@ function Messenger({ user, socket }) {
   useEffect(() => {
     conversation._id && socket.emit('join', conversation._id, user._id);
     inRoom.current = conversation._id;
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversation._id, socket]);
 
@@ -87,7 +88,7 @@ function Messenger({ user, socket }) {
         conversation: [...p.conversation, data],
       }));
     });
-    socket.on('seen', (id) => {
+    socket.on('seen', async (id) => {
       setConversation((p) => ({
         ...p,
         conversation: [
@@ -97,6 +98,9 @@ function Messenger({ user, socket }) {
           })),
         ],
       }));
+
+      const rooms = await getallrooms();
+      setRooms(rooms);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
@@ -203,6 +207,13 @@ function Messenger({ user, socket }) {
                           .includes(search.replaceAll(' ', '').toLowerCase());
                       }).length !== 0
                   )
+                  .map((x) => {
+                    let unread = x.conversation.filter(
+                      (msg) => msg.seen !== true && msg.sentBy !== user._id
+                    ).length;
+
+                    return { ...x, unread };
+                  })
                   .map((Rdata) => (
                     <div
                       key={Rdata._id}
@@ -261,8 +272,11 @@ function Messenger({ user, socket }) {
                             </span>
                           </div>
                           <span className="my-1">
-                            {Rdata.conversation[Rdata.conversation.length - 1]
-                              .message || '--'}
+                            {Rdata.unread > 0 && Rdata.unread + ' new messages'}
+
+                            {Rdata.unread === 0 &&
+                              Rdata.conversation[Rdata.conversation.length - 1]
+                                .message}
                           </span>
                         </div>
                       </div>
