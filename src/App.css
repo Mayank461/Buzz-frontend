@@ -71,6 +71,13 @@
   width: 85vh;
   
 }
+div::-webkit-scrollbar {
+  width: 7px;
+}
+div::-webkit-scrollbar-thumb{
+  background-image: linear-gradient(to top, #00b09b, #96c93d);
+  border-radius: 25px;
+}
 .scroll {
   height: 50%;
   overflow-y: auto;
@@ -107,6 +114,10 @@
 .mid {
   margin-top: -80px;
   margin-left: 50px;
+}
+.videoPanel{
+  width: 100%;
+
 }
 
 .friend-req {

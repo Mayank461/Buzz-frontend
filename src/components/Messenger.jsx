@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ScrollToBottom from 'react-scroll-to-bottom';
 import { picChat } from '../services/userservice';
 import { Howl } from 'howler';
@@ -16,7 +16,8 @@ mic.continuous = true
 mic.interimResults = true
 mic.lang = 'en-IN'
 function Messenger({ user }) {
-  const [isListening, setIsListening] = useState(false)
+  const [isListening, setIsListening] = useState(false);
+  const [onVideo,setOnVideo] = useState(false)
   const [messageInput, setMessageInput] = useState('');
   const [preview, setPreview] = useState(false);
   const [disable, setDisable] = useState(true);
@@ -28,6 +29,8 @@ function Messenger({ user }) {
   const [chk, setChk] = useState([]);
   const [loading, setLoading] = useState(false);
   const [typing, setTyping] = useState(false)
+  const videoRef = useRef(null)
+const photoRef = useRef(null)
   const [personDetails, setPersonDetails] = useState({
     profile_pic: "",
     firstname: "",
@@ -175,6 +178,7 @@ function Messenger({ user }) {
   useEffect(() => {
     handleListen();
   }, [isListening])
+
   const handleListen = () => {
     if (isListening) {
       mic.start()
@@ -200,6 +204,45 @@ function Messenger({ user }) {
 
   const switchListening = () => setIsListening((prev) => !prev);
 
+// ==================================================video calling============================================
+  const getVideo = ()=>{
+    socket.emit('video-calling',user);
+    
+  }
+ socket.on('accept-video',(data)=>{
+  setChangeUser(false)
+  setOnVideo(true);
+  navigator.mediaDevices.getUserMedia({video:{width:1200,height:1800}})
+  .then(stream=>{
+       let video =videoRef.current;
+       video.srcObject =stream;
+       video.play();
+  }).catch(err=>{console.log(err);})
+ })
+  const declineCall = ()=>{
+    socket.emit('disconnect-call',user);
+  
+  }
+  socket.on('disconnection-both',(data)=>{
+    let v = document.getElementsByClassName('videoBox')[0];
+    v.srcObject.getTracks()[0].stop();
+    setOnVideo(false);
+    setChangeUser(true)
+   })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   return (
     <div>
       {loading ? <FullPageSpinner></FullPageSpinner> : ""}
@@ -211,6 +254,7 @@ function Messenger({ user }) {
             style={{ borderRight: '5px solid #ecebeb' }}
           >
             <h5 className="mb-3 mx-4 chat-list border-bottom">Messages</h5>
+          
 
             <div style={{ height: '70vh', overflow: 'auto' }}>
 
@@ -238,10 +282,11 @@ function Messenger({ user }) {
                         {data.firstname + ' ' + data.lastname}
                       </h5>
                       <span className="my-1 ms-2">{
-                        data._id === lastMsg.recieverId || data._id === lastMsg.senderId ? lastMsg.message :
+                        data._id === lastMsg.recieverId || data._id === lastMsg.senderId ? lastMsg.message.substring(0,25) :
                           chk.map((e) => {
                             if (data._id === e.recieverId) {
-                              return e.chats[e.chats.length - 1].message
+                              const str = e.chats[e.chats.length - 1].message
+                             return str.substring(0,25);
                             }
                           })}</span>
                     </div>
@@ -271,7 +316,9 @@ function Messenger({ user }) {
                 >
                   <div className='shadow-lg p-2 bg-body rounded head'>
                     {personDetails.firstname === "" ? "" :
-                      <div className='d-flex '>
+                       
+                      <div className='d-flex justify-content-between align-items-center'>
+                        <div className='d-flex '>
                         {personDetails.profile_pic === undefined ?
                           <i className="fa-solid fa-user fa-2x card-img-top medium-round-pic round-img bg-warning d-flex justify-content-center align-items-center"></i>
                           :
@@ -279,11 +326,20 @@ function Messenger({ user }) {
                         }
 
                         <div className='d-flex align-items-center  fw-bolder ms-2 fs-5'>{personDetails.firstname + " " + personDetails.lastname}</div>
-
+                        </div>
+                        
+                        <div><i className="fa-solid fa-2x fa-video me-3 text-white float-end" onClick={getVideo}></i></div>
+                       
                       </div>
                     }
 
                   </div>
+                  <div className='position-relative'>
+                    {onVideo? <video ref={videoRef} className="videoBox videoPanel"></video>:""}
+                 
+                    {onVideo?<h1 className='position-absolute text-white bottom-0 start-50' onClick={declineCall}><i className="fa-solid fa-phone-slash"></i></h1>:""} 
+                  </div>
+               
 
                   {changeUser ?
                     <ScrollToBottom className='scroll-bottom p-2'>
@@ -301,9 +357,7 @@ function Messenger({ user }) {
                             pic={
                               element.float ? user.picture_url : personDetails.profile_pic
                             }
-
-                          />
-
+                          />  
                         </>
 
                       })}
@@ -332,7 +386,7 @@ function Messenger({ user }) {
                     {preview ?
                       <div className="card  ms-3 mb-1 preview rounded-3">
                         <div className="card-body position-relative">
-                          <img className='rounded-3' src={sendPic} style={{ width: '200px', height: "200px" }} />
+                          <img className='rounded-3' ref={photoRef} src={sendPic} style={{ width: '200px', height: "200px" }} />
                           <div className='bg-danger round-img  small-round-pic d-flex justify-content-center align-items-center position-absolute top-0 end-0' onClick={cancelPreview}><i className="fa-solid text-white fa-xmark"></i></div>
 
                         </div>
@@ -377,6 +431,7 @@ function Messenger({ user }) {
                 <img src='https://ssl.gstatic.com/dynamite/images/new_chat_room_1x.png' className='' />
                 <h3>Select a conversation</h3>
               </div>}
+
 
           </div>
         </div>
