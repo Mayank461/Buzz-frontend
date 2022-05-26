@@ -82,12 +82,20 @@ function Messenger({ user, socket }) {
   }, [user.friends.myFriends]);
 
   useEffect(() => {
-    socket.on('receive-message', (data) => {
+    socket.on('refreshRoomsData', async () => {
+      const rooms = await getallrooms();
+      setRooms(rooms);
+    });
+
+    socket.on('receive-message', async (data) => {
       setConversation((p) => ({
         ...p,
         conversation: [...p.conversation, data],
       }));
+      const rooms = await getallrooms();
+      setRooms(rooms);
     });
+
     socket.on('seen', async (id) => {
       setConversation((p) => ({
         ...p,
@@ -98,9 +106,6 @@ function Messenger({ user, socket }) {
           })),
         ],
       }));
-
-      const rooms = await getallrooms();
-      setRooms(rooms);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
@@ -125,7 +130,7 @@ function Messenger({ user, socket }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversation.conversation]);
 
-  function fireMessage(e) {
+  async function fireMessage(e) {
     e.preventDefault();
     const messageData = {
       timestamp: Date.now(),
@@ -277,9 +282,12 @@ function Messenger({ user, socket }) {
                             </span>
                           </div>
                           <span className="my-1">
-                            {Rdata.unread > 0 && Rdata.unread + ' new messages'}
+                            {Rdata.unread > 0 &&
+                              conversation._id !== Rdata._id &&
+                              Rdata.unread + ' new messages'}
 
-                            {Rdata.unread === 0 &&
+                            {(Rdata.unread === 0 ||
+                              conversation._id === Rdata._id) &&
                               Rdata.conversation[Rdata.conversation.length - 1]
                                 .message}
                           </span>
