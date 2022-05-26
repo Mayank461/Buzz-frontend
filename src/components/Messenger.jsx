@@ -207,6 +207,11 @@ function Messenger({ user, socket }) {
                           .includes(search.replaceAll(' ', '').toLowerCase());
                       }).length !== 0
                   )
+                  .sort(
+                    (x, y) =>
+                      new Date(y.updatedAt).getTime() -
+                      new Date(x.updatedAt).getTime()
+                  )
                   .map((x) => {
                     let unread = x.conversation.filter(
                       (msg) => msg.seen !== true && msg.sentBy !== user._id
