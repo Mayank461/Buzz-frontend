@@ -132,6 +132,7 @@ function Messenger({ user, socket }) {
 
   async function fireMessage(e) {
     e.preventDefault();
+    if (messageInput.replaceAll(' ', '').length < 1) return;
     const messageData = {
       timestamp: Date.now(),
       message: messageInput,
