@@ -21,7 +21,7 @@ mic.interimResults = true;
 mic.lang = "en-IN";
 function Messenger({ user }) {
   const [isListening, setIsListening] = useState(false);
-  const [stream, setStream] = useState(null);
+  const [peerid, setPeerid] = useState('');
   const [onVideo, setOnVideo] = useState(false);
   const [messageInput, setMessageInput] = useState("");
   const [preview, setPreview] = useState(false);
@@ -95,7 +95,7 @@ function Messenger({ user }) {
     } else {
       room = userId + "-" + personId;
     }
-    socket.emit("join_room", room);
+    socket.emit("join_room", {room:room,peerid:peerId});
   };
   // this is for when user recieve new message
   socket.on("recieve_message", (data) => {
@@ -113,6 +113,11 @@ function Messenger({ user }) {
     setMessageInput("");
     socket.off();
   });
+
+  socket.on('getPeerId',(data)=>{
+    setPeerid(data.peerid);
+    console.log(data);
+  })
 
   // for sending chat to anyone
   const sendChat = (e) => {
@@ -317,8 +322,8 @@ function Messenger({ user }) {
 
   return (
     <div>
-      {peerId}
-      <input type="text" value={remotePeerIdValue} onChange={e => setRemotePeerIdValue(e.target.value)} />
+      {/* {peerId}
+      <input type="text" value={remotePeerIdValue} onChange={e => setRemotePeerIdValue(e.target.value)} /> */}
       {loading ? <FullPageSpinner></FullPageSpinner> : ""}
       {isListening ? <Voice listenHandle={switchListening}></Voice> : ""}
       <div className="container bg-white my-5">
@@ -424,7 +429,7 @@ function Messenger({ user }) {
                           <i
                             className="fa-solid fa-2x fa-video me-3 text-white float-end"
                             // onClick={getVideo}
-                            onClick={() => call(remotePeerIdValue)}
+                            onClick={() => call(peerid)}
                           ></i>
                         </div>
                       </div>
