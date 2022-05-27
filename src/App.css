@@ -116,9 +116,12 @@ div::-webkit-scrollbar-thumb{
   margin-left: 50px;
 }
 .videoPanel{
-  width: 100%;
-  
+  width: 100%; 
 
+}
+.myVideo{
+  padding: 10px;
+  border-radius: 25px;
 }
 
 .friend-req {

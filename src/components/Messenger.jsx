@@ -411,7 +411,7 @@ function Messenger({ user }) {
                       ></video>
                       <video
                       ref={currentUserVideoRef}
-                      className="position-absolute top-0 start-0 w-25 myVideoBox"
+                      className="position-absolute top-0 start-0 w-25 myVideoBox myVideo"
                     ></video>
                     </>
                     ) : (
