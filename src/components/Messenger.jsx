@@ -89,6 +89,7 @@ function Messenger({ user }) {
       lastname: personLastName,
       recieverId: personId,
     });
+
     if (personId > userId) {
       room = personId + "-" + userId;
     } else {
@@ -430,20 +431,23 @@ function Messenger({ user }) {
                     )}
                   </div>
                   <div className="position-relative">
+                    <div className="position-relative ">
                     {onVideo ? (
                       <>
                       <video
-                        ref={currentUserVideoRef}
+                        ref={remoteVideoRef}
                         className="videoBox videoPanel"
                       ></video>
                       <video
-                      ref={remoteVideoRef}
-                      className=""
+                      ref={currentUserVideoRef}
+                      className="position-absolute top-0 start-0 w-25"
                     ></video>
                     </>
                     ) : (
                       ""
                     )}
+                    </div>
+                   
 
                     {onVideo ? (
                       <h1
