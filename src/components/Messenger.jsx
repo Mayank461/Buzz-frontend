@@ -43,6 +43,10 @@ function Messenger({ user }) {
     lastname: "",
     recieverId: "",
   });
+  const [peerId, setPeerId] = useState('');
+  const remoteVideoRef = useRef(null);
+  const currentUserVideoRef = useRef(null);
+  const peerInstance = useRef(null);
 
   // messenger tone setup
   const tone = require("../tone/messenger.mp3");
@@ -224,53 +228,19 @@ function Messenger({ user }) {
   const switchListening = () => setIsListening((prev) => !prev);
 
   // ==================================================video calling============================================
-  // let peerConn;
-  // const getVideo = () => {
-      
-  //     navigator.mediaDevices
-  //     .getUserMedia({ video:true})
-  //     .then((stream) => {
-  //       socket.emit("video-calling", stream);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // };
+  
 
-  // socket.on("accept-video", (data) => {
-  //   setChangeUser(false);
-  //   setOnVideo(true);
-    
-  //   navigator.mediaDevices
-  //     .getUserMedia({ video:true})
-  //     .then((stream) => {
-      
-  //       let video = videoRef.current;
-  //       video.srcObject = stream;
-
-  //       video.play();
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // });
-
-  // const declineCall = () => {
-  //   socket.emit("disconnect-call", user);
-  // };
-  // socket.on("disconnection-both", (data) => {
-  //   let video = document.getElementsByClassName("videoBox")[0];
-  //   console.log(video.srcObject.getTracks()[0]);
-  //   video.srcObject.getTracks()[0].stop();
-  //   setOnVideo(false);
-  //   setChangeUser(true);
-  // });
-
-  const [peerId, setPeerId] = useState('');
-  const [remotePeerIdValue, setRemotePeerIdValue] = useState('');
-  const remoteVideoRef = useRef(null);
-  const currentUserVideoRef = useRef(null);
-  const peerInstance = useRef(null);
+  const declineCall = () => {
+    socket.emit("disconnect-call", user);
+  };
+  socket.on("disconnection-both", (data) => {
+    let userVideo = document.getElementsByClassName("remoteVideoBox")[0];
+    let myvideo = document.getElementsByClassName("myVideoBox")[0];
+    userVideo.srcObject.getTracks()[0].stop();
+    myvideo.srcObject.getTracks()[0].stop();
+    setOnVideo(false);
+    setChangeUser(true);
+  });
 
   useEffect(() => {
     const peer = new Peer();
@@ -304,7 +274,7 @@ function Messenger({ user }) {
     setOnVideo(true);
     var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
-    getUserMedia({ video: true, audio: true }, (mediaStream) => {
+    getUserMedia({ video: true}, (mediaStream) => {
 
       currentUserVideoRef.current.srcObject = mediaStream;
       currentUserVideoRef.current.play();
@@ -318,12 +288,8 @@ function Messenger({ user }) {
     });
   }
 
-
-
   return (
     <div>
-      {/* {peerId}
-      <input type="text" value={remotePeerIdValue} onChange={e => setRemotePeerIdValue(e.target.value)} /> */}
       {loading ? <FullPageSpinner></FullPageSpinner> : ""}
       {isListening ? <Voice listenHandle={switchListening}></Voice> : ""}
       <div className="container bg-white my-5">
@@ -441,11 +407,11 @@ function Messenger({ user }) {
                       <>
                       <video
                         ref={remoteVideoRef}
-                        className="videoBox videoPanel"
+                        className="remoteVideoBox videoPanel"
                       ></video>
                       <video
                       ref={currentUserVideoRef}
-                      className="position-absolute top-0 start-0 w-25"
+                      className="position-absolute top-0 start-0 w-25 myVideoBox"
                     ></video>
                     </>
                     ) : (
@@ -457,7 +423,7 @@ function Messenger({ user }) {
                     {onVideo ? (
                       <h1
                         className="position-absolute text-white bottom-0 start-50"
-                        // onClick={declineCall}
+                        onClick={declineCall}
                       >
                         <i className="fa-solid text-danger fa-phone-slash"></i>
                       </h1>
