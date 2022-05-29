@@ -43,7 +43,7 @@ export default function Login({ fetchUser }) {
                     <button
                       title="gAuthBtn"
                       onClick={GoogleAuth}
-                      className="btn btn-lg google-button-clr rounded-pill  bg-transparent font-family font-size fw-bolder "
+                      className="btn btn-lg google-button-clr rounded-pill  bg-transparent font-family font-size-log fw-bolder "
                     >
                       Sign In with Google
                     </button>
@@ -75,12 +75,12 @@ export default function Login({ fetchUser }) {
                       title="password"
                     />
 
-                    <div className="text-center d-grid gap-1 mt-5">
+                    <div className="text-center d-grid gap-1 mt-3">
                       <button
                         title="login-btn"
                         type="submit"
                         onClick={LocalAuth}
-                        className="btn btn-lg px-5  mt-3 rounded-pill signup-btn-clr font-family fw-bolder font-size"
+                        className="btn btn-lg px-5  mt-3 rounded-pill signup-btn-clr font-family fw-bolder font-size-log"
                       >
                         Sign In
                       </button>

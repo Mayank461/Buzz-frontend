@@ -294,10 +294,7 @@ function Messenger({ user }) {
     setOnVideo(true);
       var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
-      getUserMedia({ video: {
-        width: 720,
-        height: 1280
-    }}, (mediaStream) => {
+      getUserMedia({ video: true}, (mediaStream) => {
         currentUserVideoRef.current.srcObject = mediaStream;
         currentUserVideoRef.current.play();
         call.answer(mediaStream)
@@ -317,10 +314,7 @@ function Messenger({ user }) {
     setOnVideo(true);
     var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
-    getUserMedia({ video: {
-        width: 720,
-        height: 1280
-    }}, (mediaStream) => {
+    getUserMedia({ video: true}, (mediaStream) => {
 
       currentUserVideoRef.current.srcObject = mediaStream;
       currentUserVideoRef.current.play();
