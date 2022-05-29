@@ -137,7 +137,6 @@ function Messenger({ user }) {
   // ===================================================== this is for getting peer id for video call [start] =================================================
   socket.on('getPeerId',(data)=>{
     setPeerid(data.peerid);
-    console.log(data);
   })
   // ===================================================== this is for getting peer id for video call [end] =================================================
 
@@ -265,9 +264,20 @@ function Messenger({ user }) {
   };
   socket.on("disconnection-both", (data) => {
     let userVideo = document.getElementsByClassName("remoteVideoBox")[0];
-    let myvideo = document.getElementsByClassName("myVideoBox")[0];
-    userVideo.srcObject.getTracks()[0].stop();
-    myvideo.srcObject.getTracks()[0].stop();
+    let myvideo = document.getElementsByClassName("myVideoBox")[0];    
+    if(userVideo.srcObject === null)
+    {
+      myvideo.srcObject.getTracks()[0].stop();
+    }
+    else if(myvideo.srcObject===null)
+    {
+      userVideo.srcObject.getTracks()[0].stop(); 
+    }
+    else{
+      userVideo.srcObject.getTracks()[0].stop();
+      myvideo.srcObject.getTracks()[0].stop();
+    }
+
     setOnVideo(false);
     setChangeUser(true);
   });
@@ -284,7 +294,10 @@ function Messenger({ user }) {
     setOnVideo(true);
       var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
-      getUserMedia({ video: true,audio:true }, (mediaStream) => {
+      getUserMedia({ video: {
+        width: 720,
+        height: 1280
+    }}, (mediaStream) => {
         currentUserVideoRef.current.srcObject = mediaStream;
         currentUserVideoRef.current.play();
         call.answer(mediaStream)
@@ -304,7 +317,10 @@ function Messenger({ user }) {
     setOnVideo(true);
     var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
-    getUserMedia({ video: true,audio:true}, (mediaStream) => {
+    getUserMedia({ video: {
+        width: 720,
+        height: 1280
+    }}, (mediaStream) => {
 
       currentUserVideoRef.current.srcObject = mediaStream;
       currentUserVideoRef.current.play();
@@ -324,7 +340,7 @@ function Messenger({ user }) {
     <div>
       {loading ? <FullPageSpinner></FullPageSpinner> : ""}
       {isListening ? <Voice listenHandle={switchListening}></Voice> : ""}
-      <div className="container bg-white my-5">
+      <div className="container bg-white margin-top">
         <div className="row">
           {columnOne?
            <div
@@ -410,7 +426,7 @@ function Messenger({ user }) {
                 ) : (
                   <div className="d-flex justify-content-between align-items-center">
                     <div className="d-flex ">
-                      <div className=" align-items-center back-btn" onClick={backbtn}><i className="fa-solid fa-arrow-left-long fa-2x me-2 text-white"></i></div>
+                      <div className=" align-items-center back-btn" onClick={backbtn}><i className="fa-solid fa-arrow-left fa-2x me-2 text-white"></i></div>
                       {personDetails.profile_pic === undefined ? (
                         <i className="fa-solid fa-user fa-2x card-img-top medium-round-pic round-img bg-warning d-flex justify-content-center align-items-center"></i>
                       ) : (
@@ -430,8 +446,7 @@ function Messenger({ user }) {
 
                     <div>
                       <i
-                        className="fa-solid fa-2x fa-video me-3 text-white float-end"
-                        // onClick={getVideo}
+                        className="fa-solid font-size fa-video me-3 text-white float-end"
                         onClick={() => call(peerid)}
                       ></i>
                     </div>
@@ -458,19 +473,19 @@ function Messenger({ user }) {
                
 
                 {onVideo ? (
-                  <h1
-                    className="position-absolute text-white bottom-0 start-50"
+                  <div
+                    className="decline text-white"
                     onClick={declineCall}
                   >
-                    <i className="fa-solid text-danger fa-phone-slash"></i>
-                  </h1>
+                    <i className="fa-solid  fa-phone-slash call-end"></i>
+                  </div>
                 ) : (
                   ""
                 )}
               </div>
-
+            
               {changeUser ? (
-                <ScrollToBottom className="scroll-bottom p-2">
+                <ScrollToBottom className="scroll-bottom little-padding ">
                   {conversation.map((element) => {
                     return (
                       <>
@@ -551,21 +566,21 @@ function Messenger({ user }) {
                         onChange={(e) => OnInputChange(e)}
                       />
 
-                      <div className="d-flex align-items-center position-absolute end-0 mt-1  ">
+                      <div className="d-flex align-items-center position-absolute end-0 slick-margin ">
                         <div
-                          className=" "
+                          className=" d-flex align-items-center"
                           onClick={() => switchListening()}
                           style={{ cursor: "pointer" }}
                         >
                           {isListening ? (
-                            <i className="fa-solid fa-2x text-danger fa-microphone bg-white"></i>
+                            <i className="fa-solid font-size text-danger fa-microphone bg-white"></i>
                           ) : (
-                            <i className="fa-solid fa-2x text-success ps-2 bg-white fa-microphone"></i>
+                            <i className="fa-solid font-size text-success ps-2 bg-white fa-microphone"  ></i>
                           )}
                         </div>
                         <input
                           type="file"
-                          className="gallery  me-2 bg-white rounded-pill"
+                          className="gallery  me-2 bg-white"
                           onChange={(e) => inputpic(e)}
                         />
                       </div>
@@ -590,7 +605,7 @@ function Messenger({ user }) {
             </div>
           </div>
         ) : (
-          <div className="d-flex justify-content-center flex-column empty-conversation">
+          <div className=" justify-content-center flex-column empty-conversation ">
             <img
               src="https://ssl.gstatic.com/dynamite/images/new_chat_room_1x.png"
               className=""
@@ -643,13 +658,10 @@ function ChatBubble({ my, message, chatPic, name, time, pic }) {
               ""
             ) : (
               <img
-                className="rounded-3"
+                className="rounded-3 chat-img"
                 src={chatPic}
                 alt="no pic"
-                style={{
-                  width: "300px",
-                  height: "300px",
-                }}
+              
               />
             )}
           </div>

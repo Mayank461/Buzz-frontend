@@ -34,6 +34,7 @@
   clip-path: circle();
 }
 .empty-conversation{
+  display: flex;
   position: absolute;
   top:30%;
   left: 30%;
@@ -205,6 +206,8 @@ div::-webkit-scrollbar-thumb{
   cursor: pointer;
   width: 50px;
   transition: 0.5s;
+  border-bottom-right-radius: 50px;
+    border-top-right-radius: 50px;
 }
 .gallery::-webkit-file-upload-button {
   visibility: hidden;
@@ -264,14 +267,95 @@ div::-webkit-scrollbar-thumb{
 .row-span {
   grid-row: 1 / span 2;
 }
+
+.margin-top{
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+}
+.little-padding {
+  padding: 0.5rem;
+}
+.font-size{
+  font-size: 30px;
+}
+.slick-margin{
+  margin-top: 5px;
+}
+.call-end{
+  background: red;
+  clip-path: circle;
+  border-radius: 50%;
+  padding: 25px;
+  font-size: 20px;
+}
+.decline{
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+}
+.chat-img{
+  width: 300px;
+  height: 300px;
+}
 @media screen and (max-width: 700px) {
   .sticky {
     display: none;
     position: static;
     top: 0;
   }
+  .font-size{
+    font-size: 25px;
+  }
+  .chat-img{
+    width: 200px;
+    height: 200px;
+  }
+  .logo {
+    height: 62px;
+    width: 85px;
+}
+.voice-assistant {
+  height: 36vh;
+  width: 39vh;
+}
+.color-overlay{
+  height: 36vh;
+  width: 39vh;
+}
+  .chat-list {
+    
+    font-size: 6vw;
+}
+  .decline{
+    
+    left: 44%;
+  }
+  .slick-margin{
+    margin-top: 10px;
+  }
+  .gallery::before {
+    content: '\f03e';
+    font-family: fontAwesome;
+    font-size: 25px;
+    color: green;
+    display: inline-block;
+    user-select: none;
+    margin-left: 15px;
+    
+  }
+  .scroll-bottom {
+    height: 72vh;
+    width: 100%;
+}
   .viewport-height {
     height: 100%;
+  }
+
+  .empty-conversation{
+  display: none;
+  }
+  .little-padding {
+    padding: 0px;
   }
   #logo-img {
     background-image: url('../public/TO_THE_NEW_Logo.jpg');
@@ -288,6 +372,11 @@ div::-webkit-scrollbar-thumb{
   }
   .colTwo{
     display: none;
+  }
+
+  .margin-top{
+    margin-top: 0;
+    margin-bottom: 0;
   }
 }
 

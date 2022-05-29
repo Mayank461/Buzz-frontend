@@ -1,30 +1,24 @@
 import React, { useEffect } from 'react'
 
 export default function Voice({listenHandle}) {
-    // useEffect(()=>{
-    //     console.log(listenHandle);
-    // },[])
-
-    const switchListen =()=>{
-        console.log("hii");
-    }
+  
   return (
     <div className=''>
          
         <div style={{
-        zIndex: 1000,
-        display: 'flex',
-        alignItems: 'center',
-        height: '55vh',
-        width: '85vh',
-        position: 'fixed',
-        top: "20%",
-        left: "25%",
-        right: 0,
-        backgroundColor:'white',
-        justifyContent:"center"
+         zIndex: 1000,
+         display: 'flex',
+         alignItems: 'center',
+         height: '10vh',
+         width:"7%",
+         position: 'fixed',
+         top: "40%",
+         left: "50%",
+         right: 0,
+         background: '#fff',
+         justifyContent:"center"
       }}
-      className="shadow-lg p-3 mb-5 bg-body rounded"
+      className="shadow-lg  mb-5 bg-body rounded"
       >
           <div>
            <img src='https://cdn.dribbble.com/users/2790075/screenshots/5571604/microphone_ui_animation.gif' className='voice-assistant' />
