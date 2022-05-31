@@ -23,8 +23,8 @@ function Messenger({ user }) {
   const [isListening, setIsListening] = useState(false);
   const [isAnswered, setIsAnswered] = useState(true);
   const [peerid, setPeerid] = useState("");
-  const [uniquePeer,setUniquePeer] = useState('');
-  const [userEnd,setUserEnd] = useState({})
+  const [uniquePeer, setUniquePeer] = useState("");
+  const [userEnd, setUserEnd] = useState({});
   const [answerCall, setAnswerCall] = useState(false);
   const [onVideo, setOnVideo] = useState(false);
   const [messageInput, setMessageInput] = useState("");
@@ -47,7 +47,7 @@ function Messenger({ user }) {
     lastname: "",
     recieverId: "",
   });
-  
+
   const [myPeerId, setMyPeerId] = useState("");
   const remoteVideoRef = useRef(null);
   const currentUserVideoRef = useRef(null);
@@ -116,7 +116,7 @@ function Messenger({ user }) {
     } else {
       room = userId + "-" + personId;
     }
-    socket.emit("join_room", { room: room, peerid: peerid ,mypeer:myPeerId });
+    socket.emit("join_room", { room: room, peerid: peerid, mypeer: myPeerId });
   };
 
   //  ================================================== selecting users in friends list  and joining room [end] ========================================
@@ -141,18 +141,17 @@ function Messenger({ user }) {
 
   // ===================================================== this is for getting peer id for video call [start] =================================================
   socket.on("getPeerId", (data) => {
-    data.peerid= myPeerId;
+    data.peerid = myPeerId;
     setPeerid(data.mypeer);
-    socket.emit("transfer",data)
+    socket.emit("transfer", data);
   });
-  socket.on('takeAway',(data)=>{
-    if(data.peerid === myPeerId){
-      setUniquePeer(data.mypeer)
+  socket.on("takeAway", (data) => {
+    if (data.peerid === myPeerId) {
+      setUniquePeer(data.mypeer);
+    } else {
+      setUniquePeer(data.peerid);
     }
-    else{
-      setUniquePeer(data.peerid)
-    }
-  })
+  });
   // ===================================================== this is for getting peer id for video call [end] =================================================
 
   // =================================================== for sending chat to anyone [start]===========================================================
@@ -321,42 +320,43 @@ function Messenger({ user }) {
   const call = () => {
     socket.emit("video-calling", user);
   };
-  const acceptVideoCall = (remotePeerId)=>{
-    
-    setAnswerCall(false)
-     setOnVideo(true);
-     setIsAnswered(true);
-    var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+  const acceptVideoCall = (remotePeerId) => {
+    setAnswerCall(false);
+    setOnVideo(true);
+    setIsAnswered(true);
+    var getUserMedia =
+      navigator.getUserMedia ||
+      navigator.webkitGetUserMedia ||
+      navigator.mozGetUserMedia;
 
-    getUserMedia({ video: true}, (mediaStream) => {
-
+    getUserMedia({ video: true }, (mediaStream) => {
       currentUserVideoRef.current.srcObject = mediaStream;
       currentUserVideoRef.current.play();
 
-      const call = peerInstance.current.call(remotePeerId, mediaStream)
+      const call = peerInstance.current.call(remotePeerId, mediaStream);
 
-      call.on('stream', (remoteStream) => {
-        remoteVideoRef.current.srcObject = remoteStream
+      call.on("stream", (remoteStream) => {
+        remoteVideoRef.current.srcObject = remoteStream;
         remoteVideoRef.current.play();
+       
+      
       });
     });
-
-  }
+  };
 
   socket.on("accept-video", (data) => {
-    setUserEnd(data)
+    setUserEnd(data);
     setAnswerCall(true);
     setChangeUser(false);
     setIsAnswered(false);
   });
 
-  const declineIncommingCall = ()=>{
+  const declineIncommingCall = () => {
     setOnVideo(false);
     setChangeUser(true);
     setIsAnswered(true);
-    setAnswerCall(false)
-
-  }
+    setAnswerCall(false);
+  };
   // ==================================================video calling [end] ============================================
 
   return (
@@ -439,215 +439,237 @@ function Messenger({ user }) {
           ) : (
             ""
           )}
-        
-        {columnTwo?
-        <div className="col-md-8 px-0 bg-light   bg-danger justify-content-between  position-relative" style={{height:'85vh'}}>
-        {box ? (
-          <div className="chat-box" style={{height:"100%"}}>
-            {isAnswered?<div className="chat" id="chatBox">
-              <div className="shadow-lg p-2 bg-body rounded head">
-                {personDetails.firstname === "" ? (
-                  ""
-                ) : (
-                  <div className="d-flex justify-content-between align-items-center">
-                    <div className="d-flex ">
-                      <div
-                        className=" align-items-center back-btn"
-                        onClick={backbtn}
-                      >
-                        <i className="fa-solid fa-arrow-left fa-2x me-2 text-white"></i>
+
+          {columnTwo ? (
+            <div
+              className="col-md-8 px-0 bg-light   bg-danger justify-content-between  position-relative"
+              style={{ height: "85vh" }}
+            >
+              {box ? (
+                <div className="chat-box" style={{ height: "100%" }}>
+                  {isAnswered ? (
+                    <div className="chat" id="chatBox">
+                      <div className="shadow-lg p-2 bg-body rounded head">
+                        {personDetails.firstname === "" ? (
+                          ""
+                        ) : (
+                          <div className="d-flex justify-content-between align-items-center">
+                            <div className="d-flex ">
+                              <div
+                                className=" align-items-center back-btn"
+                                onClick={backbtn}
+                              >
+                                <i className="fa-solid fa-arrow-left fa-2x me-2 text-white"></i>
+                              </div>
+                              {personDetails.profile_pic === undefined ? (
+                                <i className="fa-solid fa-user fa-2x card-img-top medium-round-pic round-img bg-warning d-flex justify-content-center align-items-center"></i>
+                              ) : (
+                                <img
+                                  src={personDetails.profile_pic}
+                                  alt=""
+                                  className="card-img-top round-img medium-round-pic"
+                                />
+                              )}
+
+                              <div className="d-flex align-items-center  fw-bolder ms-2 fs-5">
+                                {personDetails.firstname +
+                                  " " +
+                                  personDetails.lastname}
+                              </div>
+                            </div>
+
+                            <div  style={{ cursor: "pointer" }}>
+                              <i
+                                className="fa-solid font-size fa-video me-3 text-white float-end"
+                                onClick={() => call()}
+                              ></i>
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      {personDetails.profile_pic === undefined ? (
-                        <i className="fa-solid fa-user fa-2x card-img-top medium-round-pic round-img bg-warning d-flex justify-content-center align-items-center"></i>
-                      ) : (
-                        <img
-                          src={personDetails.profile_pic}
-                          alt=""
-                          className="card-img-top round-img medium-round-pic"
-                        />
-                      )}
+                      <div></div>
 
-                      <div className="d-flex align-items-center  fw-bolder ms-2 fs-5">
-                        {personDetails.firstname +
-                          " " +
-                          personDetails.lastname}
-                      </div>
-                    </div>
+                      <div className="position-relative" >
+                        <div className="position-relative " style={{height:"100%"}}>
+                          {onVideo ? (
+                            <>
+                              <video
+                              allow=''
+                                ref={remoteVideoRef}
+                                className="remoteVideoBox videoPanel"
+                              ></video>
+                              <video
 
-                    <div>
-                      <i
-                        className="fa-solid font-size fa-video me-3 text-white float-end"
-                        onClick={() => call()}
-                      ></i>
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div></div>
-            
-
-              <div className="position-relative">
-                <div className="position-relative ">
-                  {onVideo ? (
-                    <>
-                      <video
-                        ref={remoteVideoRef}
-                        className="remoteVideoBox videoPanel"
-                      ></video>
-                      <video
-                        ref={currentUserVideoRef}
-                        className="position-absolute top-0 start-0 w-25 myVideoBox myVideo"
-                      ></video>
-                    </>
-                  ) : (
-                    ""
-                  )}
-                </div>
-
-                {onVideo ? (
-    <div className=' d-flex justify-content-center align-items-center mt-4 decline' onClick={declineCall}><i className="fa-solid  fa-phone-slash call-end bg-danger round-img big-round-pic d-flex justify-content-center align-items-center text-white"></i></div>
-
-                ) : (
-                  ""
-                )}
-              </div>
-
-              {changeUser ? (
-                <ScrollToBottom className="scroll-bottom little-padding ">
-                  {conversation.map((element) => {
-                    return (
-                      <>
-                        <ChatBubble
-                          my={element.float}
-                          message={element.message}
-                          typing={typing}
-                          chatPic={"pic" in element ? element.pic : ""}
-                          name={
-                            element.float
-                              ? `You`
-                              : personDetails.firstname +
-                                " " +
-                                personDetails.lastname
-                          }
-                          time={element.time}
-                          pic={
-                            element.float
-                              ? user.picture_url
-                              : personDetails.profile_pic
-                          }
-                        />
-                      </>
-                    );
-                  })}
-                  {typing ? (
-                    <ChatBubble
-                      my={false}
-                      message="Typing..."
-                      chatPic=""
-                      name={
-                        personDetails.firstname +
-                        " " +
-                        personDetails.lastname
-                      }
-                      time=""
-                      pic={personDetails.profile_pic}
-                    />
-                  ) : (
-                    ""
-                  )}
-                </ScrollToBottom>
-              ) : (
-                ""
-              )}
-            </div>:""}
-            
-            {answerCall ? <AnswerCall callingUser={userEnd} receieved={acceptVideoCall} remoteId={peerid} myPeer={uniquePeer} declineIncommingCall={declineIncommingCall}></AnswerCall> : ""}
-
-            <div className="chatinput p-0 m-0">
-              <div className="input-group input-group-lg">
-                {preview ? (
-                  <div className="card  ms-3 mb-1 preview rounded-3">
-                    <div className="card-body position-relative">
-                      <img
-                        className="rounded-3"
-                        ref={photoRef}
-                        src={sendPic}
-                        style={{ width: "200px", height: "200px" }}
-                      />
-                      <div
-                        className="bg-danger round-img  small-round-pic d-flex justify-content-center align-items-center position-absolute top-0 end-0"
-                        onClick={cancelPreview}
-                      >
-                        <i className="fa-solid text-white fa-xmark"></i>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  ""
-                )}
-                {changeUser ? (
-                  <div className="d-flex w-100 mb-2 mt-3">
-                    <div className="d-flex w-100 position-relative">
-                      <input
-                        type="text"
-                        className="form-control rounded-pill ms-2 "
-                        placeholder="Your message.."
-                        autoComplete="off"
-                        value={messageInput}
-                        onChange={(e) => OnInputChange(e)}
-                      />
-
-                      <div className="d-flex align-items-center position-absolute end-0 slick-margin ">
-                        <div
-                          className=" d-flex align-items-center"
-                          onClick={() => switchListening()}
-                          style={{ cursor: "pointer" }}
-                        >
-                          {isListening ? (
-                            <i className="fa-solid font-size text-danger fa-microphone bg-white"></i>
+                                ref={currentUserVideoRef}
+                                className="position-absolute top-0 start-0 w-25 myVideoBox myVideo"
+                              ></video>
+                            </>
                           ) : (
-                            <i className="fa-solid font-size text-success ps-2 bg-white fa-microphone"></i>
+                            ""
                           )}
                         </div>
-                        <input
-                          type="file"
-                          className="gallery  me-2 bg-white"
-                          onChange={(e) => inputpic(e)}
-                        />
+
+                        {onVideo ? (
+                          <div
+                            className=" d-flex justify-content-center align-items-center mt-4 decline"
+                            onClick={declineCall}
+                          >
+                            <i className="fa-solid  fa-phone-slash call-end bg-danger round-img medium-round-pic d-flex justify-content-center align-items-center text-white"></i>
+                          </div>
+                        ) : (
+                          ""
+                        )}
                       </div>
-                    </div>
-                    <button
-                      className="border-0 ms-2  rounded-circle bg-success d-flex justify-content-center p-1 me-2"
-                      disabled={disable}
-                      onClick={sendChat}
-                      style={{ cursor: "pointer" }}
-                    >
-                      {disable ? (
-                        <i className="fa-solid fa-2x fa-paper-plane  round-img d-flex justify-content-center align-items-center p-2"></i>
+
+                      {changeUser ? (
+                        <ScrollToBottom className="scroll-bottom little-padding ">
+                          {conversation.map((element) => {
+                            return (
+                              <>
+                                <ChatBubble
+                                  my={element.float}
+                                  message={element.message}
+                                  typing={typing}
+                                  chatPic={"pic" in element ? element.pic : ""}
+                                  name={
+                                    element.float
+                                      ? `You`
+                                      : personDetails.firstname +
+                                        " " +
+                                        personDetails.lastname
+                                  }
+                                  time={element.time}
+                                  pic={
+                                    element.float
+                                      ? user.picture_url
+                                      : personDetails.profile_pic
+                                  }
+                                />
+                              </>
+                            );
+                          })}
+                          {typing ? (
+                            <ChatBubble
+                              my={false}
+                              message="Typing..."
+                              chatPic=""
+                              name={
+                                personDetails.firstname +
+                                " " +
+                                personDetails.lastname
+                              }
+                              time=""
+                              pic={personDetails.profile_pic}
+                            />
+                          ) : (
+                            ""
+                          )}
+                        </ScrollToBottom>
                       ) : (
-                        <i className="fa-solid fa-2x fa-paper-plane text-white round-img d-flex justify-content-center align-items-center p-2"></i>
+                        ""
                       )}
-                    </button>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+
+                  {answerCall ? (
+                    <AnswerCall
+                      callingUser={userEnd}
+                      receieved={acceptVideoCall}
+                      remoteId={peerid}
+                      myPeer={uniquePeer}
+                      declineIncommingCall={declineIncommingCall}
+                    ></AnswerCall>
+                  ) : (
+                    ""
+                  )}
+
+                  <div className="chatinput p-0 m-0">
+                    <div className="input-group input-group-lg">
+                      {preview ? (
+                        <div className="card  ms-3 mb-1 preview rounded-3">
+                          <div className="card-body position-relative">
+                            <img
+                              className="rounded-3"
+                              ref={photoRef}
+                              src={sendPic}
+                              style={{ width: "200px", height: "200px" }}
+                            />
+                            <div
+                              className="bg-danger round-img  small-round-pic d-flex justify-content-center align-items-center position-absolute top-0 end-0"
+                              onClick={cancelPreview}
+                            >
+                              <i className="fa-solid text-white fa-xmark"></i>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                      {changeUser ? (
+                        <div className="d-flex w-100 mb-2 mt-3">
+                          <div className="d-flex w-100 position-relative">
+                            <input
+                              type="text"
+                              className="form-control rounded-pill ms-2 "
+                              placeholder="Your message.."
+                              autoComplete="off"
+                              value={messageInput}
+                              onChange={(e) => OnInputChange(e)}
+                            />
+
+                            <div className="d-flex align-items-center position-absolute end-0 slick-margin ">
+                              <div
+                                className=" d-flex align-items-center"
+                                onClick={() => switchListening()}
+                                style={{ cursor: "pointer" }}
+                              >
+                                {isListening ? (
+                                  <i className="fa-solid font-size text-danger fa-microphone bg-white"></i>
+                                ) : (
+                                  <i className="fa-solid font-size text-success ps-2 bg-white fa-microphone"></i>
+                                )}
+                              </div>
+                              <input
+                                type="file"
+                                className="gallery  me-2 bg-white"
+                                onChange={(e) => inputpic(e)}
+                              />
+                            </div>
+                          </div>
+                          <button
+                            className="border-0 ms-2  rounded-circle bg-success d-flex justify-content-center p-1 me-2"
+                            disabled={disable}
+                            onClick={sendChat}
+                            style={{ cursor: "pointer" }}
+                          >
+                            {disable ? (
+                              <i className="fa-solid fa-2x fa-paper-plane  round-img d-flex justify-content-center align-items-center p-2"></i>
+                            ) : (
+                              <i className="fa-solid fa-2x fa-paper-plane text-white round-img d-flex justify-content-center align-items-center p-2"></i>
+                            )}
+                          </button>
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                    </div>
                   </div>
-                ) : (
-                  ""
-                )}
-              </div>
+                </div>
+              ) : (
+                <div className=" justify-content-center flex-column empty-conversation ">
+                  <img
+                    src="https://ssl.gstatic.com/dynamite/images/new_chat_room_1x.png"
+                    className=""
+                  />
+                  <h3>Select a conversation</h3>
+                </div>
+              )}
             </div>
-          </div>
-        ) : (
-          <div className=" justify-content-center flex-column empty-conversation ">
-            <img
-              src="https://ssl.gstatic.com/dynamite/images/new_chat_room_1x.png"
-              className=""
-            />
-            <h3>Select a conversation</h3>
-          </div>
-        )}
-      </div>
-        :""}
-            
-           
+          ) : (
+            ""
+          )}
         </div>
       </div>
     </div>
