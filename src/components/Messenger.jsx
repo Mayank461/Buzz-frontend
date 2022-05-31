@@ -1,6 +1,8 @@
+import Peer from 'peerjs';
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getMyRooms } from '../services/chatServices';
+import CallNotify from './CallNotify';
 
 function Messenger({ user, socket }) {
   const [messageInput, setMessageInput] = useState('');
@@ -178,9 +180,72 @@ function Messenger({ user, socket }) {
     return data.split(todayData).join('');
   }
 
+  const [myPeerId, setMyPeerId] = useState('');
+  const currentUserVideoRef = useRef(null);
+  const remoteVideoRef = useRef(null);
+  const peerInstance = useRef(null);
+  const input = useRef(null);
+  useEffect(() => {
+    const peer = new Peer();
+
+    peer.on('open', (id) => {
+      setMyPeerId(id);
+    });
+
+    peer.on('call', (call) => {
+      var getUserMedia =
+        navigator.getUserMedia ||
+        navigator.webkitGetUserMedia ||
+        navigator.mozGetUserMedia;
+
+      getUserMedia({ video: true }, (mediaStream) => {
+        currentUserVideoRef.current.srcObject = mediaStream;
+        currentUserVideoRef.current.play();
+        call.answer(mediaStream);
+        call.on('stream', function (remoteStream) {
+          remoteVideoRef.current.srcObject = remoteStream;
+          remoteVideoRef.current.play();
+        });
+      });
+    });
+
+    peerInstance.current = peer;
+  }, []);
+
+  const call = (remotePeerId) => {
+    var getUserMedia =
+      navigator.getUserMedia ||
+      navigator.webkitGetUserMedia ||
+      navigator.mozGetUserMedia;
+
+    getUserMedia({ video: true }, (mediaStream) => {
+      currentUserVideoRef.current.srcObject = mediaStream;
+      currentUserVideoRef.current.play();
+
+      const call = peerInstance.current.call(remotePeerId, mediaStream);
+
+      call.on('stream', (remoteStream) => {
+        remoteVideoRef.current.srcObject = remoteStream;
+        remoteVideoRef.current.play();
+      });
+    });
+  };
+
   return (
     <div>
       <div className="container bg-white my-4">
+        <h4>my peer id is {myPeerId}</h4>
+        <input type="text" ref={input} />
+        <input
+          type="button"
+          onClick={() => call(input.current.value)}
+          value="submit"
+        />
+        {input?.current?.value}
+
+        <video ref={currentUserVideoRef} />
+        <video ref={remoteVideoRef} />
+
         <div className="row shadow">
           <div
             className="col-md-4 pt-4 px-0"
@@ -369,35 +434,49 @@ function Messenger({ user, socket }) {
             {conversation._id && (
               <>
                 <div className="col-12 bg-white px-4 py-2 d-flex align-'items-center snackbar">
-                  <img
-                    src={
-                      conversation.users.find(({ _id }) => _id !== user._id)
-                        .picture_url || require('../images/blank-profile.png')
-                    }
-                    className="card-img-top round-img"
-                    alt="..."
-                    style={{
-                      width: '40px',
-                      height: '40px',
-                      marginRight: '15px',
-                    }}
-                  />
-                  <div className="d-flex flex-column">
-                    <h5 className="m-0">
-                      {conversation.users.find(({ _id }) => _id !== user._id)
-                        .firstname +
-                        ' ' +
+                  <div className="col d-flex">
+                    <img
+                      src={
                         conversation.users.find(({ _id }) => _id !== user._id)
-                          .lastname}
-                    </h5>
-                    <p className="m-0">
-                      {onlineUsersList.includes(
-                        conversation.users.find(({ _id }) => _id !== user._id)
-                          ._id
-                      )
-                        ? 'Online'
-                        : 'Offline'}
-                    </p>
+                          .picture_url || require('../images/blank-profile.png')
+                      }
+                      className="card-img-top round-img"
+                      alt="..."
+                      style={{
+                        width: '40px',
+                        height: '40px',
+                        marginRight: '15px',
+                      }}
+                    />
+                    <div className="d-flex flex-column">
+                      <h5 className="m-0">
+                        {conversation.users.find(({ _id }) => _id !== user._id)
+                          .firstname +
+                          ' ' +
+                          conversation.users.find(({ _id }) => _id !== user._id)
+                            .lastname}
+                      </h5>
+                      <p className="m-0">
+                        {onlineUsersList.includes(
+                          conversation.users.find(({ _id }) => _id !== user._id)
+                            ._id
+                        )
+                          ? 'Online'
+                          : 'Offline'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="col d-flex justify-content-end align-items-center">
+                    <div
+                      className="vc"
+                      onClick={() =>
+                        navigate(
+                          `/call?recipient=${searchParams.get('recipient')}`
+                        )
+                      }
+                    >
+                      <i className="fa fa-video-camera"></i>
+                    </div>
                   </div>
                 </div>
                 <div className="px-4">

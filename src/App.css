@@ -312,3 +312,77 @@
   text-align: right;
   color: #5441ff;
 }
+
+.callNotify {
+  /* width: 400px; */
+  min-height: 20px;
+  background-color: white;
+  padding: 15px;
+  box-sizing: content-box;
+  right: 10px;
+  top: 10px;
+  position: absolute;
+  box-shadow: 5px 5px 20px rgb(219, 219, 219);
+  border-radius: 20px;
+  z-index: 100;
+}
+
+.callNotify img {
+  border-radius: 500px;
+  width: 80px;
+  height: auto;
+  margin: 0 5px;
+}
+
+.callNotify .callbtn {
+  border-radius: 500px;
+  height: 42px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 5px;
+  font-weight: 600;
+  min-width: 120px;
+}
+.callNotify i {
+  margin-right: 10px;
+}
+
+.callNotify .accept {
+  background-color: #198754;
+  color: white;
+}
+.callNotify .reject {
+  background-color: #d6422b;
+  color: white;
+}
+
+.vc {
+  width: 45px;
+  height: 45px;
+  background: #dbdbdb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 500px;
+  cursor: pointer;
+}
+
+.remoteVideoScreen {
+  width: 100%;
+  height: calc(100vh - 70px);
+  padding: 0;
+  margin: 0;
+  background-color: #2f2f2f;
+}
+
+.myvideoScreen {
+  height: 20vh;
+  padding: 0;
+  margin: 30px;
+  border-radius: 20px;
+  border: rgb(214, 214, 214) 3px solid;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
