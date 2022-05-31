@@ -1,4 +1,3 @@
-import Peer from 'peerjs';
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getMyRooms } from '../services/chatServices';
@@ -180,72 +179,9 @@ function Messenger({ user, socket }) {
     return data.split(todayData).join('');
   }
 
-  const [myPeerId, setMyPeerId] = useState('');
-  const currentUserVideoRef = useRef(null);
-  const remoteVideoRef = useRef(null);
-  const peerInstance = useRef(null);
-  const input = useRef(null);
-  useEffect(() => {
-    const peer = new Peer();
-
-    peer.on('open', (id) => {
-      setMyPeerId(id);
-    });
-
-    peer.on('call', (call) => {
-      var getUserMedia =
-        navigator.getUserMedia ||
-        navigator.webkitGetUserMedia ||
-        navigator.mozGetUserMedia;
-
-      getUserMedia({ video: true }, (mediaStream) => {
-        currentUserVideoRef.current.srcObject = mediaStream;
-        currentUserVideoRef.current.play();
-        call.answer(mediaStream);
-        call.on('stream', function (remoteStream) {
-          remoteVideoRef.current.srcObject = remoteStream;
-          remoteVideoRef.current.play();
-        });
-      });
-    });
-
-    peerInstance.current = peer;
-  }, []);
-
-  const call = (remotePeerId) => {
-    var getUserMedia =
-      navigator.getUserMedia ||
-      navigator.webkitGetUserMedia ||
-      navigator.mozGetUserMedia;
-
-    getUserMedia({ video: true }, (mediaStream) => {
-      currentUserVideoRef.current.srcObject = mediaStream;
-      currentUserVideoRef.current.play();
-
-      const call = peerInstance.current.call(remotePeerId, mediaStream);
-
-      call.on('stream', (remoteStream) => {
-        remoteVideoRef.current.srcObject = remoteStream;
-        remoteVideoRef.current.play();
-      });
-    });
-  };
-
   return (
     <div>
       <div className="container bg-white my-4">
-        <h4>my peer id is {myPeerId}</h4>
-        <input type="text" ref={input} />
-        <input
-          type="button"
-          onClick={() => call(input.current.value)}
-          value="submit"
-        />
-        {input?.current?.value}
-
-        <video ref={currentUserVideoRef} />
-        <video ref={remoteVideoRef} />
-
         <div className="row shadow">
           <div
             className="col-md-4 pt-4 px-0"

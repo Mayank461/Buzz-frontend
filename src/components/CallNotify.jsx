@@ -15,12 +15,15 @@ const CallNotify = ({ user, socket }) => {
 
   function accept() {
     setShow(false);
-    console.log(from);
     navigate(`/call?recipient=${from.id}&rpeerid=${from.peerid}`);
   }
   function reject() {
+    socket.emit('disconnect-call', from.id, {
+      id: user._id,
+      picture_url: user.picture_url,
+      name: user.firstname + ' ' + user.lastname,
+    });
     setShow(false);
-    socket.emit('EndedCall', user._id);
   }
   if (ShowID && from)
     return (

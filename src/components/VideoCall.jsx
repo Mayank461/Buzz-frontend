@@ -1,28 +1,25 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { socket } from '../App';
 import Peer from 'peerjs';
 
-function genRoomID(id, id2) {
-  if (id > id2) return `${id}-${id2}`;
-  return `${id2}-${id}`;
-}
-
 const VideoCall = ({ user }) => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const [myPeerId, setMyPeerId] = useState('');
+  const [disconnected, setDisconnected] = useState(false);
   const [remotePeerID, setRemotePeerId] = useState(null);
+  const [recipientData, setRecipientData] = useState(null);
   const currentUserVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
   const peerInstance = useRef(null);
-
-  const myStream = useRef(null);
-  const remoteStream = useRef(null);
+  const remoteuserID = useRef(null);
 
   useEffect(() => {
     const peer = new Peer();
     const recipient = searchParams.get('recipient');
+    remoteuserID.current = recipient;
     setRemotePeerId(searchParams.get('rpeerid'));
 
     peer.on('open', (id) => {
@@ -58,13 +55,51 @@ const VideoCall = ({ user }) => {
     peerInstance.current = peer;
 
     call(remotePeerID);
+  }, [
+    remotePeerID,
+    searchParams,
+    user._id,
+    user.firstname,
+    user.lastname,
+    user.picture_url,
+  ]);
 
-    return unmount;
+  useEffect(() => {
+    setTimeout(() => {
+      document.querySelector('#fireByAccepter').click();
+    }, 3000);
   }, []);
 
-  function unmount() {
+  socket.on('disconnect-call', (data) => {
+    setRecipientData(data);
+    console.log(data);
+    setDisconnected(true);
     currentUserVideoRef.current.srcObject.getTracks().forEach((s) => s.stop());
-    remoteVideoRef.current.srcObject.getTracks().forEach((s) => s.stop());
+    // remoteVideoRef.current.srcObject.getTracks().forEach((s) => s.stop());
+    currentUserVideoRef.current.srcObject = null;
+    remoteVideoRef.current.srcObject = null;
+  });
+
+  function myCamOffOn() {
+    if (currentUserVideoRef.current.srcObject) {
+      currentUserVideoRef.current.srcObject
+        .getTracks()
+        .forEach((s) => s.stop());
+      currentUserVideoRef.current.srcObject = null;
+    } else {
+      call(remotePeerID);
+    }
+  }
+
+  function endCall() {
+    currentUserVideoRef.current.srcObject.getTracks().forEach((s) => s.stop());
+    currentUserVideoRef.current.srcObject = null;
+    socket.emit('disconnect-call', remoteuserID.current, {
+      id: user._id,
+      picture_url: user.picture_url,
+      name: user.firstname + ' ' + user.lastname,
+    });
+    setDisconnected(true);
   }
 
   const call = (rPeerId) => {
@@ -73,7 +108,7 @@ const VideoCall = ({ user }) => {
       navigator.webkitGetUserMedia ||
       navigator.mozGetUserMedia;
 
-    getUserMedia({ video: true }, (mediaStream) => {
+    getUserMedia({ video: true, voice: true }, (mediaStream) => {
       currentUserVideoRef.current.srcObject = mediaStream;
       currentUserVideoRef.current.play();
 
@@ -86,24 +121,46 @@ const VideoCall = ({ user }) => {
     });
   };
 
+  if (disconnected) {
+    return (
+      <div className="position-relative vh-100 bg-dark vc-dc">
+        <div className="">
+          <h1 className="mb-5">Call Ended</h1>
+          <img
+            src={
+              recipientData?.picture_url ||
+              require('../images/blank-profile.png')
+            }
+            className="profile"
+            alt="pic"
+            width={'200px'}
+          />
+          <h2>{recipientData?.name} </h2>
+          <div onClick={() => navigate('/chat')}>
+            <p className="pointer h6">Go back to Chat</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="position-relative">
-      <button
-        onClick={() => {
-          call(remotePeerID);
-        }}
-      >
-        click me
-      </button>
-      <button
-        onClick={() => {
-          unmount();
-        }}
-      >
-        off cam
-      </button>
+      <div
+        className="hidden"
+        id="fireByAccepter"
+        onClick={() => call(remotePeerID)}
+      ></div>
       <video ref={currentUserVideoRef} className="myvideoScreen" />
       <video ref={remoteVideoRef} className="remoteVideoScreen" />
+      <div className="vcdock d-flex justify-content-center">
+        <div className={`icon-roundbox  `} onClick={myCamOffOn}>
+          <i className="fa fa-video-camera" aria-hidden="true"></i>
+        </div>
+        <div className="icon-roundbox bg-danger" onClick={endCall}>
+          <i className="fa fa-phone" aria-hidden="true"></i>
+        </div>
+      </div>
     </div>
   );
 };

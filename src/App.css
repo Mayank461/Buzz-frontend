@@ -321,7 +321,7 @@
   box-sizing: content-box;
   right: 10px;
   top: 10px;
-  position: absolute;
+  position: fixed;
   box-shadow: 5px 5px 20px rgb(219, 219, 219);
   border-radius: 20px;
   z-index: 100;
@@ -378,6 +378,7 @@
 
 .myvideoScreen {
   height: 20vh;
+  width: 200px;
   padding: 0;
   margin: 30px;
   border-radius: 20px;
@@ -385,4 +386,47 @@
   position: absolute;
   bottom: 0;
   right: 0;
+}
+
+.vcdock {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 40px 0;
+}
+
+.vcdock .icon-roundbox {
+  background-color: white;
+  border-radius: 100px;
+  width: 65px;
+  height: 65px;
+  box-shadow: 0 0 25px rgb(108, 108, 108);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.vcdock .icon-roundbox i {
+  font-size: 2rem;
+}
+.vcdock .icon-roundbox.bg-danger {
+  background: rgb(114, 40, 40);
+  color: white;
+  box-shadow: 0 0 25px rgb(108, 62, 62);
+  transform: rotate(140deg);
+}
+
+.vc-dc {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  color: white;
+  text-align: center;
+}
+
+.vc-dc img {
+  border-radius: 100px;
+  margin: 15px 0;
 }
