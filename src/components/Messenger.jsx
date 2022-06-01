@@ -55,16 +55,24 @@ function Messenger({ user }) {
   const currentUserVideoRef = useRef(null);
   const peerInstance = useRef(null);
 
-  //  ========================================================= messenger tone setup [start] ==================================================================
+  //  ========================================================= Ringtone  setup [start] ==================================================================
   const tone = require("../tone/messenger.mp3");
+  const ringing = require("../tone/incoming_call.mp3");
   const callMySound = (src) => {
     const sound = new Howl({
       src,
       html5: true,
+     
     });
     sound.play();
   };
-  //  ========================================================= messenger tone setup [end] ==================================================================
+    const IncomingCall = new Howl({
+      src:ringing,
+      html5: true,
+      loop:true
+    });
+
+  //  ========================================================= Ringtone setup [end] ==================================================================
 
   //  ======================================================= for Responsive [start] ====================================================================
   const backbtn = () => {
@@ -326,9 +334,11 @@ function Messenger({ user }) {
     socket.emit("video-calling", user);
   };
   const acceptVideoCall = (remotePeerId) => {
+   
     setAnswerCall(false);
     setOnVideo(true);
     setIsAnswered(true);
+   
     var getUserMedia =
       navigator.getUserMedia ||
       navigator.webkitGetUserMedia ||
@@ -345,24 +355,35 @@ function Messenger({ user }) {
         remoteVideoRef.current.play();
       });
     });
+    socket.emit('connection-both',{})
   };
 
-  socket.on("accept-video", (data) => {
+  socket.off("accept-video").on("accept-video", (data) => {
+  
     setUserEnd(data);
     setAnswerCall(true);
     setChangeUser(false);
     setIsAnswered(false);
+    IncomingCall.play();
+  
   });
 
   const declineIncommingCall = () => {
     socket.emit('call-decline',{})
   };
   socket.on('call-rejected',(data)=>{
+    IncomingCall.stop();
     setProcessingCall(false);
     setOnVideo(false);
     setChangeUser(true);
     setIsAnswered(true);
     setAnswerCall(false);
+  })
+  socket.on('remove-call-panel',(data)=>{
+    IncomingCall.stop();
+    setProcessingCall(false);
+    setOnVideo(true);
+    setIsAnswered(true);
   })
   // ==================================================video calling [end] ============================================
 
