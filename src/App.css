@@ -149,25 +149,25 @@
   margin-bottom: 10px;
   font-weight: 500;
 }
-.login-panel{
+.login-panel {
   height: 75%;
 }
-.viewport-height{
+.viewport-height {
   height: 100vh;
 }
-#logo-img{
+#logo-img {
   background-image: url('https://mma.prnewswire.com/media/728150/TO_THE_NEW_Logo.jpg?p=facebook');
   height: 70px;
   width: 110px;
   background-repeat: no-repeat;
   background-size: cover;
 }
-.resp-hide{
+.resp-hide {
   display: flex;
 }
 
-.row-span{
-  grid-row:1/span 2;
+.row-span {
+  grid-row: 1 / span 2;
 }
 @media screen and (max-width: 700px) {
   .sticky {
@@ -175,19 +175,70 @@
     position: static;
     top: 0;
   }
-  .viewport-height{
+  .viewport-height {
     height: 100%;
   }
-  #logo-img{
+  #logo-img {
     background-image: url('../public/TO_THE_NEW_Logo.jpg');
     height: 50px;
     width: 50px;
     background-size: 50px;
     background-repeat: no-repeat;
   }
-  .resp-hide{
-        display: none;
+  .resp-hide {
+    display: none;
   }
- 
+}
 
+.pickFile {
+  font-weight: 500;
+  color: #69696d;
+  /* border: 2px solid #198754; */
+  border-radius: 10px;
+}
+.pickFile:hover {
+  background-color: #f3f3f3;
+}
+.pickFile i {
+  font-size: 1.5rem;
+  color: #198754;
+  margin-right: 5px;
+}
+
+.lds-facebook {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-facebook div {
+  display: inline-block;
+  position: absolute;
+  left: 8px;
+  width: 16px;
+  background: #fff;
+  animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+}
+.lds-facebook div:nth-child(1) {
+  left: 8px;
+  animation-delay: -0.24s;
+}
+.lds-facebook div:nth-child(2) {
+  left: 32px;
+  animation-delay: -0.12s;
+}
+.lds-facebook div:nth-child(3) {
+  left: 56px;
+  animation-delay: 0;
+}
+@keyframes lds-facebook {
+  0% {
+    top: 8px;
+    height: 64px;
+  }
+  50%,
+  100% {
+    top: 24px;
+    height: 32px;
+  }
 }
