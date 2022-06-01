@@ -9,6 +9,7 @@ import { API_URL } from "../config";
 import FullPageSpinner from "./FullPageSpinner";
 import Voice from "./Voice";
 import AnswerCall from "./AnswerCall";
+import ProcessingCall from "./ProcessingCall";
 const socketURL = API_URL.split("/api");
 const socket = io.connect(socketURL[0]);
 let room = "";
@@ -22,6 +23,7 @@ mic.lang = "en-IN";
 function Messenger({ user }) {
   const [isListening, setIsListening] = useState(false);
   const [isAnswered, setIsAnswered] = useState(true);
+  const [processingCall, setProcessingCall] = useState(false);
   const [peerid, setPeerid] = useState("");
   const [uniquePeer, setUniquePeer] = useState("");
   const [userEnd, setUserEnd] = useState({});
@@ -122,11 +124,12 @@ function Messenger({ user }) {
   //  ================================================== selecting users in friends list  and joining room [end] ========================================
 
   // ===================================================== this is for when user recieve new message [start]=================================================
-  socket.on("recieve_message", (data) => {
+  socket.off("recieve_message").on("recieve_message", (data) => {
     setTyping(false);
     let duplicate = data;
     if (data.senderId === user._id) {
     } else {
+      console.log("executed");
       duplicate.float = false;
       callMySound(tone);
     }
@@ -282,7 +285,7 @@ function Messenger({ user }) {
       userVideo.srcObject.getTracks()[0].stop();
       myvideo.srcObject.getTracks()[0].stop();
     }
-
+    setProcessingCall(false);
     setOnVideo(false);
     setChangeUser(true);
     setIsAnswered(true);
@@ -318,6 +321,8 @@ function Messenger({ user }) {
   }, []);
 
   const call = () => {
+    setIsAnswered(false);
+    setProcessingCall(true);
     socket.emit("video-calling", user);
   };
   const acceptVideoCall = (remotePeerId) => {
@@ -338,8 +343,6 @@ function Messenger({ user }) {
       call.on("stream", (remoteStream) => {
         remoteVideoRef.current.srcObject = remoteStream;
         remoteVideoRef.current.play();
-       
-      
       });
     });
   };
@@ -352,11 +355,15 @@ function Messenger({ user }) {
   });
 
   const declineIncommingCall = () => {
+    socket.emit('call-decline',{})
+  };
+  socket.on('call-rejected',(data)=>{
+    setProcessingCall(false);
     setOnVideo(false);
     setChangeUser(true);
     setIsAnswered(true);
     setAnswerCall(false);
-  };
+  })
   // ==================================================video calling [end] ============================================
 
   return (
@@ -441,10 +448,7 @@ function Messenger({ user }) {
           )}
 
           {columnTwo ? (
-            <div
-              className="col-md-8 px-0 bg-light   bg-danger justify-content-between  position-relative"
-              style={{ height: "85vh" }}
-            >
+            <div className="col-md-8 px-0 bg-light   bg-danger justify-content-between  position-relative high">
               {box ? (
                 <div className="chat-box" style={{ height: "100%" }}>
                   {isAnswered ? (
@@ -478,7 +482,7 @@ function Messenger({ user }) {
                               </div>
                             </div>
 
-                            <div  style={{ cursor: "pointer" }}>
+                            <div style={{ cursor: "pointer" }}>
                               <i
                                 className="fa-solid font-size fa-video me-3 text-white float-end"
                                 onClick={() => call()}
@@ -489,17 +493,19 @@ function Messenger({ user }) {
                       </div>
                       <div></div>
 
-                      <div className="position-relative" >
-                        <div className="position-relative " style={{height:"100%"}}>
+                      <div className="position-relative">
+                        <div
+                          className="position-relative "
+                          style={{ height: "100%" }}
+                        >
                           {onVideo ? (
                             <>
                               <video
-                              allow=''
+                                allow=""
                                 ref={remoteVideoRef}
                                 className="remoteVideoBox videoPanel"
                               ></video>
                               <video
-
                                 ref={currentUserVideoRef}
                                 className="position-absolute top-0 start-0 w-25 myVideoBox myVideo"
                               ></video>
@@ -581,6 +587,14 @@ function Messenger({ user }) {
                       myPeer={uniquePeer}
                       declineIncommingCall={declineIncommingCall}
                     ></AnswerCall>
+                  ) : (
+                    ""
+                  )}
+                  {processingCall ? (
+                    <ProcessingCall
+                      calltofriend={personDetails}
+                      declineIncommingCall={declineIncommingCall}
+                    ></ProcessingCall>
                   ) : (
                     ""
                   )}
