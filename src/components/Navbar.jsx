@@ -122,12 +122,6 @@ export default function Navbar({ user }) {
               >
                 <i className="fas fa-comments"></i>
               </Link>
-              <div
-                className="round-img bg-danger p-1 text-white incoming position-absolute bottom-50 end-0"
-                title="new_message_count"
-              >
-                {'0'}
-              </div>
             </div>
 
             <div className="position-relative d-flex ">

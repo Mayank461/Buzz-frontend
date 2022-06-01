@@ -110,10 +110,12 @@ export const publishPost = async (
     !result && delete newPost['pic_url'];
     data.title === '' && delete newPost['caption'];
 
-    await axios.post(APINEWPOST, newPost, { withCredentials: true });
+    const resData = await axios.post(APINEWPOST, newPost, {
+      withCredentials: true,
+    });
     notifyToList && socket.emit('notification_newPost', notifyToList, myname);
 
-    return { success: 'done' };
+    return { success: 'done', data: resData.data.data };
   } catch (error) {
     return { error: error.message };
   }

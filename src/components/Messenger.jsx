@@ -24,6 +24,7 @@ function Messenger({ user, socket }) {
   useEffect(() => {
     conversation._id && socket.emit('join', conversation._id, user._id);
     inRoom.current = conversation._id;
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversation._id, socket]);
 
@@ -81,27 +82,21 @@ function Messenger({ user, socket }) {
   }, [user.friends.myFriends]);
 
   useEffect(() => {
-    socket.on('receive-message', (data) => {
+    socket.on('refreshRoomsData', async () => {
+      const rooms = await getallrooms();
+      setRooms(rooms);
+    });
+
+    socket.on('receive-message', async (data) => {
       setConversation((p) => ({
         ...p,
         conversation: [...p.conversation, data],
       }));
-
-      rooms &&
-        setRooms(
-          rooms.map((r) => {
-            if (conversation._id === r._id) {
-              return {
-                ...r,
-                conversation: [...r.conversation, data],
-                updatedAt: data.timestamp,
-              };
-            }
-            return r;
-          })
-        );
+      const rooms = await getallrooms();
+      setRooms(rooms);
     });
-    socket.on('seen', (id) => {
+
+    socket.on('seen', async (id) => {
       setConversation((p) => ({
         ...p,
         conversation: [
@@ -115,8 +110,29 @@ function Messenger({ user, socket }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
 
-  function fireMessage(e) {
+  useEffect(() => {
+    const updateData =
+      rooms &&
+      rooms.map((r) => {
+        if (conversation._id === r._id) {
+          return {
+            ...r,
+            conversation: conversation.conversation,
+            updatedAt:
+              conversation.conversation[conversation.conversation.length - 1]
+                .timestamp,
+          };
+        }
+        return r;
+      });
+
+    setRooms(updateData);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conversation.conversation]);
+
+  async function fireMessage(e) {
     e.preventDefault();
+    if (messageInput.replaceAll(' ', '').length < 1) return;
     const messageData = {
       timestamp: Date.now(),
       message: messageInput,
@@ -186,17 +202,28 @@ function Messenger({ user, socket }) {
             <div style={{ height: '70vh', overflow: 'auto' }}>
               {rooms &&
                 rooms
-                  .filter(({ users }) => {
-                    return (
-                      users
-                        .filter(({ _id }) => _id !== user._id)
-                        .filter(({ firstname, lastname }) => {
-                          let s = search.replaceAll(' ', '');
-                          if (s.length < 2) return true;
-                          let name = firstname + lastname;
-                          return name.toLowerCase().includes(s.toLowerCase());
-                        }).length !== 0
-                    );
+                  .filter(
+                    ({ users }) =>
+                      users.filter(({ _id, firstname, lastname }) => {
+                        if (_id === user._id) return false;
+                        let name = firstname + lastname;
+                        return name
+                          .toLowerCase()
+                          .replaceAll(' ', '')
+                          .includes(search.replaceAll(' ', '').toLowerCase());
+                      }).length !== 0
+                  )
+                  .sort(
+                    (x, y) =>
+                      new Date(y.updatedAt).getTime() -
+                      new Date(x.updatedAt).getTime()
+                  )
+                  .map((x) => {
+                    let unread = x.conversation.filter(
+                      (msg) => msg.seen !== true && msg.sentBy !== user._id
+                    ).length;
+
+                    return { ...x, unread };
                   })
                   .map((Rdata) => (
                     <div
@@ -256,8 +283,14 @@ function Messenger({ user, socket }) {
                             </span>
                           </div>
                           <span className="my-1">
-                            {Rdata.conversation[Rdata.conversation.length - 1]
-                              .message || ''}
+                            {Rdata.unread > 0 &&
+                              conversation._id !== Rdata._id &&
+                              Rdata.unread + ' new messages'}
+
+                            {(Rdata.unread === 0 ||
+                              conversation._id === Rdata._id) &&
+                              Rdata.conversation[Rdata.conversation.length - 1]
+                                .message}
                           </span>
                         </div>
                       </div>
@@ -266,7 +299,16 @@ function Messenger({ user, socket }) {
 
               {rooms &&
                 user.friends.myFriends
-                  .filter(({ _id }) => !rooms.find((r) => r._id.includes(_id)))
+                  .filter(({ _id, firstname, lastname }) => {
+                    if (!rooms.find((r) => r._id.includes(_id))) {
+                      let name = firstname + lastname;
+                      return name
+                        .toLowerCase()
+                        .replaceAll(' ', '')
+                        .includes(search.replaceAll(' ', '').toLowerCase());
+                    }
+                    return false;
+                  })
                   .map((Fdata) => (
                     <div
                       key={Fdata._id}
