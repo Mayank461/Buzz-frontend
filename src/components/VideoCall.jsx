@@ -55,14 +55,7 @@ const VideoCall = ({ user }) => {
     peerInstance.current = peer;
 
     call(remotePeerID);
-  }, [
-    remotePeerID,
-    searchParams,
-    user._id,
-    user.firstname,
-    user.lastname,
-    user.picture_url,
-  ]);
+  }, [searchParams]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -72,34 +65,35 @@ const VideoCall = ({ user }) => {
 
   socket.on('disconnect-call', (data) => {
     setRecipientData(data);
-    console.log(data);
     setDisconnected(true);
     currentUserVideoRef.current.srcObject.getTracks().forEach((s) => s.stop());
-    // remoteVideoRef.current.srcObject.getTracks().forEach((s) => s.stop());
+    remoteVideoRef.current.srcObject.getTracks().forEach((s) => s.stop());
     currentUserVideoRef.current.srcObject = null;
     remoteVideoRef.current.srcObject = null;
   });
 
+  socket.on('camToggle', (val) => (remoteVideoRef.current.style.display = val));
+
   function myCamOffOn() {
-    if (currentUserVideoRef.current.srcObject) {
-      currentUserVideoRef.current.srcObject
-        .getTracks()
-        .forEach((s) => s.stop());
-      currentUserVideoRef.current.srcObject = null;
+    if (currentUserVideoRef.current.style.display === 'none') {
+      currentUserVideoRef.current.style.display = 'block';
+      socket.emit('camToggle', remoteuserID.current, 'block');
     } else {
-      call(remotePeerID);
+      currentUserVideoRef.current.style.display = 'none';
+      socket.emit('camToggle', remoteuserID.current, 'none');
     }
   }
 
   function endCall() {
+    setDisconnected(true);
     currentUserVideoRef.current.srcObject.getTracks().forEach((s) => s.stop());
+    remoteVideoRef.current.srcObject.getTracks().forEach((s) => s.stop());
     currentUserVideoRef.current.srcObject = null;
     socket.emit('disconnect-call', remoteuserID.current, {
       id: user._id,
       picture_url: user.picture_url,
       name: user.firstname + ' ' + user.lastname,
     });
-    setDisconnected(true);
   }
 
   const call = (rPeerId) => {
@@ -108,7 +102,7 @@ const VideoCall = ({ user }) => {
       navigator.webkitGetUserMedia ||
       navigator.mozGetUserMedia;
 
-    getUserMedia({ video: true, voice: true }, (mediaStream) => {
+    getUserMedia({ video: true, audio: true }, (mediaStream) => {
       currentUserVideoRef.current.srcObject = mediaStream;
       currentUserVideoRef.current.play();
 
@@ -145,13 +139,13 @@ const VideoCall = ({ user }) => {
   }
 
   return (
-    <div className="position-relative">
+    <div className="position-relative parent-vc">
       <div
         className="hidden"
         id="fireByAccepter"
         onClick={() => call(remotePeerID)}
       ></div>
-      <video ref={currentUserVideoRef} className="myvideoScreen" />
+      <video ref={currentUserVideoRef} muted className="myvideoScreen" />
       <video ref={remoteVideoRef} className="remoteVideoScreen" />
       <div className="vcdock d-flex justify-content-center">
         <div className={`icon-roundbox  `} onClick={myCamOffOn}>

@@ -245,13 +245,18 @@
 
 /* messenger css */
 
+.imagechatbg {
+  background: url('./images/bg.jpg');
+  background-size: cover;
+  background-position: center;
+}
 .chatbubble {
   max-width: 70%;
 }
 
 .chatbubble .time {
   font-size: 0.8rem;
-  color: #b2b2b2;
+  color: #767676;
   font-weight: 500;
   padding: 0 15px;
 }
@@ -267,6 +272,11 @@
 
 .chatbubble .bubbletext p {
   font-size: 1.2rem;
+}
+
+.chatbubble .file-unknwon {
+  font-size: 1rem;
+  color: white;
 }
 
 .myMessage {
@@ -306,6 +316,38 @@
   padding-left: 30px;
 }
 
+.chatinput .input-file {
+  right: 14%;
+  bottom: 25%;
+  font-size: 25px;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.chatinput .file-upload-preview:hover {
+  background-color: #ffe9e5;
+}
+.chatinput .file-upload-preview {
+  position: absolute;
+  bottom: 120%;
+  max-width: 250px;
+  max-height: 40px;
+  right: 0;
+  background-color: white;
+  padding: 10px;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 05px;
+}
+.chatinput .preview {
+  position: absolute;
+  bottom: 120%;
+  max-width: 250px;
+  max-height: 100px;
+  right: 0;
+  cursor: pointer;
+}
 .seen {
   font-size: 14px !important;
   margin: 0;
@@ -368,9 +410,12 @@
   cursor: pointer;
 }
 
+.parent-vc {
+  height: calc(100vh - 70px);
+}
 .remoteVideoScreen {
   width: 100%;
-  height: calc(100vh - 70px);
+  height: 100%;
   padding: 0;
   margin: 0;
   background-color: #2f2f2f;
