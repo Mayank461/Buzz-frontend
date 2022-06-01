@@ -7,6 +7,7 @@ import {
   APIUPDATEUSERDETAILS_URL,
   API_GETSUGGESTFRIENDS,
   API_PROFILE_UPLOAD,
+  API_SEARCH_USER,
 } from '../config';
 
 export const getSuggestFriends = async () => {
@@ -100,6 +101,19 @@ export const profilePicChange = async (user_id, file, refresh) => {
     refresh();
     toast.success('Picture Changed Successfully');
     // return { message: 'Picture change successfully' };
+  } catch (error) {
+    return { error: true, message: error.message };
+  }
+};
+
+export const searchUser = async (searchText) => {
+  try {
+    if (searchText.length <= 1) return { data: [] };
+    return await axios.get(`${API_SEARCH_USER}`, {
+      params: {
+        query: searchText,
+      },
+    });
   } catch (error) {
     return { error: true, message: error.message };
   }
