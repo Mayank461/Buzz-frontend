@@ -12,6 +12,12 @@ import { checkAuth } from './services/authServices';
 import { getSuggestFriends } from './services/userservice';
 import FullPageSpinner from './components/FullPageSpinner';
 import Messenger from './components/Messenger';
+import { io } from 'socket.io-client';
+import { SERVER_URL } from './config';
+import { toast } from 'react-toastify';
+import CallNotify from './components/CallNotify';
+import VideoCall from './components/VideoCall';
+export const socket = io(SERVER_URL);
 
 function App() {
   const [user, setUser] = useState(false);
@@ -20,18 +26,62 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchUser();
+    fetchUser(user);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refresh]);
 
   const toggleRefresh = () => setRefresh((p) => !p);
 
-  async function fetchUser() {
-    setLoading(true);
+  useEffect(() => {
+    socket.on('notification', (data) => {
+      toast(data);
+      toggleRefresh();
+    });
+  }, []);
+
+  async function fetchUser(userState) {
+    if (!userState) setLoading(true);
     let { success, user } = await checkAuth();
     success && setUser(user);
     if (user) {
       let friends = await getSuggestFriends();
       setSFriend([...friends]);
+      socket.emit('login', user._id);
+
+      // manage activity
+      socket.on('onlineList', (ids) => {
+        const friendlist_with_status = user.friends.myFriends.map((data) => {
+          if (ids.includes(data._id)) data['online'] = true;
+          return data;
+        });
+
+        setUser((prev) => ({
+          ...prev,
+          friends: { ...prev.friends, myFriends: friendlist_with_status },
+        }));
+      });
+
+      setChangeState('online', user, setUser);
+      setChangeState('offline', user, setUser);
+
+      function setChangeState(state, user, setUser) {
+        socket.on(state, (id) => {
+          if (user.friends.myFriends.some(({ _id }) => _id === id)) {
+            const friendlist_with_status = user.friends.myFriends.map(
+              (data) => {
+                let bool = state === 'online' ? true : false;
+                if (data._id === id) data['online'] = bool;
+                return data;
+              }
+            );
+
+            setUser((prev) => ({
+              ...prev,
+              friends: { ...prev.friends, myFriends: friendlist_with_status },
+            }));
+          }
+        });
+      }
     }
     setLoading(false);
   }
@@ -45,6 +95,7 @@ function App() {
       {user ? (
         <>
           <Navbar user={user} />
+          <CallNotify user={user} socket={socket} />
           <Routes>
             <Route
               path="/"
@@ -56,7 +107,17 @@ function App() {
                 />
               }
             />
-            <Route path="/chat" element={<Messenger user={user} />} />
+
+            <Route
+              path="/chat"
+              element={<Messenger user={user} socket={socket} />}
+            />
+
+            <Route
+              path="/call"
+              element={<VideoCall socket={socket} user={user} />}
+            />
+
             <Route
               path="/profile"
               element={

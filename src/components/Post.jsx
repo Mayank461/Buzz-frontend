@@ -37,10 +37,7 @@ export default function Post({
 
   return (
     <>
-      <div
-        key={index}
-        className="card p-3 mb-3 shadow p-3  bg-body rounded border-0"
-      >
+      <div className="card p-3 mb-3 shadow p-3  bg-body rounded border-0">
         <div className="d-flex justify-content-between align-items-center mb-2">
           <div className="d-flex align-items-center">
             {picture_url ? (
@@ -168,22 +165,22 @@ export default function Post({
                   <i className="fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"></i>
                 )}
 
-                <div class="input-group">
+                <div className="input-group">
                   <input
                     style={{
                       borderBottomLeftRadius: '50px',
                       borderTopLeftRadius: '50px',
                     }}
                     type="text"
-                    class="form-control"
+                    className="form-control"
                     ref={commentInput}
                     placeholder="Write a comment..."
                     onChange={(e) => oninputchange(e)}
                     name="message"
                   />
-                  <div class="input-group-append">
+                  <div className="input-group-append">
                     <button
-                      class="btn btn-outline-darkgit  "
+                      className="btn btn-outline-darkgit  "
                       type="button"
                       onClick={() => {
                         commentBox(
@@ -204,8 +201,8 @@ export default function Post({
               </div>
             </div>
           </div>
-          {comment.map((data) => {
-            return <Comment data={data} />;
+          {comment.map((data, i) => {
+            return <Comment data={data} key={i} />;
           })}
         </div>
       </div>

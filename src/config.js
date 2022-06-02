@@ -1,11 +1,12 @@
-export let API_URL;
+export let API_URL, SERVER_URL;
 
 if (process.env.REACT_APP_STAGE === 'prod') {
-  console.log(process.env);
   API_URL = 'https://buzzz-server.herokuapp.com/api';
+  SERVER_URL = 'https://buzzz-server.herokuapp.com';
 }
 if (process.env.REACT_APP_STAGE === 'dev') {
   API_URL = 'http://localhost:5000/api';
+  SERVER_URL = 'http://localhost:5000';
 }
 
 export const API_CHECKAUTH = `${API_URL}/auth/login/success`;
@@ -28,3 +29,6 @@ export const APIDELREQ_URL = `${API_URL}/users/deleteRequest/`;
 export const API_FEEDFILE_UPLOAD = `https://api.cloudinary.com/v1_1/buzzz-social-app/auto/upload`;
 export const API_PROFILE_UPLOAD = `https://api.cloudinary.com/v1_1/buzzz-social-app/image/upload`;
 export const API_SEARCH_USER = `${API_URL}/users/search/all`;
+
+export const API_CHAT_SENDMSG = `${API_URL}/chat/send`;
+export const API_CHAT_GETROOMS = `${API_URL}/chat/getMyRooms`;

@@ -245,13 +245,18 @@
 
 /* messenger css */
 
+.imagechatbg {
+  background: url('./images/bg.jpg');
+  background-size: cover;
+  background-position: center;
+}
 .chatbubble {
   max-width: 70%;
 }
 
 .chatbubble .time {
   font-size: 0.8rem;
-  color: #b2b2b2;
+  color: #767676;
   font-weight: 500;
   padding: 0 15px;
 }
@@ -269,6 +274,11 @@
   font-size: 1.2rem;
 }
 
+.chatbubble .file-unknwon {
+  font-size: 1rem;
+  color: white;
+}
+
 .myMessage {
   justify-content: flex-end;
   margin-left: auto;
@@ -282,6 +292,186 @@
   justify-content: flex-end;
 }
 .myMessage .bubbletext {
-  background-color: #dcffb8;
+  background-color: #162e48;
   margin-left: auto;
+  color: white;
+}
+
+.snackbar {
+  box-shadow: 0px 0px 10px #c7c6c64f;
+}
+
+.iconIninput {
+  position: relative;
+}
+.iconIninput > i {
+  position: absolute;
+  top: 30%;
+  bottom: 0;
+  left: 2%;
+  color: #6d7073;
+}
+
+.iconIninput > input {
+  padding-left: 30px;
+}
+
+.chatinput .input-file {
+  right: 14%;
+  bottom: 25%;
+  font-size: 25px;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.chatinput .file-upload-preview:hover {
+  background-color: #ffe9e5;
+}
+.chatinput .file-upload-preview {
+  position: absolute;
+  bottom: 120%;
+  max-width: 250px;
+  max-height: 40px;
+  right: 0;
+  background-color: white;
+  padding: 10px;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 05px;
+}
+.chatinput .preview {
+  position: absolute;
+  bottom: 120%;
+  max-width: 250px;
+  max-height: 100px;
+  right: 0;
+  cursor: pointer;
+}
+.seen {
+  font-size: 14px !important;
+  margin: 0;
+  text-align: right;
+  color: #5441ff;
+}
+
+.callNotify {
+  /* width: 400px; */
+  min-height: 20px;
+  background-color: white;
+  padding: 15px;
+  box-sizing: content-box;
+  right: 10px;
+  top: 10px;
+  position: fixed;
+  box-shadow: 5px 5px 20px rgb(219, 219, 219);
+  border-radius: 20px;
+  z-index: 100;
+}
+
+.callNotify img {
+  border-radius: 500px;
+  width: 80px;
+  height: auto;
+  margin: 0 5px;
+}
+
+.callNotify .callbtn {
+  border-radius: 500px;
+  height: 42px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 5px;
+  font-weight: 600;
+  min-width: 120px;
+}
+.callNotify i {
+  margin-right: 10px;
+}
+
+.callNotify .accept {
+  background-color: #198754;
+  color: white;
+}
+.callNotify .reject {
+  background-color: #d6422b;
+  color: white;
+}
+
+.vc {
+  width: 45px;
+  height: 45px;
+  background: #dbdbdb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 500px;
+  cursor: pointer;
+}
+
+.parent-vc {
+  height: calc(100vh - 70px);
+}
+.remoteVideoScreen {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  background-color: #2f2f2f;
+}
+
+.myvideoScreen {
+  height: 20vh;
+  width: 200px;
+  padding: 0;
+  margin: 30px;
+  border-radius: 20px;
+  border: rgb(214, 214, 214) 3px solid;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+.vcdock {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 40px 0;
+}
+
+.vcdock .icon-roundbox {
+  background-color: white;
+  border-radius: 100px;
+  width: 65px;
+  height: 65px;
+  box-shadow: 0 0 25px rgb(108, 108, 108);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.vcdock .icon-roundbox i {
+  font-size: 2rem;
+}
+.vcdock .icon-roundbox.bg-danger {
+  background: rgb(114, 40, 40);
+  color: white;
+  box-shadow: 0 0 25px rgb(108, 62, 62);
+  transform: rotate(140deg);
+}
+
+.vc-dc {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  color: white;
+  text-align: center;
+}
+
+.vc-dc img {
+  border-radius: 100px;
+  margin: 15px 0;
 }
