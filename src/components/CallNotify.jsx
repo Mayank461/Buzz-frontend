@@ -10,6 +10,7 @@ const CallNotify = ({ user, socket }) => {
     socket.on('CallNotify', (id, from) => {
       setFrom(from);
       setShow(id);
+      console.log(id, from);
     });
   }, []);
 
@@ -34,13 +35,23 @@ const CallNotify = ({ user, socket }) => {
           alt="pic"
         />
         <div className="col d-flex flex-column">
-          <h3 className="mx-2 my-0">{from.name}</h3>
+          <h3 className="mx-2 my-0" data-testid="name-field">
+            {from.name}
+          </h3>
           <div className="d-flex">
-            <div className="btn callbtn accept" onClick={accept}>
+            <div
+              className="btn callbtn accept"
+              data-testid="accept-btn"
+              onClick={accept}
+            >
               <i className="fa fa-phone"></i>
               Accept
             </div>
-            <div className="btn callbtn reject" onClick={reject}>
+            <div
+              className="btn callbtn reject"
+              data-testid="reject-btn"
+              onClick={reject}
+            >
               <i className="fa fa-times"></i>
               Reject
             </div>

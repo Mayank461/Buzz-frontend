@@ -104,12 +104,6 @@ exports[`should render Navbar Panel 1`] = `
             className="fas fa-comments"
           />
         </a>
-        <div
-          className="round-img bg-danger p-1 text-white incoming position-absolute bottom-50 end-0"
-          title="new_message_count"
-        >
-          0
-        </div>
       </div>
       <div
         className="position-relative d-flex "

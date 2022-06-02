@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { chatFileUpload, getMyRooms } from '../services/chatServices';
-import CallNotify from './CallNotify';
 
 function Messenger({ user, socket }) {
   const [messageInput, setMessageInput] = useState('');
