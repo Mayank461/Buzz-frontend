@@ -10,7 +10,6 @@ const CallNotify = ({ user, socket }) => {
     socket.on('CallNotify', (id, from) => {
       setFrom(from);
       setShow(id);
-      console.log(id, from);
     });
   }, []);
 

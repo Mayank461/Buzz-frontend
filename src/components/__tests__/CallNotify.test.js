@@ -1,34 +1,13 @@
-import { getByTestId, render, screen, waitFor } from '@testing-library/react';
-import socketIOClient from 'socket.io-client';
-import MockedSocket from 'socket.io-mock';
+import { render, screen } from '@testing-library/react';
 import CallNotify from '../CallNotify';
-import renderer, { act } from 'react-test-renderer';
+import renderer from 'react-test-renderer';
 import { BrowserRouter } from 'react-router-dom';
+import SocketMock from 'socket.io-mock';
 
 jest.mock('socket.io-client');
 
 describe('Testing connection', () => {
-  let socket;
-
-  beforeEach(() => {
-    socket = new MockedSocket();
-    socketIOClient.mockReturnValue(socket);
-  });
-
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
-  it('Should not disply ~ No notification', () => {
-    const tree = renderer
-      .create(
-        <BrowserRouter>
-          <CallNotify />
-        </BrowserRouter>
-      )
-      .toJSON();
-    expect(tree).toMatchSnapshot();
-  });
+  let socket = new SocketMock();
 
   it('Should disply ~ New Calling Notification', async () => {
     const user = {
@@ -37,29 +16,28 @@ describe('Testing connection', () => {
       lastname: 'User',
       friends: { myFriends: [], mySentRequests: [{}] },
     };
+    const data = {
+      id: user?._id,
+      picture_url: user?.picture_url,
+      name: user.firstname + ' ' + user.lastname,
+    };
 
     render(
       <BrowserRouter>
         <CallNotify user={user} socket={socket} />
       </BrowserRouter>
     );
-
-    const data = {
-      id: user?._id,
-      picture_url: user?.picture_url,
-      name: 'abc',
-    };
-
     socket.socketClient.emit('CallNotify', 123, data);
-    // socket.socketClient.on('CallNotify', 123, (data) => console.log(data));
-    // await new Promise((r) => setTimeout(r, 2000));
+
+    await new Promise((r) => setTimeout(r, 2000));
+
+    const name = screen.queryByTestId('name-field');
+    expect(name).toBeTruthy();
 
     const accept_btn = screen.queryByTestId('accept-btn');
+    expect(accept_btn).toBeTruthy();
+
     const reject_btn = screen.queryByTestId('reject-btn');
-    const name = screen.queryByTestId('name-field');
-    // expect(accept_btn).toBeTruthy();
-    // expect(reject_btn).toBeTruthy();
-    expect(name).toBeTruthy();
-    // console.log(accept_btn);
+    expect(reject_btn).toBeTruthy();
   });
 });
