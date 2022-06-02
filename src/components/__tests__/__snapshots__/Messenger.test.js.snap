@@ -1,0 +1,131 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Testing Layout Snapshot Test Chat Bubble 1`] = `
+<div
+  className="d-flex my-2 chatbubble myMessage"
+>
+  <div
+    className="flex-column px-2 my-1 w-100"
+  >
+    <div
+      className="d-flex rowalign"
+    >
+      <span
+        className="time"
+      >
+        8:00
+      </span>
+      <h6
+        className="mb-2"
+      >
+        Test User
+      </h6>
+    </div>
+    <div
+      className="d-flex bubbletext flex-column"
+    >
+      <div
+        className="file"
+      >
+        <img
+          alt="preview"
+          data-testid="file-picture"
+          src="image.png"
+          style={
+            Object {
+              "margin": "5px 0",
+              "maxHeight": "250px",
+            }
+          }
+        />
+      </div>
+      <p
+        className="m-0"
+      >
+        Hi!
+      </p>
+    </div>
+    <p
+      className="seen false"
+    >
+      seen
+      <i
+        aria-hidden="true"
+        className="fa fa-check ms-2"
+      />
+    </p>
+  </div>
+  <img
+    alt="pic"
+    className="card-img-top round-img"
+    src="blank-profile.png"
+    style={
+      Object {
+        "height": "40px",
+        "width": "40px",
+      }
+    }
+  />
+</div>
+`;
+
+exports[`Testing Layout Snapshot test 1`] = `
+<div>
+  <div
+    className="container bg-white mt-3"
+  >
+    <div
+      className="row shadow"
+    >
+      <div
+        className="col-md-4 pt-4 px-0"
+        style={
+          Object {
+            "borderRight": "5px solid #ecebeb",
+          }
+        }
+      >
+        <h2
+          className="mb-3 mx-4"
+        >
+          Messenger
+        </h2>
+        <div
+          className="mx-4"
+        >
+          <div
+            className="form-group iconIninput mb-2"
+          >
+            <input
+              className="form-control "
+              onChange={[Function]}
+              placeholder="Search your friends"
+              type="text"
+              value=""
+            />
+            <i
+              className="fa fa-search"
+            />
+          </div>
+        </div>
+        <div
+          style={
+            Object {
+              "height": "70vh",
+              "overflow": "auto",
+            }
+          }
+        />
+      </div>
+      <div
+        className="col-md-8 bg-light p-0 flex-column d-flex justify-content-between imagechatbg"
+        style={
+          Object {
+            "minHeight": "80vh",
+          }
+        }
+      />
+    </div>
+  </div>
+</div>
+`;

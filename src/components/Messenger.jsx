@@ -541,7 +541,15 @@ function Messenger({ user, socket }) {
 
 export default Messenger;
 
-function ChatBubble({ my, message, name, picture_url, time, seen, file }) {
+export function ChatBubble({
+  my,
+  message,
+  name,
+  picture_url,
+  time,
+  seen,
+  file,
+}) {
   if (!picture_url) picture_url = require('../images/blank-profile.png');
 
   function genFilePreview(url) {
@@ -554,6 +562,7 @@ function ChatBubble({ my, message, name, picture_url, time, seen, file }) {
     ) {
       return (
         <img
+          data-testid="file-picture"
           src={file}
           alt="preview"
           style={{ maxHeight: '250px', margin: '5px 0' }}
@@ -567,6 +576,7 @@ function ChatBubble({ my, message, name, picture_url, time, seen, file }) {
     ) {
       return (
         <video
+          data-testid="file-video"
           src={file}
           controls
           style={{ maxHeight: '250px', margin: '5px 0' }}
@@ -577,7 +587,13 @@ function ChatBubble({ my, message, name, picture_url, time, seen, file }) {
     return (
       <>
         <i className="fa fa-file me-2"></i>
-        <a href={file} target="_blank" className="file-unknwon">
+        <a
+          data-testid="file-other"
+          href={file}
+          target="_blank"
+          className="file-unknwon"
+          rel="noreferrer"
+        >
           Download File
         </a>
       </>

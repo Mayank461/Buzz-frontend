@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`layout test Snapshot match 1`] = `
+<div
+  className="position-relative parent-vc"
+>
+  <div
+    className="hidden"
+    id="fireByAccepter"
+    onClick={[Function]}
+  />
+  <video
+    className="myvideoScreen"
+    muted={true}
+  />
+  <video
+    className="remoteVideoScreen"
+  />
+  <div
+    className="vcdock d-flex justify-content-center"
+  >
+    <div
+      className="icon-roundbox  "
+      onClick={[Function]}
+    >
+      <i
+        aria-hidden="true"
+        className="fa fa-video-camera"
+      />
+    </div>
+    <div
+      className="icon-roundbox bg-danger"
+      onClick={[Function]}
+    >
+      <i
+        aria-hidden="true"
+        className="fa fa-phone"
+      />
+    </div>
+  </div>
+</div>
+`;

@@ -25,7 +25,6 @@ describe('Testing connection', () => {
     const tree = renderer
       .create(
         <BrowserRouter>
-          {' '}
           <CallNotify user={user} socket={socket} />
         </BrowserRouter>
       )
