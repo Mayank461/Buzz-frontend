@@ -202,7 +202,7 @@ function Messenger({ user }) {
     setSendPic("");
     setPreview(false);
     setDisable(true);
-    isListening(false);
+    setIsListening(false);
     setMessageInput("");
     socket.off();
   };
@@ -334,7 +334,7 @@ function Messenger({ user }) {
     socket.emit("video-calling", user);
   };
   const acceptVideoCall = (remotePeerId) => {
-   
+    IncomingCall.stop();
     setAnswerCall(false);
     setOnVideo(true);
     setIsAnswered(true);
