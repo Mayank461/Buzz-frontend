@@ -15,6 +15,8 @@ import Messenger from './components/Messenger';
 import { io } from 'socket.io-client';
 import { SERVER_URL } from './config';
 import { toast } from 'react-toastify';
+import CallNotify from './components/CallNotify';
+import VideoCall from './components/VideoCall';
 export const socket = io(SERVER_URL);
 
 function App() {
@@ -93,6 +95,7 @@ function App() {
       {user ? (
         <>
           <Navbar user={user} />
+          <CallNotify user={user} socket={socket} />
           <Routes>
             <Route
               path="/"
@@ -107,8 +110,12 @@ function App() {
 
             <Route
               path="/chat"
-              index
               element={<Messenger user={user} socket={socket} />}
+            />
+
+            <Route
+              path="/call"
+              element={<VideoCall socket={socket} user={user} />}
             />
 
             <Route

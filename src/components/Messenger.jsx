@@ -1,12 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { getMyRooms } from '../services/chatServices';
+import { chatFileUpload, getMyRooms } from '../services/chatServices';
+import CallNotify from './CallNotify';
 
 function Messenger({ user, socket }) {
   const [messageInput, setMessageInput] = useState('');
   const [conversation, setConversation] = useState([]);
   const [onlineUsersList, setOnlineUsersList] = useState([]);
   const [search, setSearch] = useState('');
+  const [fileChat, setFileChat] = useState(null);
+  const [fileLoad, setFileLoad] = useState(false);
   const [rooms, setRooms] = useState(null);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -133,12 +136,22 @@ function Messenger({ user, socket }) {
   async function fireMessage(e) {
     e.preventDefault();
     if (messageInput.replaceAll(' ', '').length < 1) return;
+
     const messageData = {
       timestamp: Date.now(),
       message: messageInput,
       sentBy: user._id,
       seen: false,
     };
+
+    if (fileChat) {
+      setFileLoad(true);
+      let filelink = await chatFileUpload(fileChat);
+      messageData['file'] = filelink;
+      setFileLoad(false);
+      setFileChat(null);
+    }
+
     socket.emit('send-message', messageData, conversation._id);
     // sendMessage(conversation._id, messageInput);
 
@@ -180,7 +193,7 @@ function Messenger({ user, socket }) {
 
   return (
     <div>
-      <div className="container bg-white my-4">
+      <div className="container bg-white mt-3">
         <div className="row shadow">
           <div
             className="col-md-4 pt-4 px-0"
@@ -363,41 +376,55 @@ function Messenger({ user, socket }) {
           </div>
 
           <div
-            className="col-md-8 bg-light p-0 flex-column d-flex justify-content-between"
+            className="col-md-8 bg-light p-0 flex-column d-flex justify-content-between imagechatbg"
             style={{ minHeight: '80vh' }}
           >
             {conversation._id && (
               <>
                 <div className="col-12 bg-white px-4 py-2 d-flex align-'items-center snackbar">
-                  <img
-                    src={
-                      conversation.users.find(({ _id }) => _id !== user._id)
-                        .picture_url || require('../images/blank-profile.png')
-                    }
-                    className="card-img-top round-img"
-                    alt="..."
-                    style={{
-                      width: '40px',
-                      height: '40px',
-                      marginRight: '15px',
-                    }}
-                  />
-                  <div className="d-flex flex-column">
-                    <h5 className="m-0">
-                      {conversation.users.find(({ _id }) => _id !== user._id)
-                        .firstname +
-                        ' ' +
+                  <div className="col d-flex">
+                    <img
+                      src={
                         conversation.users.find(({ _id }) => _id !== user._id)
-                          .lastname}
-                    </h5>
-                    <p className="m-0">
-                      {onlineUsersList.includes(
-                        conversation.users.find(({ _id }) => _id !== user._id)
-                          ._id
-                      )
-                        ? 'Online'
-                        : 'Offline'}
-                    </p>
+                          .picture_url || require('../images/blank-profile.png')
+                      }
+                      className="card-img-top round-img"
+                      alt="..."
+                      style={{
+                        width: '40px',
+                        height: '40px',
+                        marginRight: '15px',
+                      }}
+                    />
+                    <div className="d-flex flex-column">
+                      <h5 className="m-0">
+                        {conversation.users.find(({ _id }) => _id !== user._id)
+                          .firstname +
+                          ' ' +
+                          conversation.users.find(({ _id }) => _id !== user._id)
+                            .lastname}
+                      </h5>
+                      <p className="m-0">
+                        {onlineUsersList.includes(
+                          conversation.users.find(({ _id }) => _id !== user._id)
+                            ._id
+                        )
+                          ? 'Online'
+                          : 'Offline'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="col d-flex justify-content-end align-items-center">
+                    <div
+                      className="vc"
+                      onClick={() =>
+                        navigate(
+                          `/call?recipient=${searchParams.get('recipient')}`
+                        )
+                      }
+                    >
+                      <i className="fa fa-video-camera"></i>
+                    </div>
                   </div>
                 </div>
                 <div className="px-4">
@@ -434,6 +461,7 @@ function Messenger({ user, socket }) {
                           }
                           time={time}
                           seen={msg.seen}
+                          file={msg?.file}
                         />
                       );
                     })}
@@ -442,6 +470,32 @@ function Messenger({ user, socket }) {
                   </div>
                   <div className="chatinput p-0 m-0">
                     <div className="input-group input-group-lg mb-3">
+                      {fileChat && fileChat.type.includes('image') && (
+                        <img
+                          src={URL.createObjectURL(fileChat)}
+                          className="preview"
+                          alt="preview"
+                          onClick={() => setFileChat(null)}
+                        />
+                      )}
+                      {fileChat && fileChat.type.includes('video') && (
+                        <video
+                          src={URL.createObjectURL(fileChat)}
+                          className="preview"
+                          onClick={() => setFileChat(null)}
+                        ></video>
+                      )}
+                      {fileChat &&
+                        !fileChat.type.includes('video') &&
+                        !fileChat.type.includes('image') && (
+                          <div
+                            className="file-upload-preview"
+                            onClick={() => setFileChat(null)}
+                          >
+                            <i className="fa fa-file me-2"></i>
+                            <span>{fileChat.name.slice(0, 25) + '...'}</span>
+                          </div>
+                        )}
                       <form onSubmit={fireMessage} className="d-flex  w-100">
                         <input
                           type="text"
@@ -450,13 +504,27 @@ function Messenger({ user, socket }) {
                           value={messageInput}
                           autoComplete="off"
                           onChange={(e) => setMessageInput(e.target.value)}
+                          disabled={fileLoad}
                         />
+                        <input
+                          type="file"
+                          className="d-none"
+                          id="file-ip"
+                          onChange={(e) => setFileChat(e.target.files[0])}
+                          disabled={fileLoad}
+                        />
+                        <label
+                          htmlFor="file-ip"
+                          className="position-absolute fa fa-file input-file"
+                        ></label>
+
                         <div className="input-group-append input-group-lg">
                           <button
-                            className="btn btn-outline-primary"
+                            className="btn btn btn-dark"
                             type="submit"
+                            disabled={fileLoad}
                           >
-                            Send
+                            {fileLoad ? 'Uploading...' : 'Send'}
                           </button>
                         </div>
                       </form>
@@ -474,8 +542,48 @@ function Messenger({ user, socket }) {
 
 export default Messenger;
 
-function ChatBubble({ my, message, name, picture_url, time, seen }) {
+function ChatBubble({ my, message, name, picture_url, time, seen, file }) {
   if (!picture_url) picture_url = require('../images/blank-profile.png');
+
+  function genFilePreview(url) {
+    if (!file) return;
+
+    if (
+      file.includes('.png') ||
+      file.includes('.jpg') ||
+      file.includes('.jpeg')
+    ) {
+      return (
+        <img
+          src={file}
+          alt="preview"
+          style={{ maxHeight: '250px', margin: '5px 0' }}
+        />
+      );
+    }
+    if (
+      file.includes('.mp3') ||
+      file.includes('.mp4') ||
+      file.includes('.mov')
+    ) {
+      return (
+        <video
+          src={file}
+          controls
+          style={{ maxHeight: '250px', margin: '5px 0' }}
+        ></video>
+      );
+    }
+
+    return (
+      <>
+        <i className="fa fa-file me-2"></i>
+        <a href={file} target="_blank" className="file-unknwon">
+          Download File
+        </a>
+      </>
+    );
+  }
 
   return (
     <>
@@ -497,7 +605,8 @@ function ChatBubble({ my, message, name, picture_url, time, seen }) {
             <span className="time">{time}</span>
             {my && <h6 className="mb-2">{name}</h6>}
           </div>
-          <div className="d-flex bubbletext">
+          <div className="d-flex bubbletext flex-column">
+            <div className="file">{genFilePreview(file)}</div>
             <p className="m-0">{message}</p>
           </div>
           {seen && (
