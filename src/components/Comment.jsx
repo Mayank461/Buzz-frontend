@@ -20,10 +20,12 @@ export default function Comment({ data }) {
           data-testid="cmnt"
           className={` align-self-center ${loadmore && 'text-comment'}`}
         >
-          {data.message}
+          {data.message.length > 130
+            ? data.message.substring(0, 130) + ' . . . '
+            : data.message}
         </div>
       </div>
-      {data?.message?.length > 335 && (
+      {data.message.length > 130 && (
         <div
           className="seemore"
           onClick={() => {
@@ -33,6 +35,15 @@ export default function Comment({ data }) {
           {loadmore ? 'Show More' : 'Show less'}
         </div>
       )}
+
+      <div
+        className="seemore"
+        onClick={() => {
+          setloadmore((p) => !p);
+        }}
+      >
+        {loadmore ? 'Show More' : 'Show less'}
+      </div>
     </>
   );
 }

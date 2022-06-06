@@ -1,5 +1,6 @@
-import { render } from '@testing-library/react';
-import FullPageSpinner from "../FullPageSpinner";
+import renderer from 'react-test-renderer';
+import FullPageSpinner from '../FullPageSpinner';
 test('should render FullPageSpinner Panel', () => {
-    render(<FullPageSpinner />)
-})
+  const tree = renderer.create(<FullPageSpinner />).toJSON();
+  expect(tree).toMatchSnapshot();
+});

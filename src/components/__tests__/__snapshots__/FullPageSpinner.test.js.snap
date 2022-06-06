@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render FullPageSpinner Panel 1`] = `
+<div
+  style={
+    Object {
+      "alignItems": "center",
+      "background": "#fff",
+      "display": "flex",
+      "height": "100vh",
+      "left": 0,
+      "position": "fixed",
+      "right": 0,
+      "top": 0,
+      "zIndex": 1000,
+    }
+  }
+>
+  <div
+    className="spinner-border text-dark position-absolute start-50"
+  >
+    <span
+      className="visually-hidden"
+    >
+      Loading...
+    </span>
+  </div>
+</div>
+`;

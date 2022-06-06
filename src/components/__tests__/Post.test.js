@@ -27,6 +27,22 @@ test('should render Post Panel', () => {
       uid={userData._id}
     />
   );
+  const tree = renderer
+    .create(
+      <Post
+        index={index}
+        data={element}
+        inclike={like}
+        deslike={dislike}
+        commentBox={commentBox}
+        userdata={userData}
+        reportPost={report}
+        uid={userData._id}
+      />
+    )
+    .toJSON();
+  expect(tree).toMatchSnapshot();
+
   const text = screen.queryByTestId('whoPosted').innerHTML;
   expect(text).toBe('mahir asrani');
 });
