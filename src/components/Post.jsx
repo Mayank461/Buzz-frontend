@@ -202,7 +202,15 @@ export default function Post({
             </div>
           </div>
           {comment.map((data, i) => {
-            return <Comment data={data} key={i} />;
+            return (
+              <Comment
+                data={data}
+                key={i}
+                commentIndex={i}
+                postId={_id}
+                user={userdata}
+              />
+            );
           })}
         </div>
       </div>

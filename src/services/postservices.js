@@ -2,6 +2,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { socket } from '../App';
 import {
+  APICOMMENT_REPLY_URL,
   APICOMMENT_URL,
   APILIKE_URL,
   APINEWPOST,
@@ -116,6 +117,24 @@ export const publishPost = async (
     notifyToList && socket.emit('notification_newPost', notifyToList, myname);
 
     return { success: 'done', data: resData.data.data };
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
+export const postCommentReply = async (post_id, commentIndex, message) => {
+  try {
+    const res = await axios.post(
+      `${APICOMMENT_REPLY_URL}`,
+      {
+        post_id,
+        commentIndex,
+        message,
+      },
+      { withCredentials: true }
+    );
+
+    return res.data;
   } catch (error) {
     return { error: error.message };
   }

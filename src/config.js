@@ -14,6 +14,7 @@ export const API_GETSUGGESTFRIENDS = `${API_URL}/users/friends/suggestions`;
 export const APILIKE_URL = `${API_URL}/posts/like`;
 export const APIUNLIKE_URL = `${API_URL}/posts/unlike`;
 export const APICOMMENT_URL = `${API_URL}/posts/comment`;
+export const APICOMMENT_REPLY_URL = `${API_URL}/posts/comment/reply`;
 export const APIREPORT_URL = `${API_URL}/posts/report`;
 export const APINEWPOST = `${API_URL}/posts/userPost`;
 export const APIGETPOST_URL = `${API_URL}/posts/getPost`;

@@ -144,7 +144,7 @@
   cursor: pointer;
   color: #69696d;
   text-align: end;
-  margin: 5px 10px;
+  /* margin: 5px 10px; */
   font-size: 0.8rem;
   margin-bottom: 10px;
   font-weight: 500;
@@ -474,4 +474,11 @@
 .vc-dc img {
   border-radius: 100px;
   margin: 15px 0;
+}
+
+.replyTo {
+  font-size: 14px;
+  font-weight: 600;
+  color: #60599c;
+  cursor: pointer;
 }
