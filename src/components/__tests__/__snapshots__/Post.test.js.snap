@@ -170,15 +170,29 @@ exports[`should render Post Panel 1`] = `
       </div>
     </div>
     <div
-      className="d-flex container"
+      className="mb-3"
     >
-      <i
-        className="mt-2 me-2 fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"
-      />
       <div
-        className=" align-self-center text-comment"
-        data-testid="cmnt"
-      />
+        className="d-flex container"
+      >
+        <i
+          className="mt-2 me-2 fa-solid fa-user fa-2x card-img-top small-round-pic  round-img bg-warning d-flex justify-content-center align-items-center"
+        />
+        <div
+          className="d-flex flex-column w-100 mt-2"
+        >
+          <div
+            className=" align-self-start text-comment"
+            data-testid="cmnt"
+          />
+          <div
+            className="mb-3 replyTo"
+            onClick={[Function]}
+          >
+            Reply
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

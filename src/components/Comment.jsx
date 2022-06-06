@@ -41,7 +41,7 @@ export default function Comment({ data, postId, commentIndex, user }) {
             data-testid="cmnt"
             className={` align-self-start ${loadmore && 'text-comment'}`}
           >
-            {data.message.length > 130 && loadmore
+            {data?.message?.length > 130 && loadmore
               ? data.message.substring(0, 130) + ' . . . '
               : data.message}
           </div>
@@ -51,7 +51,7 @@ export default function Comment({ data, postId, commentIndex, user }) {
             </div>
           )}
 
-          {data.message.length > 130 && (
+          {data?.message?.length > 130 && (
             <div
               className="seemore"
               onClick={() => {
@@ -62,7 +62,7 @@ export default function Comment({ data, postId, commentIndex, user }) {
             </div>
           )}
 
-          {data.reply.map((x) => (
+          {data?.reply?.map((x) => (
             <div className="d-flex my-2">
               {x.user_id.picture_url ? (
                 <img

@@ -2,19 +2,33 @@
 
 exports[`should render Comment Panel 1`] = `
 <div
-  className="d-flex container"
+  className="mb-3"
 >
-  <img
-    alt="..."
-    className=" mt-2 small-round-pic me-2  round-img "
-    data-testid="userCommentPic"
-    src="no pic"
-  />
   <div
-    className=" align-self-center text-comment"
-    data-testid="cmnt"
+    className="d-flex container"
   >
-    no msg
+    <img
+      alt="..."
+      className=" mt-2 small-round-pic me-2  round-img "
+      data-testid="userCommentPic"
+      src="no pic"
+    />
+    <div
+      className="d-flex flex-column w-100 mt-2"
+    >
+      <div
+        className=" align-self-start text-comment"
+        data-testid="cmnt"
+      >
+        no msg
+      </div>
+      <div
+        className="mb-3 replyTo"
+        onClick={[Function]}
+      >
+        Reply
+      </div>
+    </div>
   </div>
 </div>
 `;
